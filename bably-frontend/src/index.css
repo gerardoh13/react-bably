@@ -1,0 +1,18 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #282c34;
+  background: url(https://img.freepik.com/free-vector/gradient-blue-color-background-modern-minimalist-design-abstract_343694-2124.jpg?w=1380&t=st=1679118144~exp=1679118744~hmac=401f6b7cc53aea65eaff6fabd002ecfcd02f920e73d12f36d72ce5b895f99645);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
