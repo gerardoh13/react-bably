@@ -36,7 +36,7 @@ class BablyApi {
     return res.token;
   }
 
-  static async register(data) {
+  static async registerUser(data) {
     let res = await this.request("users/register", data, "post");
     return res.token;
   }
@@ -52,7 +52,10 @@ class BablyApi {
   }
 
   // ------------------INFANTS-----------------------
-
+  static async registerInfant(userId, data) {
+    let res = await this.request(`infants/register/${userId}`, data, "post");
+    return res.token;
+  }
 
 }
 

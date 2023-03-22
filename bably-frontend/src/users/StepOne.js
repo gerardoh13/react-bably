@@ -9,14 +9,14 @@ function StepOne({ data, handleChange }) {
         <input
           type="text"
           className="form-control"
-          id="childName"
-          name="childName"
+          id="firstName"
+          name="firstName"
           placeholder="Child's First Name"
-          value={data.childName}
+          value={data.firstName}
           onChange={handleChange}
           required
         />
-        <label htmlFor="childName">Child's First Name</label>
+        <label htmlFor="firstName">Child's First Name</label>
         <div className="invalid-feedback">Please enter your child's name.</div>
       </div>
       <hr className="my-4" />

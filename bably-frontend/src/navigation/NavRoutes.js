@@ -13,10 +13,9 @@ function NavRoutes({ login, signup }) {
       <Route element={<PublicRoutes />}>
         <Route exact path="/login" element={<Login login={login} />} />
         <Route exact path="/signup" element={<Signup signup={signup} />} />
-        <Route exact path="/register" element={<Register />} />
       </Route>
       <Route element={<PrivateRoutes />}>
-        {/* <Route exact path="/register" element={<Register />} /> */}
+        <Route exact path="/register" element={<Register />} />
       </Route>
     </Routes>
   );

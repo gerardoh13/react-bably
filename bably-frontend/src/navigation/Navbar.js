@@ -43,41 +43,41 @@ function Navbar({ logout }) {
     <>
       <li className="nav-item">
         <NavLink
-          to="/companies"
+          to="/feeds"
           data-bs-toggle="collapse"
           data-bs-target="#navbar"
           className={({ isActive }) =>
             isActive ? activeClassName : "nav-link"
           }
-          onClick={() => navigate("/companies")}
+          onClick={() => navigate("/feeds")}
         >
-          Companies
+          Log Feeding
         </NavLink>
       </li>
       <li className="nav-item">
         <NavLink
-          to="/jobs"
+          to="/calendar"
           data-bs-toggle="collapse"
           data-bs-target="#navbar"
           className={({ isActive }) =>
             isActive ? activeClassName : "nav-link"
           }
-          onClick={() => navigate("/jobs")}
+          onClick={() => navigate("/calendar")}
         >
-          Jobs
+          Calendar
         </NavLink>
       </li>
       <li className="nav-item">
         <NavLink
-          to="/profile"
+          to="/reminders"
           data-bs-toggle="collapse"
           data-bs-target="#navbar"
           className={({ isActive }) =>
             isActive ? activeClassName : "nav-link"
           }
-          onClick={() => navigate("/profile")}
+          onClick={() => navigate("/reminders")}
         >
-          Profile
+          Reminder Settings
         </NavLink>
       </li>
       <li className="nav-item">
@@ -87,7 +87,7 @@ function Navbar({ logout }) {
           data-bs-target="#navbar"
           onClick={logout}
         >
-          Log out
+          Logout
         </Link>
       </li>
     </>

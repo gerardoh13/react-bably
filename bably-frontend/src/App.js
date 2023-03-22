@@ -7,7 +7,7 @@ import UserContext from "./users/UserContext";
 import Spinner from "./common/Spinner";
 import { useLocalStorage } from "./hooks";
 import NavRoutes from "./navigation/NavRoutes";
-import Navbar from "./common/Navbar";
+import Navbar from "./navigation/Navbar";
 
 function App() {
   const [token, setToken] = useLocalStorage("bably-token");
@@ -24,6 +24,7 @@ function App() {
         let { email } = decodeToken(token);
         BablyApi.token = token;
         let user = await BablyApi.getCurrUser(email);
+        console.log(user)
         setCurrUser(user);
       } catch (err) {
         console.log(err);
@@ -47,7 +48,7 @@ function App() {
 
   const signup = async (data) => {
     try {
-      let userToken = await BablyApi.register(data);
+      let userToken = await BablyApi.registerUser(data);
       setToken(userToken);
       return { success: true };
     } catch (errors) {
@@ -60,12 +61,22 @@ function App() {
     setToken(null);
   };
 
+  const registerInfant = async (data) => {
+    if (!currUser) return;
+    try {
+      await BablyApi.registerInfant(currUser.id, data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return (
     <div className="App">
       <BrowserRouter>
         <UserContext.Provider
           value={{
-            currUser
+            currUser,
+            registerInfant
           }}
         >
           <Navbar logout={logout} />

@@ -105,14 +105,19 @@ class User {
 
     if (!user) throw new NotFoundError(`No user: ${email}`);
 
-    // const userApplicationsRes = await db.query(
-    //   `SELECT a.job_id
-    //        FROM applications AS a
-    //        WHERE a.username = $1`,
-    //   [username]
-    // );
+    const infantsRes = await db.query(
+      `SELECT i.id,
+              i.first_name AS "firstName",
+              i.dob,
+              i.gender
+           FROM infants i
+           WHERE i.id IN (SELECT infant_id from users_infants
+            WHERE user_id = $1)`,
+      [user.id]
+    );
 
-    // user.applications = userApplicationsRes.rows.map((a) => a.job_id);
+    user.infants = infantsRes.rows;
+
     return user;
   }
 

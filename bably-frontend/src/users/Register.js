@@ -1,25 +1,34 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import StepOne from "./StepOne";
 import StepTwo from "./StepTwo";
+import UserContext from "../users/UserContext";
+import { useNavigate } from "react-router-dom";
 import "./Register.css";
 
 function Register() {
   const INITIAL_STATE = {
-    childName: "",
+    firstName: "",
     gender: "",
     dob: "",
+    publicId: ""
   };
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState(INITIAL_STATE);
+  const { registerInfant } = useContext(UserContext);
+  const navigate = useNavigate();
 
-  const navigate = (n) => {
+  const changeStep = (n) => {
     setStep((prev) => prev + n);
-    console.log(formData);
   };
+
+const submit = () => {
+  registerInfant(formData)
+  navigate("/");
+}
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    const trimCheck = name === "childName";
+    const trimCheck = name === "firstName";
     setFormData((data) => ({
       ...data,
       [name]: trimCheck ? value.trimStart().replace(/\s+/g, " ") : value,
@@ -63,7 +72,7 @@ function Register() {
                 <button
                   className="btn btn-success mt-3 form-control"
                   id="prevBtn"
-                  onClick={() => navigate(-1)}
+                  onClick={() => changeStep(-1)}
                 >
                   Previous
                 </button>
@@ -75,7 +84,7 @@ function Register() {
                 <button
                   className="btn btn-success mt-3 form-control"
                   id="nextBtn"
-                  onClick={() => navigate(1)}
+                  onClick={() => changeStep(1)}
                 >
                   Next
                 </button>
@@ -83,7 +92,7 @@ function Register() {
                 <button
                   className="btn btn-success mt-3 form-control"
                   id="nextBtn"
-                  onClick={() => console.log(formData)}
+                  onClick={submit}
                 >
                   Submit
                 </button>
@@ -92,7 +101,7 @@ function Register() {
             <div className="mt-2">
               <span
                 className={`step ${
-                  formData.childName && formData.gender ? "finish" : ""
+                  formData.firstName && formData.gender ? "finish" : ""
                 } ${step === 0 ? "active" : ""}`}
               ></span>
               <span
@@ -100,7 +109,11 @@ function Register() {
                   step === 1 ? "active" : ""
                 }`}
               ></span>
-              <span className={`step ${step === 2 ? "active" : ""}`}></span>
+                            <span
+                className={`step ${formData.dob ? "finish" : ""} ${
+                  step === 2 ? "active" : ""
+                }`}
+              ></span>
               <span className={`step ${step === 3 ? "active" : ""}`}></span>
             </div>
           </div>
