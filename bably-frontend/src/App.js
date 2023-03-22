@@ -6,6 +6,7 @@ import UserContext from "./users/UserContext";
 import Spinner from "./common/Spinner";
 import { useLocalStorage } from "./hooks";
 import NavRoutes from "./navigation/NavRoutes";
+import Navbar from "./common/Navbar";
 
 function App() {
   const [token, setToken] = useLocalStorage("bably-token");
@@ -67,7 +68,7 @@ function App() {
             currUser
           }}
         >
-          {/* <Navbar logout={logout} /> */}
+          <Navbar logout={logout} />
           {loading ? <Spinner /> : <NavRoutes login={login} signup={signup}/>}
         </UserContext.Provider>
       </BrowserRouter>

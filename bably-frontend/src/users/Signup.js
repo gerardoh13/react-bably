@@ -55,7 +55,7 @@ function Signup({ signup }) {
   };
 
   return (
-    <div className="card col-lg-4 col-md-5 col-sm-6 col-11 mt-5">
+    <div className="card col-lg-4 col-md-5 col-sm-6 col-11 my-auto">
       <div className="card-body">
         <h5 className="card-title">Sign up</h5>
         {errors.length ? <Alerts msgs={errors} /> : null}
