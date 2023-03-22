@@ -4,7 +4,7 @@ import Alerts from "../common/Alerts";
 
 function Login({ login }) {
   const INITIAL_STATE = {
-    username: "",
+    email: "",
     password: "",
   };
 
@@ -40,15 +40,15 @@ function Login({ login }) {
             <input
               className="form-control"
               type="text"
-              name="username"
-              id="username"
-              value={formData.username}
-              placeholder="username"
+              name="email"
+              id="email"
+              value={formData.email}
+              placeholder="email"
               required
-              autoComplete="username"
+              autoComplete="email"
               onChange={handleChange}
             />
-            <label htmlFor="username">Username</label>
+            <label htmlFor="email">Email:</label>
           </div>
           <div className="form-floating mb-4">
             <input
@@ -62,7 +62,7 @@ function Login({ login }) {
               autoComplete="current-password"
               onChange={handleChange}
             />
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">Password:</label>
           </div>
           <button className="btn btn-primary form-control">Submit</button>
         </form>

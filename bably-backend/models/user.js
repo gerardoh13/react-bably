@@ -24,13 +24,13 @@ class User {
   static async authenticate(email, password) {
     // try to find the user first
     const result = await db.query(
-          `SELECT id,
+      `SELECT id,
                   email,
                   password,
                   first_name AS "firstName"
            FROM users
            WHERE email = $1`,
-        [email],
+      [email]
     );
 
     const user = result.rows[0];
@@ -54,13 +54,12 @@ class User {
    * Throws BadRequestError on duplicates.
    **/
 
-  static async register(
-      { email, password, firstName }) {
+  static async register({ email, password, firstName }) {
     const duplicateCheck = await db.query(
-          `SELECT email
+      `SELECT email
            FROM users
            WHERE email = $1`,
-        [email],
+      [email]
     );
 
     if (duplicateCheck.rows[0]) {
@@ -70,21 +69,50 @@ class User {
     const hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
 
     const result = await db.query(
-          `INSERT INTO users
+      `INSERT INTO users
            (email,
             password,
             first_name)
            VALUES ($1, $2, $3)
            RETURNING id, email, first_name AS "firstName"`,
-        [
-          email,
-          hashedPassword,
-          firstName,
-        ],
+      [email, hashedPassword, firstName]
     );
 
     const user = result.rows[0];
 
+    return user;
+  }
+
+  /** Given a username, return data about user.
+   *
+   * Returns { username, first_name, last_name, is_admin, jobs }
+   *   where jobs is { id, title, company_handle, company_name, state }
+   *
+   * Throws NotFoundError if user not found.
+   **/
+
+  static async get(email) {
+    const userRes = await db.query(
+      `SELECT id,
+              email,
+              first_name AS "firstName"
+           FROM users
+           WHERE email = $1`,
+      [email]
+    );
+
+    const user = userRes.rows[0];
+
+    if (!user) throw new NotFoundError(`No user: ${email}`);
+
+    // const userApplicationsRes = await db.query(
+    //   `SELECT a.job_id
+    //        FROM applications AS a
+    //        WHERE a.username = $1`,
+    //   [username]
+    // );
+
+    // user.applications = userApplicationsRes.rows.map((a) => a.job_id);
     return user;
   }
 
@@ -110,11 +138,9 @@ class User {
       data.password = await bcrypt.hash(data.password, BCRYPT_WORK_FACTOR);
     }
 
-    const { setCols, values } = sqlForPartialUpdate(
-        data,
-        {
-          firstName: "first_name",
-        });
+    const { setCols, values } = sqlForPartialUpdate(data, {
+      firstName: "first_name",
+    });
     const emailVarIdx = "$" + (values.length + 1);
 
     const querySql = `UPDATE users 
@@ -136,18 +162,16 @@ class User {
 
   static async remove(email) {
     let result = await db.query(
-          `DELETE
+      `DELETE
            FROM users
            WHERE email = $1
            RETURNING email`,
-        [email],
+      [email]
     );
     const user = result.rows[0];
 
     if (!user) throw new NotFoundError(`No user: ${email}`);
   }
-
 }
-
 
 module.exports = User;

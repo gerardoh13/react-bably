@@ -1,6 +1,7 @@
 import { BrowserRouter } from "react-router-dom";
 import './App.css';
 import { useState, useEffect } from "react";
+import BablyApi from "./api";
 import { decodeToken } from "react-jwt";
 import UserContext from "./users/UserContext";
 import Spinner from "./common/Spinner";
@@ -19,26 +20,25 @@ function App() {
         setLoading(false);
         return;
       }
-      // try {
-      //   let { username } = decodeToken(token);
-      //   JoblyApi.token = token;
-      //   let user = await JoblyApi.getCurrUser(username);
-      //   setCurrUser(user);
-      //   setApplicationIds(new Set(user.applications));
-      // } catch (err) {
-      //   console.log(err);
-      //   setCurrUser(null);
-      // }
-      // setLoading(false);
+      try {
+        let { email } = decodeToken(token);
+        BablyApi.token = token;
+        let user = await BablyApi.getCurrUser(email);
+        setCurrUser(user);
+      } catch (err) {
+        console.log(err);
+        setCurrUser(null);
+      }
+      setLoading(false);
     }
-    // setLoading(true);
+    setLoading(true);
     getCurrUser();
   }, [token]);
 
   const login = async (data) => {
     try {
-      // let userToken = await JoblyApi.login(data);
-      // setToken(userToken);
+      let userToken = await BablyApi.login(data);
+      setToken(userToken);
       return { valid: true };
     } catch (errors) {
       return { valid: false, errors };
@@ -47,8 +47,8 @@ function App() {
 
   const signup = async (data) => {
     try {
-      // let userToken = await JoblyApi.register(data);
-      // setToken(userToken);
+      let userToken = await BablyApi.register(data);
+      setToken(userToken);
       return { success: true };
     } catch (errors) {
       return { success: false, errors };
