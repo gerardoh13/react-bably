@@ -2,13 +2,16 @@
   "name": "bably-backend",
   "version": "1.0.0",
   "description": "bably express backend",
-  "main": "app.js",
+  "main": "server.js",
   "scripts": {
-    "test": "jest"
+    "start": "node server.js",
+    "test": "jest -i"
   },
-  "repository": {
-    "type": "git",
-    "url": "bably-backend"
+  "jest": {
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "config.js"
+    ]
   },
   "author": "gerardoh13",
   "license": "ISC",
