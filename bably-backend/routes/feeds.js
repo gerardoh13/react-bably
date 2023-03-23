@@ -36,4 +36,21 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
   }
 });
 
+router.get(
+  "/:infant_id/:last_midnight/:next_midnight",
+  async function (req, res, next) {
+    const { infant_id, last_midnight, next_midnight } = req.params;
+    try {
+      const feeds = await Feed.getTodaysFeeds(
+        infant_id,
+        last_midnight,
+        next_midnight
+      );
+      return res.json({ feeds });
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
+
 module.exports = router;

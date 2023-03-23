@@ -30,6 +30,22 @@ class Feed {
 
     return feed;
   }
+
+  static async getTodaysFeeds(infant_id, last_midnight, next_midnight) {
+    const result = await db.query(
+      `SELECT id,
+              method,
+              fed_at,
+              amount,
+              duration,
+              infant_id
+      FROM feeds WHERE infant_id = $1 AND fed_at > $2 AND fed_at < $3`,
+      [infant_id, last_midnight, next_midnight]
+    );
+    let feeds = result.rows;
+
+    return feeds;
+  }
 }
 
 module.exports = Feed;

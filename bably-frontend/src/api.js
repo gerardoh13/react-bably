@@ -56,11 +56,18 @@ class BablyApi {
     let res = await this.request(`infants/register/${userId}`, data, "post");
     return res.token;
   }
-    // ------------------FEEDS-----------------------
-    static async addFeed(data) {
-      let res = await this.request("feeds", data, "post");
-      return res.feed;
-    }
+  // ------------------FEEDS-----------------------
+  static async addFeed(data) {
+    let res = await this.request("feeds", data, "post");
+    return res.feed;
+  }
+
+  static async getTodaysFeeds(infant_id, last_midnight, next_midnight) {
+    let res = await this.request(
+      `feeds/${infant_id}/${last_midnight}/${next_midnight}`
+    );
+    return res.feeds;
+  }
 }
 
 export default BablyApi;

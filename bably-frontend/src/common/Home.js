@@ -1,10 +1,29 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import UserContext from "../users/UserContext";
+import BablyApi from "../api";
 
 function Home() {
   const [feeds, setFeeds] = useState([]);
   let { currChild } = useContext(UserContext);
 
+  useEffect(() => {
+    getFeeds()
+  }, []);
+
+const getFeeds = async () => {
+  const { last_midnight, next_midnight } = getMidnights();
+  let todaysFeeds = await BablyApi.getTodaysFeeds(currChild.id, last_midnight, next_midnight)
+console.log(todaysFeeds)
+}
+
+  const getMidnights = () => {
+    let midnight = new Date();
+    midnight.setHours(0, 0, 0, 0);
+    let last_midnight = midnight.getTime() / 1000;
+    midnight.setDate(midnight.getDate() + 1);
+    let next_midnight = midnight.getTime() / 1000;
+    return { last_midnight, next_midnight };
+  };
   return (
     <div className="mt-4 col-11 col-xl-6 text-center">
       <h2>Today's Feeds</h2>
@@ -45,13 +64,15 @@ function Home() {
         </div>
       ) : null}
 
-      {!feeds.length ? (<div>
-        <hr />
-        <h4 className="my-3">
-          Log {currChild.firstName}'s feeds to see your latest activity here!
-        </h4>
-        <hr />
-      </div>) : null}
+      {!feeds.length ? (
+        <div>
+          <hr />
+          <h4 className="my-3">
+            Log {currChild.firstName}'s feeds to see your latest activity here!
+          </h4>
+          <hr />
+        </div>
+      ) : null}
 
       <div className="card text-bg-primary mb-3">
         <a className="nav-link" href="/feeds">
