@@ -4,17 +4,26 @@ import BablyApi from "../api";
 
 function Home() {
   const [feeds, setFeeds] = useState([]);
+  const [totals, setTotals] = useState({
+    amount: 0,
+    duration: 0,
+  });
   let { currChild } = useContext(UserContext);
 
   useEffect(() => {
-    getFeeds()
+    getFeeds();
   }, []);
 
-const getFeeds = async () => {
-  const { last_midnight, next_midnight } = getMidnights();
-  let todaysFeeds = await BablyApi.getTodaysFeeds(currChild.id, last_midnight, next_midnight)
-console.log(todaysFeeds)
-}
+  const getFeeds = async () => {
+    const { last_midnight, next_midnight } = getMidnights();
+    let todaysFeeds = await BablyApi.getTodaysFeeds(
+      currChild.id,
+      last_midnight,
+      next_midnight
+    );
+    setFeeds(todaysFeeds);
+    updateCards(todaysFeeds);
+  };
 
   const getMidnights = () => {
     let midnight = new Date();
@@ -23,6 +32,22 @@ console.log(todaysFeeds)
     midnight.setDate(midnight.getDate() + 1);
     let next_midnight = midnight.getTime() / 1000;
     return { last_midnight, next_midnight };
+  };
+
+  const updateCards = (todaysFeeds) => {
+    const bottleFeeds = todaysFeeds.filter((f) => f.method === "bottle");
+    const nursingFeeds = todaysFeeds.filter((f) => f.method === "nursing");
+    let feedAmt = !bottleFeeds.length
+      ? 0
+      : bottleFeeds.length > 1
+      ? bottleFeeds.reduce((acc, curr) => acc.amount + curr.amount)
+      : bottleFeeds[0].amount;
+    let feedDuration = !nursingFeeds.length
+      ? 0
+      : nursingFeeds.length > 1
+      ? nursingFeeds.reduce((acc, curr) => acc.duration + curr.duration)
+      : nursingFeeds[0].duration;
+    setTotals({ duration: feedDuration, amount: feedAmt });
   };
   return (
     <div className="mt-4 col-11 col-xl-6 text-center">
@@ -33,7 +58,7 @@ console.log(todaysFeeds)
             <div className="col">
               <div className="card text-bg-primary">
                 <div className="card-body">
-                  <h2 id="bottleCount" className="card-title"></h2>
+                  <h2 id="bottleCount" className="card-title">{totals.amount}</h2>
                 </div>
                 <div className="card-footer">
                   <p>Total oz</p>
@@ -43,7 +68,7 @@ console.log(todaysFeeds)
             <div className="col">
               <div className="card text-bg-primary">
                 <div className="card-body">
-                  <h2 id="nursingCount" className="card-title"></h2>
+                  <h2 id="nursingCount" className="card-title">{totals.duration}</h2>
                 </div>
                 <div className="card-footer">
                   <p>Nursing Feeds</p>
