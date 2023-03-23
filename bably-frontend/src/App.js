@@ -1,5 +1,5 @@
 import { BrowserRouter } from "react-router-dom";
-import './App.css';
+import "./App.css";
 import { useState, useEffect } from "react";
 import BablyApi from "./api";
 import { decodeToken } from "react-jwt";
@@ -12,6 +12,7 @@ import Navbar from "./navigation/Navbar";
 function App() {
   const [token, setToken] = useLocalStorage("bably-token");
   const [currUser, setCurrUser] = useState(null);
+  const [currChild, setCurrChild] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,8 +25,8 @@ function App() {
         let { email } = decodeToken(token);
         BablyApi.token = token;
         let user = await BablyApi.getCurrUser(email);
-        console.log(user)
         setCurrUser(user);
+        setCurrChild(user.infants[0]);
       } catch (err) {
         console.log(err);
         setCurrUser(null);
@@ -76,11 +77,12 @@ function App() {
         <UserContext.Provider
           value={{
             currUser,
-            registerInfant
+            currChild,
+            registerInfant,
           }}
         >
           <Navbar logout={logout} />
-          {loading ? <Spinner /> : <NavRoutes login={login} signup={signup}/>}
+          {loading ? <Spinner /> : <NavRoutes login={login} signup={signup} />}
         </UserContext.Provider>
       </BrowserRouter>
     </div>

@@ -1,39 +1,39 @@
 "use strict";
 
-/** Routes for infants. */
+/** Routes for feeds. */
 
 const jsonschema = require("jsonschema");
 
-const Infant = require("../models/infant");
+const Feed = require("../models/feed");
 const express = require("express");
-const infantNewSchema = require("../schemas/infantNew.json");
+const { ensureLoggedIn } = require("../middleware/auth");
+const feedNewSchema = require("../schemas/feedNew.json");
 const { BadRequestError } = require("../expressError");
 
 const router = new express.Router();
 
-/** POST /register/:userId:   { infant } => { infant }
+/** POST /:   { infant } => { infant }
  *
- * infant must include { firstName, dob, gender }
+ * feed must include { firstName, dob, gender }
  *
  * Returns { id, firstName, dob, gender, publicId }
  *
  * Authorization required: none
  */
 
-router.post("/register/:userId", async function (req, res, next) {
+router.post("/", ensureLoggedIn, async function (req, res, next) {
   try {
-    const validator = jsonschema.validate(req.body, infantNewSchema);
+    const validator = jsonschema.validate(req.body, feedNewSchema);
     if (!validator.valid) {
       const errs = validator.errors.map((e) => e.stack);
       throw new BadRequestError(errs);
     }
 
-    const infant = await Infant.register(req.body, req.params.userId);
-    return res.status(201).json({ infant });
+    const feed = await Feed.add(req.body);
+    return res.status(201).json({ feed });
   } catch (err) {
     return next(err);
   }
 });
-
 
 module.exports = router;

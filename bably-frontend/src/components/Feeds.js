@@ -1,14 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import BablyApi from "../api";
+import UserContext from "../users/UserContext";
 
 function Feeds() {
   const INITIAL_STATE = {
     method: "bottle",
     amount: 6,
+    duration: "",
+    fed_at: "",
+    maxDateTime: "",
   };
   const [formData, setFormData] = useState(INITIAL_STATE);
+  const { currChild } = useContext(UserContext);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    let now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    now.setMilliseconds(null);
+    now.setSeconds(null);
+    let currTime = now.toISOString().slice(0, -1);
+    setFormData((data) => ({
+      ...data,
+      fed_at: currTime,
+      maxDateTime: currTime,
+    }));
+  }, []);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((data) => ({
@@ -20,7 +38,8 @@ function Feeds() {
   const handleSubmit = (e) => {
     e.preventDefault();
     let tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    let newFeed = { fed_at: formData.fed_at, method: formData.method, tz };
+    let fed_at = new Date(formData.fed_at).getTime() / 1000;
+    let newFeed = { fed_at, method: formData.method, infant_id: currChild.id };
     if (formData.method === "bottle") {
       let amount = parseFloat(formData.amount);
       newFeed.amount = amount;
@@ -28,13 +47,15 @@ function Feeds() {
       let duration = parseFloat(formData.duration);
       newFeed.duration = duration;
     }
+    setFormData(INITIAL_STATE);
     console.log(newFeed);
+    BablyApi.addFeed(newFeed)
     navigate("/");
   };
   return (
-    <div className="my-auto card text-center">
+    <div className="card col-xl-3 col-lg-4 col-md-5 col-sm-6 col-11 my-auto text-center">
       <div className="card-body">
-        <h5 className="card-title">Log Feed</h5>
+        <h5 className="card-title mb-3">Log New Feed</h5>
         <form method="POST" id="feedForm" onSubmit={handleSubmit}>
           <input
             type="radio"
@@ -81,6 +102,8 @@ function Feeds() {
                 name="fed_at"
                 id="fed_at"
                 required
+                value={formData.fed_at}
+                max={formData.maxDateTime}
                 onChange={handleChange}
               />
             </div>
@@ -123,7 +146,10 @@ function Feeds() {
                 step="1"
                 min="1"
                 max="60"
+                disabled={formData.method === "bottle"}
+                value={formData.duration}
                 onChange={handleChange}
+                required={formData.method === "nursing"}
               />
             </div>
           </div>

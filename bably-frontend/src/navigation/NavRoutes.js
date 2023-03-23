@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Routes, Route } from "react-router-dom";
+import HomeAnon from "../common/HomeAnon";
 import Home from "../common/Home";
 import Login from "../users/Login";
 import Signup from "../users/Signup";
@@ -8,10 +9,14 @@ import PublicRoutes from "./PublicRoutes";
 import Register from "../users/Register";
 import Calendar from "../components/Calendar";
 import Feeds from "../components/Feeds";
+import UserContext from "../users/UserContext";
+
 function NavRoutes({ login, signup }) {
+  const { currUser } = useContext(UserContext);
+
   return (
     <Routes>
-      <Route exact path="/" element={<Home />} />
+      <Route exact path="/" element={currUser ? <Home /> : <HomeAnon />} />
       <Route element={<PublicRoutes />}>
         <Route exact path="/login" element={<Login login={login} />} />
         <Route exact path="/signup" element={<Signup signup={signup} />} />
