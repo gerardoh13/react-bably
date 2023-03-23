@@ -51,7 +51,7 @@ function Navbar({ logout }) {
           }
           onClick={() => navigate("/feeds")}
         >
-          Log Feeding
+          Feeds
         </NavLink>
       </li>
       <li className="nav-item">
@@ -77,7 +77,7 @@ function Navbar({ logout }) {
           }
           onClick={() => navigate("/reminders")}
         >
-          Reminder Settings
+          Reminders
         </NavLink>
       </li>
       <li className="nav-item">
@@ -95,7 +95,7 @@ function Navbar({ logout }) {
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark">
-        {/* fixed-bottom */}
+      {/* fixed-bottom */}
       <div className="container-fluid">
         <NavLink className="navbar-brand" to="/">
           Bably
