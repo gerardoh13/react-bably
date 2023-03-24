@@ -12,7 +12,7 @@
         "type": "integer"
       },
       "amount": {
-        "type": "integer"
+        "type": "number"
       },
       "duration": {
         "type": "integer"

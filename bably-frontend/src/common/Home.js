@@ -4,6 +4,7 @@ import BablyApi from "../api";
 
 function Home() {
   const [feeds, setFeeds] = useState([]);
+  const [showMore, setShowMore] = useState("d-none");
   const [totals, setTotals] = useState({
     amount: 0,
     duration: 0,
@@ -39,16 +40,36 @@ function Home() {
     const nursingFeeds = todaysFeeds.filter((f) => f.method === "nursing");
     let feedAmt = !bottleFeeds.length
       ? 0
-      : bottleFeeds.length > 1
-      ? bottleFeeds.reduce((acc, curr) => acc.amount + curr.amount)
-      : bottleFeeds[0].amount;
+      : bottleFeeds.reduce((acc, curr) => acc + curr.amount, 0);
     let feedDuration = !nursingFeeds.length
       ? 0
-      : nursingFeeds.length > 1
-      ? nursingFeeds.reduce((acc, curr) => acc.duration + curr.duration)
-      : nursingFeeds[0].duration;
+      : nursingFeeds.reduce((acc, curr) => acc + curr.duration, 0);
     setTotals({ duration: feedDuration, amount: feedAmt });
   };
+
+  const createRows = (arr, hidden = false) => {
+    return arr.map((f) => (
+      <tr key={f.id} className={hidden ? showMore : ""}>
+        <td>{toDateStr(f.fed_at)}</td>
+        <td>{f.method}</td>
+        <td>
+          {f.method === "bottle" ? `${f.amount} oz` : `${f.duration} mins`}
+        </td>
+      </tr>
+    ));
+  };
+
+  function toDateStr(timestamp) {
+    let value = timestamp * 1000;
+    let toDate = new Date(value);
+    let date = toDate.toLocaleDateString();
+    let time = toDate.toLocaleString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    return `${date} ${time}`;
+  }
+
   return (
     <div className="mt-4 col-11 col-xl-6 text-center">
       <h2>Today's Feeds</h2>
@@ -58,33 +79,60 @@ function Home() {
             <div className="col">
               <div className="card text-bg-primary">
                 <div className="card-body">
-                  <h2 id="bottleCount" className="card-title">{totals.amount}</h2>
+                  <h2 id="bottleCount" className="card-title">
+                    {totals.amount}
+                  </h2>
                 </div>
                 <div className="card-footer">
-                  <p>Total oz</p>
+                  <p>Total Oz</p>
                 </div>
               </div>
             </div>
             <div className="col">
               <div className="card text-bg-primary">
                 <div className="card-body">
-                  <h2 id="nursingCount" className="card-title">{totals.duration}</h2>
+                  <h2 id="nursingCount" className="card-title">
+                    {totals.duration}
+                  </h2>
                 </div>
                 <div className="card-footer">
-                  <p>Nursing Feeds</p>
+                  <p>Nursing Mins</p>
                 </div>
               </div>
             </div>
           </div>
-          <table className="table table-striped text-start">
+          <table className="table table-striped text-start bg-light">
             <thead>
               <tr>
-                <th scope="col">Date/Time</th>
+                <th scope="col">Date and Time</th>
                 <th scope="col">Method</th>
-                <th scope="col">oz/mins</th>
+                <th scope="col">Oz/Mins</th>
               </tr>
             </thead>
-            <tbody id="table"></tbody>
+            <tbody id="table">
+              {createRows(feeds.slice(0, 3))}
+              {feeds.length > 3 ? (
+                <>
+                  <tr
+                    className={showMore === "" ? "d-none" : ""}
+                    onClick={() => setShowMore("")}
+                  >
+                    <th scope="row">+ {feeds.slice(3).length} More</th>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  {createRows(feeds.slice(3), true)}
+                  <tr
+                    className={showMore}
+                    onClick={() => setShowMore("d-none")}
+                  >
+                    <th scope="row">Hide</th>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                </>
+              ) : null}
+            </tbody>
           </table>
         </div>
       ) : null}

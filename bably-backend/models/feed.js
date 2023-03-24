@@ -39,7 +39,9 @@ class Feed {
               amount,
               duration,
               infant_id
-      FROM feeds WHERE infant_id = $1 AND fed_at > $2 AND fed_at < $3`,
+      FROM feeds 
+      WHERE infant_id = $1 AND fed_at > $2 AND fed_at < $3
+      ORDER BY fed_at DESC`,
       [infant_id, last_midnight, next_midnight]
     );
     let feeds = result.rows;
