@@ -2,7 +2,7 @@ import React from "react";
 
 function Spinner() {
   return (
-    <div className="card marginT10 text-center">
+    <div className="card my-auto text-center">
       <div className="card-body">
         <h1 className="card-title">Loading</h1>
 

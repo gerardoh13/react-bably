@@ -23,6 +23,15 @@ CREATE TABLE feeds (
     REFERENCES infants ON DELETE CASCADE
 );
 
+CREATE TABLE diapers (
+  id SERIAL PRIMARY KEY,
+  type VARCHAR(6) NOT NULL,
+  size VARCHAR(5) NOT NULL,
+  changed_at BIGINT NOT NULL,
+  infant_id INTEGER 
+    REFERENCES infants ON DELETE CASCADE
+);
+
 CREATE TABLE users_infants (
   user_id INTEGER
     REFERENCES users ON DELETE CASCADE,

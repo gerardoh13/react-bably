@@ -1,14 +1,14 @@
 "use strict";
 
-/** Routes for feeds. */
+/** Routes for diapers. */
 
 const jsonschema = require("jsonschema");
 
-const Feed = require("../models/feed");
+const Diaper = require("../models/diaper");
 const Infant = require("../models/infant");
 const express = require("express");
 const { ensureLoggedIn } = require("../middleware/auth");
-const feedNewSchema = require("../schemas/feedNew.json");
+const diaperNewSchema = require("../schemas/diaperNew.json");
 const { BadRequestError } = require("../expressError");
 
 const router = new express.Router();
@@ -24,7 +24,7 @@ const router = new express.Router();
 
 router.post("/", ensureLoggedIn, async function (req, res, next) {
   try {
-    const validator = jsonschema.validate(req.body, feedNewSchema);
+    const validator = jsonschema.validate(req.body, diaperNewSchema);
     if (!validator.valid) {
       const errs = validator.errors.map((e) => e.stack);
       throw new BadRequestError(errs);
@@ -32,8 +32,8 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
     if (
       await Infant.checkAuthorized(res.locals.user.email, req.body.infant_id)
     ) {
-      const feed = await Feed.add(req.body);
-      return res.status(201).json({ feed });
+      const diaper = await Diaper.add(req.body);
+      return res.status(201).json({ diaper });
     }
   } catch (err) {
     return next(err);
@@ -41,14 +41,14 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
 });
 
 router.get(
-  "/:infant_id/:last_midnight/:next_midnight",
+  "/:infant_id/:start/:end",
   ensureLoggedIn,
   async function (req, res, next) {
     const { infant_id, start, end } = req.params;
     try {
       if (await Infant.checkAuthorized(res.locals.user.email, infant_id)) {
-        const feeds = await Feed.getTodaysFeeds(infant_id, start, end);
-        return res.json({ feeds });
+        const diapers = await Diaper.getTodaysDiapers(infant_id, start, end);
+        return res.json({ diapers });
       }
     } catch (err) {
       return next(err);

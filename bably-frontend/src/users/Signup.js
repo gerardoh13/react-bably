@@ -21,7 +21,7 @@ function Signup({ signup }) {
     let response = await signup(formattedData);
     if (response.success) {
       setFormData(INITIAL_STATE);
-      navigate("/");
+      navigate("/register");
     } else {
       setErrors(response.errors);
     }

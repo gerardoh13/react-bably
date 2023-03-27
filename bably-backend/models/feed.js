@@ -1,7 +1,6 @@
 "use strict";
 
 const db = require("../db");
-const { ForbiddenError } = require("../expressError");
 // const { NotFoundError} = require("../expressError");
 // const { sqlForPartialUpdate } = require("../helpers/sql");
 
@@ -31,7 +30,7 @@ class Feed {
     return feed;
   }
 
-  static async getTodaysFeeds(infant_id, last_midnight, next_midnight) {
+  static async getTodaysFeeds(infant_id, start, end) {
     const result = await db.query(
       `SELECT id,
               method,
@@ -42,7 +41,7 @@ class Feed {
       FROM feeds 
       WHERE infant_id = $1 AND fed_at > $2 AND fed_at < $3
       ORDER BY fed_at DESC`,
-      [infant_id, last_midnight, next_midnight]
+      [infant_id, start, end]
     );
     let feeds = result.rows;
 

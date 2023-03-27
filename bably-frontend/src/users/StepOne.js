@@ -1,10 +1,13 @@
 import React from "react";
 
-function StepOne({ data, handleChange }) {
+function StepOne({ data, handleChange, changeStep }) {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    changeStep(1);
+  };
   return (
-    <div className="tab needs-validation">
+    <form onSubmit={handleSubmit} className="needs-validation">
       <h4 className="my-4">How shall we refer to your child?</h4>
-
       <div className="form-floating">
         <input
           type="text"
@@ -20,40 +23,41 @@ function StepOne({ data, handleChange }) {
         <div className="invalid-feedback">Please enter your child's name.</div>
       </div>
       <hr className="my-4" />
-      <small className="">Select your child's gender</small>
+      <small>Select your child's gender</small>
       <br />
-        <input
-          type="radio"
-          className="btn-check gender"
-          name="gender"
-          id="boy"
-          autoComplete="off"
-          checked={data.gender === "male"}
-          value="male"
-          required
-          onChange={handleChange}
-        />
-        <label className="btn btn-outline-dark me-2" htmlFor="boy">
-          <i className="bi bi-gender-male"></i> Boy
-        </label>
+      <input
+        type="radio"
+        className="btn-check gender"
+        name="gender"
+        id="boy"
+        autoComplete="off"
+        checked={data.gender === "male"}
+        value="male"
+        required
+        onChange={handleChange}
+      />
+      <label className="btn btn-outline-dark me-2" htmlFor="boy">
+        <i className="bi bi-gender-male"></i> Boy
+      </label>
 
-        <input
-          type="radio"
-          className="btn-check gender"
-          name="gender"
-          id="girl"
-          autoComplete="off"
-          checked={data.gender === "female"}
-          value="female"
-          onChange={handleChange}
-        />
-        <label className="btn btn-outline-dark" htmlFor="girl">
-          <i className="bi bi-gender-female"></i> Girl
-        </label>
-        <div className="invalid-feedback">
-          Please select your child's gender.
-        </div>
-    </div>
+      <input
+        type="radio"
+        className="btn-check gender"
+        name="gender"
+        id="girl"
+        autoComplete="off"
+        checked={data.gender === "female"}
+        value="female"
+        onChange={handleChange}
+      />
+      <label className="btn btn-outline-dark" htmlFor="girl">
+        <i className="bi bi-gender-female"></i> Girl
+      </label>
+      <div className="invalid-feedback">Please select your child's gender.</div>
+      <button className="btn btn-success mt-3 form-control">
+        Next
+      </button>
+    </form>
   );
 }
 

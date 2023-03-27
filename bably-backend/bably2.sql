@@ -1,3 +1,4 @@
+-- psql <  bably2.sql
 \echo 'Delete and recreate bably2 db?'
 \prompt 'Return for yes or control-C to cancel > ' foo
 

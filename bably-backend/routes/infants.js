@@ -46,8 +46,10 @@ router.get(
   async function (req, res, next) {
     const { infant_id, start, end } = req.params;
     try {
-      const events = await Feed.getFeedEvents(infant_id, start, end);
-      return res.json({ events });
+      if (await Infant.checkAuthorized(res.locals.user.email, infant_id)){
+        const events = await Feed.getFeedEvents(infant_id, start, end);
+        return res.json({ events });
+      }
     } catch (err) {
       return next(err);
     }

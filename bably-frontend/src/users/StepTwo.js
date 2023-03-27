@@ -1,8 +1,12 @@
 import React from "react";
 
-function StepTwo({ data, handleChange }) {
+function StepTwo({ data, handleChange, changeStep }) {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    changeStep(1);
+  };
   return (
-    <div className="tab needs-validation">
+    <form className="needs-validation" onSubmit={handleSubmit}>
       <h4 className="my-4">What is your child's date of birth?</h4>
       <p>We use this information to provide age-appropriate guidance.</p>
       <input
@@ -17,7 +21,19 @@ function StepTwo({ data, handleChange }) {
       <div className="invalid-feedback">
         Please enter your child's date of birth.
       </div>
-    </div>
+      <div className="row">
+      <button
+        className="btn btn-success mt-3 me-2 form-control col"
+        onClick={() => changeStep(-1)}
+      >
+        Previous
+      </button>
+      <button className="btn btn-success mt-3 form-control col">
+        Next
+      </button>
+      </div>
+
+    </form>
   );
 }
 

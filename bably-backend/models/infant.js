@@ -1,9 +1,7 @@
 "use strict";
 
 const db = require("../db");
-const { ForbiddenError } = require("../expressError");
-// const { NotFoundError} = require("../expressError");
-// const { sqlForPartialUpdate } = require("../helpers/sql");
+const { UnauthorizedError } = require("../expressError");
 
 /** Related functions for infants. */
 
@@ -35,6 +33,18 @@ class Infant {
       [userId, infant.id]
     );
     return infant;
+  }
+  static async checkAuthorized(email, infant_id) {
+    const result = await db.query(
+      `SELECT ui.infant_id,
+              ui.user_id
+      FROM users_infants ui
+      JOIN users u ON u.id = ui.user_id
+      WHERE u.email = $1 AND ui.infant_id = $2`,
+      [email, infant_id]
+    );
+    if (result.rows[0]) return true;
+    else throw new UnauthorizedError();
   }
 }
 
