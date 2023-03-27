@@ -38,6 +38,7 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
 
 router.get(
   "/:infant_id/:last_midnight/:next_midnight",
+  ensureLoggedIn,
   async function (req, res, next) {
     const { infant_id, last_midnight, next_midnight } = req.params;
     try {

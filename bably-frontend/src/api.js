@@ -62,11 +62,16 @@ class BablyApi {
     return res.feed;
   }
 
-  static async getTodaysFeeds(infant_id, last_midnight, next_midnight) {
+  static async getTodaysFeeds(infant_id, start, end) {
     let res = await this.request(
-      `feeds/${infant_id}/${last_midnight}/${next_midnight}`
+      `feeds/${infant_id}/${start}/${end}`
     );
     return res.feeds;
+  }
+  // ------------------EVENTS-----------------------
+  static async getEvents(infant_id, start, end) {
+    let res = await this.request(`infants/events/${infant_id}/${start}/${end}`);
+    return res.events;
   }
 }
 

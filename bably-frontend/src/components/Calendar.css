@@ -1,0 +1,25 @@
+.fc-view {
+  background-color: #5c8a92;
+  color: white;
+}
+
+@media (max-width: 576px) {
+  .fc-toolbar-title {
+    font-size: x-large !important;
+  }
+  .fc-more-link {
+    display: none;
+  }
+}
+.fc-daygrid-dot-event {
+  pointer-events: none;
+}
+
+.fc-daygrid-block-event {
+    margin-top: 0px !important;
+    pointer-events: none;
+}
+
+.fc-daygrid-event-harness {
+    margin-top: 0px !important;
+}

@@ -48,6 +48,35 @@ class Feed {
 
     return feeds;
   }
+
+  static async getFeedEvents(infant_id, start, end) {
+    const result = await db.query(
+      `SELECT id,
+              method,
+              amount,
+              duration,
+              fed_at
+      FROM feeds 
+      WHERE infant_id = $1 AND fed_at > $2 AND fed_at < $3
+      ORDER BY fed_at DESC`,
+      [infant_id, start, end]
+    );
+    let feeds = result.rows.map((f) => this.formatEvent(f));
+
+    return feeds;
+  }
+  static formatEvent(feed) {
+    let title =
+      feed.method === "bottle"
+        ? `${feed.method} feed, ${feed.amount} oz`
+        : `${feed.method}, ${feed.duration} mins`;
+    let feedEvent = {
+      title,
+      id: feed.id,
+      start: feed.fed_at * 1000,
+    };
+    return feedEvent;
+  }
 }
 
 module.exports = Feed;

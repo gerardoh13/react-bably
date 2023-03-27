@@ -12,19 +12,18 @@ function Home() {
   let { currChild } = useContext(UserContext);
 
   useEffect(() => {
+    const getFeeds = async () => {
+      const { last_midnight, next_midnight } = getMidnights();
+      let todaysFeeds = await BablyApi.getTodaysFeeds(
+        currChild.id,
+        last_midnight,
+        next_midnight
+      );
+      setFeeds(todaysFeeds);
+      updateCards(todaysFeeds);
+    };
     getFeeds();
-  }, []);
-
-  const getFeeds = async () => {
-    const { last_midnight, next_midnight } = getMidnights();
-    let todaysFeeds = await BablyApi.getTodaysFeeds(
-      currChild.id,
-      last_midnight,
-      next_midnight
-    );
-    setFeeds(todaysFeeds);
-    updateCards(todaysFeeds);
-  };
+  }, [currChild]);
 
   const getMidnights = () => {
     let midnight = new Date();
@@ -84,7 +83,9 @@ function Home() {
                   </h2>
                 </div>
                 <div className="card-footer">
-                  <p>Total Oz</p>
+                  <p>
+                    Total <br className="d-block d-sm-none" /> Oz
+                  </p>
                 </div>
               </div>
             </div>
@@ -97,6 +98,19 @@ function Home() {
                 </div>
                 <div className="card-footer">
                   <p>Nursing Mins</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="col">
+              <div className="card text-bg-primary">
+                <div className="card-body">
+                  <h2 id="nursingCount" className="card-title">
+                    {feeds.length}
+                  </h2>
+                </div>
+                <div className="card-footer">
+                  <p>Total Feeds</p>
                 </div>
               </div>
             </div>
