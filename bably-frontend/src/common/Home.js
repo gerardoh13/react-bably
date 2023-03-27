@@ -4,31 +4,42 @@ import BablyApi from "../api";
 import { Navigate } from "react-router-dom";
 import DiaperForm from "../components/DiaperForm";
 import FeedForm from "../components/FeedForm";
+import FeedTable from "../components/FeedTable";
+import SummaryCards from "../components/SummaryCards";
+import DiaperTable from "../components/DiaperTable";
 
 function Home() {
   const [feeds, setFeeds] = useState([]);
-  const [showMore, setShowMore] = useState("d-none");
+  const [diapers, setDiapers] = useState([]);
   const [showDiaperForm, setShowDiaperForm] = useState(false);
   const [showFeedForm, setShowFeedForm] = useState(false);
-
+  const [currTable, setCurrTable] = useState("feeds");
   const [totals, setTotals] = useState({
     amount: 0,
     duration: 0,
+    wet: 0,
+    soiled: 0,
   });
-  let { currChild } = useContext(UserContext);
+  const { currChild } = useContext(UserContext);
 
   useEffect(() => {
-    const getFeeds = async () => {
+    const getActivity = async () => {
       const { last_midnight, next_midnight } = getMidnights();
-      let todaysFeeds = await BablyApi.getTodaysFeeds(
+      const todaysFeeds = await BablyApi.getTodaysFeeds(
+        currChild.id,
+        last_midnight,
+        next_midnight
+      );
+      const todaysDiapers = await BablyApi.getTodaysDiapers(
         currChild.id,
         last_midnight,
         next_midnight
       );
       setFeeds(todaysFeeds);
-      updateCards(todaysFeeds);
+      setDiapers(todaysDiapers);
+      updateCards(todaysFeeds, todaysDiapers);
     };
-    if (currChild) getFeeds();
+    if (currChild) getActivity();
   }, [currChild]);
 
   const getMidnights = () => {
@@ -40,39 +51,37 @@ function Home() {
     return { last_midnight, next_midnight };
   };
 
-  const updateCards = (todaysFeeds) => {
+  const changeTable = (val) => {
+    if (currTable === val) return;
+    else setCurrTable(val);
+  };
+  const updateCards = (todaysFeeds, todaysDiapers) => {
     const bottleFeeds = todaysFeeds.filter((f) => f.method === "bottle");
     const nursingFeeds = todaysFeeds.filter((f) => f.method === "nursing");
+    const wetDiapers = todaysDiapers.filter((f) => f.type !== "soiled");
+    const soiledDiapers = todaysDiapers.filter((f) => f.type !== "wet");
     let feedAmt = !bottleFeeds.length
       ? 0
       : bottleFeeds.reduce((acc, curr) => acc + curr.amount, 0);
     let feedDuration = !nursingFeeds.length
       ? 0
       : nursingFeeds.reduce((acc, curr) => acc + curr.duration, 0);
-    setTotals({ duration: feedDuration, amount: feedAmt });
-  };
-
-  const createRows = (arr, hidden = false) => {
-    return arr.map((f) => (
-      <tr key={f.id} className={hidden ? showMore : ""}>
-        <td>{toDateStr(f.fed_at)}</td>
-        <td>{f.method}</td>
-        <td>
-          {f.method === "bottle" ? `${f.amount} oz` : `${f.duration} mins`}
-        </td>
-      </tr>
-    ));
+    setTotals({
+      duration: feedDuration,
+      amount: feedAmt,
+      wet: wetDiapers.length,
+      soiled: soiledDiapers.length,
+    });
   };
 
   function toDateStr(timestamp) {
     let value = timestamp * 1000;
     let toDate = new Date(value);
-    let date = toDate.toLocaleDateString();
     let time = toDate.toLocaleString([], {
       hour: "2-digit",
       minute: "2-digit",
     });
-    return `${date} ${time}`;
+    return `${time}`;
   }
   if (!currChild) return <Navigate to="/register" replace={true} />;
   return (
@@ -80,114 +89,52 @@ function Home() {
       <DiaperForm show={showDiaperForm} setShow={setShowDiaperForm} />
       <FeedForm show={showFeedForm} setShow={setShowFeedForm} />
       <div className="mt-4 col-11 col-xl-6 text-center">
-        <h2>Today's Feeds</h2>
-        {feeds.length ? (
-          <div>
-            <div className="row mb-3">
-              <div className="col">
-                <div className="card text-bg-primary">
-                  <div className="card-body">
-                    <h2 id="bottleCount" className="card-title">
-                      {totals.amount}
-                    </h2>
-                  </div>
-                  <div className="card-footer">
-                    <p>
-                      Total <br className="d-block d-sm-none" /> Oz
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="col">
-                <div className="card text-bg-primary">
-                  <div className="card-body">
-                    <h2 id="nursingCount" className="card-title">
-                      {totals.duration}
-                    </h2>
-                  </div>
-                  <div className="card-footer">
-                    <p>Nursing Mins</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="col">
-                <div className="card text-bg-primary">
-                  <div className="card-body">
-                    <h2 id="nursingCount" className="card-title">
-                      {feeds.length}
-                    </h2>
-                  </div>
-                  <div className="card-footer">
-                    <p>Total Feeds</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <table className="table table-striped text-start bg-light">
-              <thead>
-                <tr>
-                  <th scope="col">Date and Time</th>
-                  <th scope="col">Method</th>
-                  <th scope="col">Oz/Mins</th>
-                </tr>
-              </thead>
-              <tbody id="table">
-                {createRows(feeds.slice(0, 3))}
-                {feeds.length > 3 ? (
-                  <>
-                    <tr
-                      className={showMore === "" ? "d-none" : ""}
-                      onClick={() => setShowMore("")}
-                    >
-                      <th scope="row">+ {feeds.slice(3).length} More</th>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                    {createRows(feeds.slice(3), true)}
-                    <tr
-                      className={showMore}
-                      onClick={() => setShowMore("d-none")}
-                    >
-                      <th scope="row">Hide</th>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                  </>
-                ) : null}
-              </tbody>
-            </table>
-          </div>
-        ) : null}
-
-        {!feeds.length ? (
+        <h2 className="mb-4">Today's Activity</h2>
+        {!feeds.length && !diapers.length ? (
           <div>
             <hr />
             <h4 className="my-3">
-              Log {currChild.firstName}'s feeds to see your latest activity
-              here!
+              Log {currChild.firstName}'s feeds and diapers to see your latest
+              activity here!
             </h4>
             <hr />
           </div>
-        ) : null}
+        ) : (
+          <>
+            <SummaryCards
+              feeds={feeds}
+              totals={totals}
+              diapers={diapers}
+              changeTable={changeTable}
+            />
+            {currTable === "feeds" ? (
+              <FeedTable feeds={feeds} totals={totals} toDateStr={toDateStr} />
+            ) : (
+              <DiaperTable
+                diapers={diapers}
+                totals={totals}
+                toDateStr={toDateStr}
+              />
+            )}
+          </>
+        )}
 
         <div
           className="card text-bg-primary mb-3"
           onClick={() => setShowFeedForm(true)}
         >
-          {/* <a className="nav-link" href="/feeds"> */}
           <div className="card-body">
             <h5 className="card-title">Log Feed</h5>
           </div>
-          {/* </a> */}
         </div>
 
-        <div className="card text-bg-warning mb-3">
-          {/* <a className="cardLink" href="/diapers"> */}
+        <div
+          className="card text-bg-warning mb-3"
+          onClick={() => setShowDiaperForm(true)}
+        >
           <div className="card-body">
             <h5 className="card-title">Log Diaper</h5>
           </div>
-          {/* </a> */}
         </div>
 
         <div className="card text-bg-info mb-3">

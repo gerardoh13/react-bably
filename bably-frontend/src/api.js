@@ -63,10 +63,18 @@ class BablyApi {
   }
 
   static async getTodaysFeeds(infant_id, start, end) {
-    let res = await this.request(
-      `feeds/${infant_id}/${start}/${end}`
-    );
+    let res = await this.request(`feeds/${infant_id}/${start}/${end}`);
     return res.feeds;
+  }
+  // ------------------DIAPERS-----------------------
+  static async addDiaper(data) {
+    let res = await this.request("diapers", data, "post");
+    return res.diaper;
+  }
+
+  static async getTodaysDiapers(infant_id, start, end) {
+    let res = await this.request(`diapers/${infant_id}/${start}/${end}`);
+    return res.diapers;
   }
   // ------------------EVENTS-----------------------
   static async getEvents(infant_id, start, end) {

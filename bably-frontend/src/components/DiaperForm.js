@@ -3,26 +3,25 @@ import BablyApi from "../api";
 import UserContext from "../users/UserContext";
 import Modal from "react-bootstrap/Modal";
 
-function DiaperForm({ show, setShow, submit, feed }) {
-  const INITIAL_STATE = feed
+function DiaperForm({ show, setShow, submit, diaper }) {
+  const INITIAL_STATE = diaper
     ? {
-        method: feed.method,
-        amount: feed.amount || "",
-        duration: feed.duration || "",
-        fed_at: feed.fed_at,
+        type: diaper.type,
+        size: diaper.size || "",
+        duration: diaper.duration || "",
+        changed_at: diaper.changed_at,
       }
     : {
-        method: "bottle",
-        amount: 6,
-        duration: "",
-        fed_at: "",
+        type: "dry",
+        size: "light",
+        changed_at: "",
         maxDateTime: "",
       };
   const [formData, setFormData] = useState(INITIAL_STATE);
   const { currChild } = useContext(UserContext);
 
   useEffect(() => {
-    if (show && !feed) {
+    if (show && !diaper) {
       let now = new Date();
       now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
       now.setMilliseconds(null);
@@ -30,11 +29,11 @@ function DiaperForm({ show, setShow, submit, feed }) {
       let currTime = now.toISOString().slice(0, -1);
       setFormData((data) => ({
         ...data,
-        fed_at: currTime,
+        changed_at: currTime,
         maxDateTime: currTime,
       }));
     }
-  }, [show, feed]);
+  }, [show, diaper]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -52,24 +51,26 @@ function DiaperForm({ show, setShow, submit, feed }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    let tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    let fed_at = new Date(formData.fed_at).getTime() / 1000;
-    let newFeed = { fed_at, method: formData.method, infant_id: currChild.id };
-    if (formData.method === "bottle") {
-      let amount = parseFloat(formData.amount);
-      newFeed.amount = amount;
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const changed_at = new Date(formData.changed_at).getTime() / 1000;
+    const newDiaper = {
+      changed_at,
+      type: formData.type,
+      infant_id: currChild.id,
+    };
+    if (formData.type === "dry") {
+      newDiaper.size = "light";
     } else {
-      let duration = parseFloat(formData.duration);
-      newFeed.duration = duration;
+      newDiaper.size = formData.size;
     }
-    console.log(newFeed);
-    // BablyApi.addFeed(newFeed);
+    console.log(newDiaper);
+    BablyApi.addDiaper(newDiaper);
     resetForm();
   };
   return (
     <Modal show={show} centered>
       <Modal.Header>
-        <Modal.Title>Log New Feed</Modal.Title>
+        <Modal.Title>Log New Diaper Change</Modal.Title>
         <button
           className="btn-close"
           aria-label="Close"
@@ -80,101 +81,121 @@ function DiaperForm({ show, setShow, submit, feed }) {
         <form onSubmit={handleSubmit} className="text-center">
           <input
             type="radio"
-            className="btn-check method"
-            name="method"
-            id="bottle"
+            className="btn-check"
+            name="type"
+            id="dry"
             autoComplete="off"
-            value="bottle"
-            checked={formData.method === "bottle"}
+            value="dry"
+            checked={formData.type === "dry"}
             onChange={handleChange}
           />
-          <label
-            className="btn btn-outline-secondary radioLabel me-2"
-            htmlFor="bottle"
-          >
-            Bottle
+          <label className="btn btn-outline-secondary" htmlFor="dry">
+            Dry
           </label>
 
           <input
             type="radio"
-            className="btn-check method"
-            name="method"
-            id="nursing"
+            className="btn-check"
+            name="type"
+            id="wet"
             autoComplete="off"
-            value="nursing"
-            checked={formData.method === "nursing"}
+            value="wet"
+            checked={formData.type === "wet"}
             onChange={handleChange}
           />
-          <label
-            className="btn btn-outline-secondary radioLabel"
-            htmlFor="nursing"
-          >
-            Nursing
+          <label className="btn btn-outline-secondary mx-2" htmlFor="wet">
+            Wet
           </label>
+
+          <input
+            type="radio"
+            className="btn-check"
+            name="type"
+            id="soiled"
+            autoComplete="off"
+            value="soiled"
+            checked={formData.type === "soiled"}
+            onChange={handleChange}
+          />
+          <label className="btn btn-outline-secondary" htmlFor="soiled">
+            Soiled
+          </label>
+
+          <input
+            type="radio"
+            className="btn-check"
+            name="type"
+            id="mixed"
+            autoComplete="off"
+            value="mixed"
+            checked={formData.type === "mixed"}
+            onChange={handleChange}
+          />
+          <label className="btn btn-outline-secondary ms-2" htmlFor="mixed">
+            Mixed
+          </label>
+
+          <div className={`${formData.type !== "dry" ? "mt-3" : "d-none"}`}>
+            <input
+              type="radio"
+              className="btn-check"
+              name="size"
+              id="light"
+              autoComplete="off"
+              value="light"
+              checked={formData.size === "light"}
+              onChange={handleChange}
+            />
+            <label className="btn btn-outline-secondary ms-2" htmlFor="light">
+              Light
+            </label>
+            <input
+              type="radio"
+              className="btn-check"
+              name="size"
+              id="medium"
+              autoComplete="off"
+              value="medium"
+              checked={formData.size === "medium"}
+              onChange={handleChange}
+            />
+            <label className="btn btn-outline-secondary ms-2" htmlFor="medium">
+              Medium
+            </label>
+            <input
+              type="radio"
+              className="btn-check"
+              name="size"
+              id="heavy"
+              autoComplete="off"
+              value="heavy"
+              checked={formData.size === "heavy"}
+              onChange={handleChange}
+            />
+            <label className="btn btn-outline-secondary ms-2" htmlFor="heavy">
+              Heavy
+            </label>
+          </div>
 
           <div className="row mt-3">
             <div className="col">
-              <label htmlFor="fed_at">Start Time:</label>
+              <label htmlFor="changed_at">Change Time:</label>
             </div>
             <div className="col">
               <input
                 className="form-control"
                 type="datetime-local"
-                name="fed_at"
-                id="fed_at"
+                name="changed_at"
+                id="changed_at"
                 required
-                value={formData.fed_at}
+                value={formData.changed_at}
                 max={formData.maxDateTime}
                 onChange={handleChange}
               />
             </div>
           </div>
 
-          <div className={`${formData.method === "nursing" ? "d-none" : ""}`}>
-            <label htmlFor="amount" className="form-label">
-              Amount:
-            </label>
-            <input
-              type="range"
-              name="amount"
-              id="amount"
-              className="form-range"
-              step="0.25"
-              min="1"
-              max="12"
-              onChange={handleChange}
-              value={formData.amount}
-            />
-            <output>{formData.amount}</output>
-            <span> oz</span>
-          </div>
-          <div
-            className={`${
-              formData.method === "bottle" ? "d-none" : "row mt-3"
-            }`}
-          >
-            <div className="col">
-              <label htmlFor="amount" className="form-label">
-                Duration (mins):
-              </label>
-            </div>
-            <div className="col">
-              <input
-                type="number"
-                name="duration"
-                id="duration"
-                className="form-control"
-                step="1"
-                min="1"
-                max="60"
-                disabled={formData.method === "bottle"}
-                value={formData.duration}
-                onChange={handleChange}
-                required={formData.method === "nursing"}
-              />
-            </div>
-          </div>
-          <div className="row mt-3">
+          <div className="row mt-3 px-3">
             <button
               type="button"
               className="btn btn-secondary form-control col me-2"
@@ -184,7 +205,7 @@ function DiaperForm({ show, setShow, submit, feed }) {
               Close
             </button>
             <button className="btn btn-success col form-control">
-              {feed ? "Edit" : "Log"} Feed
+              {diaper ? "Edit" : "Log"} Diaper
             </button>
           </div>
         </form>

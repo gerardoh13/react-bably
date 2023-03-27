@@ -16,12 +16,13 @@ class Diaper {
 
   static async add(data) {
     const result = await db.query(
-      `INSERT INTO diapers (status,
+      `INSERT INTO diapers (type,
+                        size,
                         changed_at,
                         infant_id)
-           VALUES ($1, $2, $3)
-           RETURNING id, status, changed_at, infant_id`,
-      [data.status, data.changed_at, data.infant_id]
+           VALUES ($1, $2, $3, $4)
+           RETURNING id, type, size, changed_at, infant_id`,
+      [data.type, data.size, data.changed_at, data.infant_id]
     );
     let diaper = result.rows[0];
 

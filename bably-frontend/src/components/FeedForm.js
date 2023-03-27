@@ -23,6 +23,7 @@ function FeedForm({ show, setShow, submit, feed }) {
 
   useEffect(() => {
     if (show && !feed) {
+      console.log("tick")
       let now = new Date();
       now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
       now.setMilliseconds(null);
@@ -62,8 +63,8 @@ function FeedForm({ show, setShow, submit, feed }) {
       let duration = parseFloat(formData.duration);
       newFeed.duration = duration;
     }
-    console.log(newFeed);
-    // BablyApi.addFeed(newFeed);
+    // console.log(newFeed);
+    BablyApi.addFeed(newFeed);
     resetForm();
   };
   return (
@@ -112,7 +113,7 @@ function FeedForm({ show, setShow, submit, feed }) {
             Nursing
           </label>
 
-          <div className="row mt-3">
+          <div className="row mt-3 px-3">
             <div className="col">
               <label htmlFor="fed_at">Start Time:</label>
             </div>

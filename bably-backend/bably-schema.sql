@@ -26,7 +26,7 @@ CREATE TABLE feeds (
 CREATE TABLE diapers (
   id SERIAL PRIMARY KEY,
   type VARCHAR(6) NOT NULL,
-  size VARCHAR(5) NOT NULL,
+  size VARCHAR(6) NOT NULL,
   changed_at BIGINT NOT NULL,
   infant_id INTEGER 
     REFERENCES infants ON DELETE CASCADE
