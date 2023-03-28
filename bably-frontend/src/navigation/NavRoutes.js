@@ -8,7 +8,6 @@ import PrivateRoutes from "./PrivateRoutes";
 import PublicRoutes from "./PublicRoutes";
 import Register from "../users/Register";
 import Calendar from "../components/Calendar";
-import Feeds from "../components/Feeds";
 import UserContext from "../users/UserContext";
 
 function NavRoutes({ login, signup }) {
@@ -24,7 +23,6 @@ function NavRoutes({ login, signup }) {
       <Route element={<PrivateRoutes />}>
         <Route exact path="/register" element={<Register />} />
         <Route exact path="/calendar" element={<Calendar />} />
-        <Route exact path="/feeds" element={<Feeds />} />
       </Route>
     </Routes>
   );

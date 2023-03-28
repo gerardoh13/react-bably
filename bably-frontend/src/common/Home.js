@@ -88,7 +88,7 @@ function Home() {
     <>
       <DiaperForm show={showDiaperForm} setShow={setShowDiaperForm} />
       <FeedForm show={showFeedForm} setShow={setShowFeedForm} />
-      <div className="mt-4 col-11 col-xl-6 text-center">
+      <div className="mt-3 col-11 col-xl-6 text-center">
         <h2 className="mb-4">Today's Activity</h2>
         {!feeds.length && !diapers.length ? (
           <div>
@@ -107,7 +107,7 @@ function Home() {
               diapers={diapers}
               changeTable={changeTable}
             />
-            {currTable === "feeds" ? (
+            {currTable === "feeds" && feeds.length ? (
               <FeedTable feeds={feeds} totals={totals} toDateStr={toDateStr} />
             ) : (
               <DiaperTable

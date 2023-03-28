@@ -43,19 +43,6 @@ function Navbar({ logout }) {
     <>
       <li className="nav-item">
         <NavLink
-          to="/feeds"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbar"
-          className={({ isActive }) =>
-            isActive ? activeClassName : "nav-link"
-          }
-          onClick={() => navigate("/feeds")}
-        >
-          Feeds
-        </NavLink>
-      </li>
-      <li className="nav-item">
-        <NavLink
           to="/calendar"
           data-bs-toggle="collapse"
           data-bs-target="#navbar"

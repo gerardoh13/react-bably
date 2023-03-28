@@ -73,6 +73,7 @@ class Feed {
       title,
       id: feed.id,
       start: feed.fed_at * 1000,
+      backgroundColor: "#66bdb8",
     };
     return feedEvent;
   }

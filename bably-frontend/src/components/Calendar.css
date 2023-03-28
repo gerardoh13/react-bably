@@ -12,6 +12,7 @@
   }
 }
 .fc-daygrid-dot-event {
+  display: none;
   pointer-events: none;
 }
 
@@ -22,4 +23,8 @@
 
 .fc-daygrid-event-harness {
     margin-top: 0px !important;
+}
+
+.fc-col-header {
+  background-color: #354e53;
 }

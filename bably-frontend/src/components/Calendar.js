@@ -15,23 +15,40 @@ function Calendar() {
     start = start.getTime() / 1000;
     end = end.getTime() / 1000;
     let events = await BablyApi.getEvents(currChild.id, start, end);
-    let uniqueDates = new Set(
-      events.map((d) =>
+    const uniqueFeedDates = new Set(
+      events.feeds.map((d) =>
         new Date(d.start)
           .toLocaleString("sv", { timeZoneName: "short" })
           .slice(0, 10)
       )
     );
-    let allDayFeedEvents = Array.from(uniqueDates).map((d) => ({
+    const uniqueDiaperDates = new Set(
+      events.diapers.map((d) =>
+        new Date(d.start)
+          .toLocaleString("sv", { timeZoneName: "short" })
+          .slice(0, 10)
+      )
+    );
+    const allDayFeedEvents = Array.from(uniqueFeedDates).map((d) => ({
       date: d,
       title: "feed",
+      backgroundColor: "#66bdb8",
     }));
-    events = [...events, ...allDayFeedEvents];
+    const allDayDiaperEvents = Array.from(uniqueDiaperDates).map((d) => ({
+      date: d,
+      title: "diaper",
+    }));
+    events = [
+      ...events.feeds,
+      ...events.diapers,
+      ...allDayFeedEvents,
+      ...allDayDiaperEvents,
+    ];
     return events;
   };
 
   return (
-    <div className="col-12 col-sm-8 mt-3">
+    <div className="col-12 col-sm-8 mt-3 calendar">
       <FullCalendar
         plugins={[
           dayGridPlugin,
@@ -45,7 +62,8 @@ function Calendar() {
           }
         }}
         initialView="dayGridMonth"
-        height={"80vh"}
+        height="auto"
+        nextDayThreshold="09:00:00"
         themeSystem="bootstrap5"
         headerToolbar={{
           left: "prev,next",
@@ -61,13 +79,12 @@ function Calendar() {
             allDaySlot: false,
           },
         }}
-        dayMaxEvents={1}
+        dayMaxEvents={2}
         slotEventOverlap={false}
         events={{
           events: function (info) {
             return getEvents(info.start, info.end);
           },
-          backgroundColor: "#66bdb8",
         }}
       />
     </div>
