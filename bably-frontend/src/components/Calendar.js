@@ -53,6 +53,16 @@ function Calendar() {
     return events;
   };
 
+  const updateDiaper = async (diaper_id, diaper) => {
+    delete diaper.infant_id;
+    await BablyApi.updateDiaper(currChild.id, diaper_id, diaper);
+  };
+
+  const updateFeed = async (feed_id, feed) => {
+    delete feed.infant_id;
+    await BablyApi.updateFeed(currChild.id, feed_id, feed);
+  };
+
   const showModal = (type) => {
     if (type === "feed") {
       setShowFeedForm(true);
@@ -60,16 +70,19 @@ function Calendar() {
       setShowDiaperForm(true);
     }
   };
+
   return (
     <>
       <FeedForm
         show={showFeedForm}
         setShow={setShowFeedForm}
+        submit={updateFeed}
         feed={currEvent}
       />
-            <DiaperForm
+      <DiaperForm
         show={showDiaperForm}
         setShow={setShowDiaperForm}
+        submit={updateDiaper}
         diaper={currEvent}
       />
       <div className="col-12 col-sm-8 mt-3 calendar">

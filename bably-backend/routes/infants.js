@@ -50,8 +50,8 @@ router.get(
     try {
       if (await Infant.checkAuthorized(res.locals.user.email, infant_id)) {
         let events = {};
-        events.feeds = await Feed.getFeedEvents(infant_id, start, end);
-        events.diapers = await Diaper.getDiaperEvents(infant_id, start, end);
+        events.feeds = await Feed.getEvents(infant_id, start, end);
+        events.diapers = await Diaper.getEvents(infant_id, start, end);
         return res.json({ events });
       }
     } catch (err) {
@@ -68,8 +68,8 @@ router.get(
     try {
       if (await Infant.checkAuthorized(res.locals.user.email, infant_id)) {
         let today = {};
-        today.feeds = await Feed.getTodaysFeeds(infant_id, start, end);
-        today.diapers = await Diaper.getTodaysDiapers(infant_id, start, end);
+        today.feeds = await Feed.getTodays(infant_id, start, end);
+        today.diapers = await Diaper.getTodays(infant_id, start, end);
         return res.json({ today });
       }
     } catch (err) {

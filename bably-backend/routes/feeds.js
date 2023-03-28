@@ -9,6 +9,7 @@ const Infant = require("../models/infant");
 const express = require("express");
 const { ensureLoggedIn } = require("../middleware/auth");
 const feedNewSchema = require("../schemas/feedNew.json");
+const feedUpdateSchema = require("../schemas/feedUpdate.json");
 const { BadRequestError } = require("../expressError");
 
 const router = new express.Router();
@@ -44,12 +45,33 @@ router.get("/:infant_id/:id", ensureLoggedIn, async function (req, res, next) {
   const { infant_id, id } = req.params;
   try {
     if (await Infant.checkAuthorized(res.locals.user.email, infant_id)) {
-      const feed = await Feed.getFeed(id);
+      const feed = await Feed.get(id);
       return res.json({ feed });
     }
   } catch (err) {
     return next(err);
   }
 });
+
+router.patch(
+  "/:infant_id/:feed_id",
+  ensureLoggedIn,
+  async function (req, res, next) {
+    const { infant_id, feed_id } = req.params;
+    try {
+      const validator = jsonschema.validate(req.body, feedUpdateSchema);
+      if (!validator.valid) {
+        const errs = validator.errors.map((e) => e.stack);
+        throw new BadRequestError(errs);
+      }
+      if (await Infant.checkAuthorized(res.locals.user.email, infant_id)) {
+        const diaper = await Feed.update(feed_id, req.body);
+        return res.json({ diaper });
+      }
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
 
 module.exports = router;

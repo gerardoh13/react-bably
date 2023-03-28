@@ -46,10 +46,10 @@ class BablyApi {
     return res.user;
   }
 
-  static async updateUser(email, data) {
-    let res = await this.request(`users/${email}`, data, "patch");
-    return res.user;
-  }
+  // static async updateUser(email, data) {
+  //   let res = await this.request(`users/${email}`, data, "patch");
+  //   return res.user;
+  // }
 
   // ------------------INFANTS-----------------------
   static async registerInfant(userId, data) {
@@ -72,6 +72,10 @@ class BablyApi {
     return res.feed;
   }
 
+  static async updateFeed(infant_id, feed_id, data) {
+    let res = await this.request(`feeds/${infant_id}/${feed_id}`, data, "patch");
+    return res.feed;
+  }
   // ------------------DIAPERS-----------------------
   static async addDiaper(data) {
     let res = await this.request("diapers", data, "post");
@@ -83,6 +87,10 @@ class BablyApi {
     return res.diaper;
   }
 
+  static async updateDiaper(infant_id, diaper_id, data) {
+    let res = await this.request(`diapers/${infant_id}/${diaper_id}`, data, "patch");
+    return res.diaper;
+  }
   // ------------------EVENTS-----------------------
   static async getEvents(infant_id, start, end) {
     let res = await this.request(`infants/events/${infant_id}/${start}/${end}`);

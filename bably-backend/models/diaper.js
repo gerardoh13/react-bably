@@ -1,8 +1,8 @@
 "use strict";
 
 const db = require("../db");
-// const { NotFoundError} = require("../expressError");
-// const { sqlForPartialUpdate } = require("../helpers/sql");
+const { NotFoundError } = require("../expressError");
+const { sqlForPartialUpdate } = require("../helpers/sql");
 
 /** Related functions for feeds. */
 
@@ -29,7 +29,7 @@ class Diaper {
     return diaper;
   }
 
-  static async getDiaper(id) {
+  static async get(id) {
     const result = await db.query(
       `SELECT id,
               type,
@@ -44,7 +44,7 @@ class Diaper {
 
     return diaper;
   }
-  static async getTodaysDiapers(infant_id, start, end) {
+  static async getTodays(infant_id, start, end) {
     const result = await db.query(
       `SELECT id,
               type,
@@ -61,7 +61,23 @@ class Diaper {
     return diapers;
   }
 
-  static async getDiaperEvents(infant_id, start, end) {
+  static async update(id, data) {
+    const { setCols, values } = sqlForPartialUpdate(data, {});
+    const idVarIdx = "$" + (values.length + 1);
+
+    const querySql = `UPDATE diapers
+                      SET ${setCols} 
+                      WHERE id = ${idVarIdx} 
+                      RETURNING id, type, size, changed_at, infant_id`;
+    const result = await db.query(querySql, [...values, id]);
+    const diaper = result.rows[0];
+
+    if (!diaper) throw new NotFoundError(`No diaper: ${id}`);
+
+    return diaper;
+  }
+
+  static async getEvents(infant_id, start, end) {
     const result = await db.query(
       `SELECT id,
               type,

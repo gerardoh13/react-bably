@@ -15,11 +15,8 @@
     },
     "duration": {
       "type": "integer"
-    },
-    "infant_id": {
-      "type": "integer"
     }
   },
   "additionalProperties": false,
-  "required": ["method", "fed_at", "infant_id"]
+  "required": ["method", "fed_at"]
 }
