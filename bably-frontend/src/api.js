@@ -56,26 +56,33 @@ class BablyApi {
     let res = await this.request(`infants/register/${userId}`, data, "post");
     return res.token;
   }
+
+  static async getTodaysData(infant_id, start, end) {
+    let res = await this.request(`infants/today/${infant_id}/${start}/${end}`);
+    return res.today;
+  }
   // ------------------FEEDS-----------------------
   static async addFeed(data) {
     let res = await this.request("feeds", data, "post");
     return res.feed;
   }
 
-  static async getTodaysFeeds(infant_id, start, end) {
-    let res = await this.request(`feeds/${infant_id}/${start}/${end}`);
-    return res.feeds;
+  static async getFeed(infant_id, feed_id) {
+    let res = await this.request(`feeds/${infant_id}/${feed_id}`);
+    return res.feed;
   }
+
   // ------------------DIAPERS-----------------------
   static async addDiaper(data) {
     let res = await this.request("diapers", data, "post");
     return res.diaper;
   }
 
-  static async getTodaysDiapers(infant_id, start, end) {
-    let res = await this.request(`diapers/${infant_id}/${start}/${end}`);
-    return res.diapers;
+  static async getDiaper(infant_id, feed_id) {
+    let res = await this.request(`diapers/${infant_id}/${feed_id}`);
+    return res.diaper;
   }
+
   // ------------------EVENTS-----------------------
   static async getEvents(infant_id, start, end) {
     let res = await this.request(`infants/events/${infant_id}/${start}/${end}`);

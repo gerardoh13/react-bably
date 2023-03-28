@@ -1,15 +1,21 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import bootstrap5Plugin from "@fullcalendar/bootstrap5";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import listPlugin from "@fullcalendar/list";
 import BablyApi from "../api";
 import UserContext from "../users/UserContext";
+import FeedForm from "./FeedForm";
+import DiaperForm from "./DiaperForm";
 import "./Calendar.css";
 
 function Calendar() {
-  let { currChild } = useContext(UserContext);
+  const [currEvent, setCurrEvent] = useState(null);
+  const { currChild } = useContext(UserContext);
+  const [showDiaperForm, setShowDiaperForm] = useState(false);
+  const [showFeedForm, setShowFeedForm] = useState(false);
 
   const getEvents = async (start, end) => {
     start = start.getTime() / 1000;
@@ -47,47 +53,78 @@ function Calendar() {
     return events;
   };
 
+  const showModal = (type) => {
+    if (type === "feed") {
+      setShowFeedForm(true);
+    } else if (type === "diaper") {
+      setShowDiaperForm(true);
+    }
+  };
   return (
-    <div className="col-12 col-sm-8 mt-3 calendar">
-      <FullCalendar
-        plugins={[
-          dayGridPlugin,
-          bootstrap5Plugin,
-          timeGridPlugin,
-          interactionPlugin,
-        ]}
-        dateClick={function (info) {
-          if (info.view.type === "dayGridMonth") {
-            this.changeView("timeGridDay", info.dateStr);
-          }
-        }}
-        initialView="dayGridMonth"
-        height="auto"
-        nextDayThreshold="09:00:00"
-        themeSystem="bootstrap5"
-        headerToolbar={{
-          left: "prev,next",
-          center: "title",
-          right: "dayGridMonth,timeGridDay",
-        }}
-        views={{
-          dayGrid: {
-            titleFormat: { year: "numeric", month: "short" },
-          },
-          day: {
-            titleFormat: { year: "numeric", month: "short", day: "numeric" },
-            allDaySlot: false,
-          },
-        }}
-        dayMaxEvents={2}
-        slotEventOverlap={false}
-        events={{
-          events: function (info) {
-            return getEvents(info.start, info.end);
-          },
-        }}
+    <>
+      <FeedForm
+        show={showFeedForm}
+        setShow={setShowFeedForm}
+        feed={currEvent}
       />
-    </div>
+            <DiaperForm
+        show={showDiaperForm}
+        setShow={setShowDiaperForm}
+        diaper={currEvent}
+      />
+      <div className="col-12 col-sm-8 mt-3 calendar">
+        <FullCalendar
+          plugins={[
+            dayGridPlugin,
+            bootstrap5Plugin,
+            timeGridPlugin,
+            interactionPlugin,
+            listPlugin,
+          ]}
+          dateClick={function (info) {
+            if (info.view.type === "dayGridMonth") {
+              this.changeView("timeGridDay", info.dateStr);
+            }
+          }}
+          eventClick={async function (info) {
+            const [type, eventId] = info.event._def.publicId.split("-");
+            let event;
+            if (type === "feed") {
+              event = await BablyApi.getFeed(currChild.id, eventId);
+            } else if (type === "diaper") {
+              event = await BablyApi.getDiaper(currChild.id, eventId);
+            }
+            setCurrEvent(event);
+            showModal(type);
+          }}
+          initialView="dayGridMonth"
+          height="auto"
+          nextDayThreshold="09:00:00"
+          themeSystem="bootstrap5"
+          headerToolbar={{
+            left: "prev,next",
+            center: "title",
+            right: "dayGridMonth,timeGridDay",
+          }}
+          views={{
+            dayGrid: {
+              titleFormat: { year: "numeric", month: "short" },
+            },
+            day: {
+              titleFormat: { year: "numeric", month: "short", day: "numeric" },
+              allDaySlot: false,
+            },
+          }}
+          dayMaxEvents={2}
+          slotEventOverlap={false}
+          events={{
+            events: function (info) {
+              return getEvents(info.start, info.end);
+            },
+          }}
+        />
+      </div>
+    </>
   );
 }
 

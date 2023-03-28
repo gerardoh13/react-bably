@@ -29,6 +29,21 @@ class Diaper {
     return diaper;
   }
 
+  static async getDiaper(id) {
+    const result = await db.query(
+      `SELECT id,
+              type,
+              size,
+              changed_at,
+              infant_id
+      FROM diapers 
+      WHERE id = $1`,
+      [id]
+    );
+    let diaper = result.rows[0];
+
+    return diaper;
+  }
   static async getTodaysDiapers(infant_id, start, end) {
     const result = await db.query(
       `SELECT id,
@@ -63,7 +78,7 @@ class Diaper {
   }
   static formatEvent(diaper) {
     let diaperEvent = {
-      id: diaper.id,
+      id: `diaper-${diaper.id}`,
       title: `${diaper.type} diaper`,
       size: diaper.size,
       start: diaper.changed_at * 1000,

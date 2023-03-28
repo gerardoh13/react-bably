@@ -1,22 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
-import BablyApi from "../api";
 import UserContext from "../users/UserContext";
 import Modal from "react-bootstrap/Modal";
 
 function DiaperForm({ show, setShow, submit, diaper }) {
-  const INITIAL_STATE = diaper
-    ? {
-        type: diaper.type,
-        size: diaper.size || "",
-        duration: diaper.duration || "",
-        changed_at: diaper.changed_at,
-      }
-    : {
-        type: "dry",
-        size: "light",
-        changed_at: "",
-        maxDateTime: "",
-      };
+  const INITIAL_STATE = {
+    type: "dry",
+    size: "light",
+    changed_at: "",
+    maxDateTime: "",
+  };
   const [formData, setFormData] = useState(INITIAL_STATE);
   const { currChild } = useContext(UserContext);
 
@@ -32,6 +24,16 @@ function DiaperForm({ show, setShow, submit, diaper }) {
         changed_at: currTime,
         maxDateTime: currTime,
       }));
+    } else if (show && diaper) {
+      let date = new Date(diaper.changed_at * 1000);
+      date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+      date.setMilliseconds(null);
+      date.setSeconds(null);
+      setFormData({
+        type: diaper.type,
+        size: diaper.size,
+        changed_at: date.toISOString().slice(0, -1),
+      });
     }
   }, [show, diaper]);
 
@@ -45,13 +47,12 @@ function DiaperForm({ show, setShow, submit, diaper }) {
 
   const resetForm = () => {
     setFormData(INITIAL_STATE);
-    // setErrors([]);
     setShow(false);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    // const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const changed_at = new Date(formData.changed_at).getTime() / 1000;
     const newDiaper = {
       changed_at,
@@ -63,14 +64,14 @@ function DiaperForm({ show, setShow, submit, diaper }) {
     } else {
       newDiaper.size = formData.size;
     }
-    console.log(newDiaper);
-    BablyApi.addDiaper(newDiaper);
+    if (diaper) await submit(diaper.id, newDiaper);
+    else await submit(newDiaper);
     resetForm();
   };
   return (
     <Modal show={show} centered>
       <Modal.Header>
-        <Modal.Title>Log New Diaper Change</Modal.Title>
+        <Modal.Title> {diaper ? "Edit" : "Log New"} Diaper Change</Modal.Title>
         <button
           className="btn-close"
           aria-label="Close"

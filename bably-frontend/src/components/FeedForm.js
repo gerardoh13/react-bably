@@ -1,29 +1,21 @@
 import React, { useState, useEffect, useContext } from "react";
-import BablyApi from "../api";
 import UserContext from "../users/UserContext";
 import Modal from "react-bootstrap/Modal";
 
 function FeedForm({ show, setShow, submit, feed }) {
-  const INITIAL_STATE = feed
-    ? {
-        method: feed.method,
-        amount: feed.amount || "",
-        duration: feed.duration || "",
-        fed_at: feed.fed_at,
-      }
-    : {
-        method: "bottle",
-        amount: 6,
-        duration: "",
-        fed_at: "",
-        maxDateTime: "",
-      };
+  let INITIAL_STATE = {
+    method: "bottle",
+    amount: 6,
+    duration: "",
+    fed_at: "",
+    maxDateTime: "",
+  };
+
   const [formData, setFormData] = useState(INITIAL_STATE);
   const { currChild } = useContext(UserContext);
 
   useEffect(() => {
     if (show && !feed) {
-      console.log("tick")
       let now = new Date();
       now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
       now.setMilliseconds(null);
@@ -34,6 +26,17 @@ function FeedForm({ show, setShow, submit, feed }) {
         fed_at: currTime,
         maxDateTime: currTime,
       }));
+    } else if (show && feed) {
+      let date = new Date(feed.fed_at * 1000);
+      date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+      date.setMilliseconds(null);
+      date.setSeconds(null);
+      setFormData({
+        method: feed.method,
+        amount: feed.amount || "",
+        duration: feed.duration || "",
+        fed_at: date.toISOString().slice(0, -1),
+      });
     }
   }, [show, feed]);
 
@@ -47,13 +50,12 @@ function FeedForm({ show, setShow, submit, feed }) {
 
   const resetForm = () => {
     setFormData(INITIAL_STATE);
-    // setErrors([]);
     setShow(false);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    let tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    // let tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
     let fed_at = new Date(formData.fed_at).getTime() / 1000;
     let newFeed = { fed_at, method: formData.method, infant_id: currChild.id };
     if (formData.method === "bottle") {
@@ -63,14 +65,14 @@ function FeedForm({ show, setShow, submit, feed }) {
       let duration = parseFloat(formData.duration);
       newFeed.duration = duration;
     }
-    // console.log(newFeed);
-    BablyApi.addFeed(newFeed);
+    if (feed) await submit(feed.id, newFeed);
+    else await submit(newFeed);
     resetForm();
   };
   return (
     <Modal show={show} centered>
       <Modal.Header>
-        <Modal.Title>Log New Feed</Modal.Title>
+        <Modal.Title> {feed ? "Edit" : "Log New"} Feed</Modal.Title>
         <button
           className="btn-close"
           aria-label="Close"

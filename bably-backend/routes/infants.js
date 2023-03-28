@@ -48,11 +48,29 @@ router.get(
   async function (req, res, next) {
     const { infant_id, start, end } = req.params;
     try {
-      if (await Infant.checkAuthorized(res.locals.user.email, infant_id)){
-        let events = {}
+      if (await Infant.checkAuthorized(res.locals.user.email, infant_id)) {
+        let events = {};
         events.feeds = await Feed.getFeedEvents(infant_id, start, end);
         events.diapers = await Diaper.getDiaperEvents(infant_id, start, end);
         return res.json({ events });
+      }
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
+
+router.get(
+  "/today/:infant_id/:start/:end",
+  ensureLoggedIn,
+  async function (req, res, next) {
+    const { infant_id, start, end } = req.params;
+    try {
+      if (await Infant.checkAuthorized(res.locals.user.email, infant_id)) {
+        let today = {};
+        today.feeds = await Feed.getTodaysFeeds(infant_id, start, end);
+        today.diapers = await Diaper.getTodaysDiapers(infant_id, start, end);
+        return res.json({ today });
       }
     } catch (err) {
       return next(err);

@@ -30,6 +30,23 @@ class Feed {
     return feed;
   }
 
+  static async getFeed(id) {
+    const result = await db.query(
+      `SELECT id,
+              method,
+              fed_at,
+              amount,
+              duration,
+              infant_id
+      FROM feeds 
+      WHERE id = $1`,
+      [id]
+    );
+    let feed = result.rows[0];
+
+    return feed;
+  }
+
   static async getTodaysFeeds(infant_id, start, end) {
     const result = await db.query(
       `SELECT id,
@@ -71,7 +88,7 @@ class Feed {
         : `${feed.method}, ${feed.duration} mins`;
     let feedEvent = {
       title,
-      id: feed.id,
+      id: `feed-${feed.id}`,
       start: feed.fed_at * 1000,
       backgroundColor: "#66bdb8",
     };

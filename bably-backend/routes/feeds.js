@@ -40,20 +40,16 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
   }
 });
 
-router.get(
-  "/:infant_id/:start/:end",
-  ensureLoggedIn,
-  async function (req, res, next) {
-    const { infant_id, start, end } = req.params;
-    try {
-      if (await Infant.checkAuthorized(res.locals.user.email, infant_id)) {
-        const feeds = await Feed.getTodaysFeeds(infant_id, start, end);
-        return res.json({ feeds });
-      }
-    } catch (err) {
-      return next(err);
+router.get("/:infant_id/:id", ensureLoggedIn, async function (req, res, next) {
+  const { infant_id, id } = req.params;
+  try {
+    if (await Infant.checkAuthorized(res.locals.user.email, infant_id)) {
+      const feed = await Feed.getFeed(id);
+      return res.json({ feed });
     }
+  } catch (err) {
+    return next(err);
   }
-);
+});
 
 module.exports = router;

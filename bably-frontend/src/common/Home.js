@@ -24,20 +24,16 @@ function Home() {
 
   useEffect(() => {
     const getActivity = async () => {
-      const { last_midnight, next_midnight } = getMidnights();
-      const todaysFeeds = await BablyApi.getTodaysFeeds(
+      const { lastMidnight, nextMidnight } = getMidnights();
+      const todaysData = await BablyApi.getTodaysData(
         currChild.id,
-        last_midnight,
-        next_midnight
+        lastMidnight,
+        nextMidnight
       );
-      const todaysDiapers = await BablyApi.getTodaysDiapers(
-        currChild.id,
-        last_midnight,
-        next_midnight
-      );
-      setFeeds(todaysFeeds);
-      setDiapers(todaysDiapers);
-      updateCards(todaysFeeds, todaysDiapers);
+      setFeeds(todaysData.feeds);
+      setDiapers(todaysData.diapers);
+      updateFeedCard(todaysData.feeds);
+      updateDiaperCard(todaysData.diapers);
     };
     if (currChild) getActivity();
   }, [currChild]);
@@ -45,33 +41,75 @@ function Home() {
   const getMidnights = () => {
     let midnight = new Date();
     midnight.setHours(0, 0, 0, 0);
-    let last_midnight = midnight.getTime() / 1000;
+    let lastMidnight = midnight.getTime() / 1000;
     midnight.setDate(midnight.getDate() + 1);
-    let next_midnight = midnight.getTime() / 1000;
-    return { last_midnight, next_midnight };
+    let nextMidnight = midnight.getTime() / 1000;
+    return { lastMidnight, nextMidnight };
   };
 
   const changeTable = (val) => {
     if (currTable === val) return;
     else setCurrTable(val);
   };
-  const updateCards = (todaysFeeds, todaysDiapers) => {
+
+  const addFeed = async (feed) => {
+    let newFeed = await BablyApi.addFeed(feed);
+    const { lastMidnight, nextMidnight } = getMidnights();
+    let dateTime = parseInt(newFeed.fed_at);
+    if (dateTime > lastMidnight && dateTime < nextMidnight) {
+      pushAndSortFeeds(newFeed);
+    }
+  };
+
+  const pushAndSortFeeds = (newFeed) => {
+    let feedsCopy = [...feeds];
+    feedsCopy.push(newFeed);
+    feedsCopy.sort((a, b) => b.fed_at - a.fed_at);
+    setFeeds(feedsCopy);
+    updateFeedCard(feedsCopy);
+  };
+
+  const updateFeedCard = (todaysFeeds) => {
     const bottleFeeds = todaysFeeds.filter((f) => f.method === "bottle");
     const nursingFeeds = todaysFeeds.filter((f) => f.method === "nursing");
-    const wetDiapers = todaysDiapers.filter((f) => f.type !== "soiled");
-    const soiledDiapers = todaysDiapers.filter((f) => f.type !== "wet");
     let feedAmt = !bottleFeeds.length
       ? 0
       : bottleFeeds.reduce((acc, curr) => acc + curr.amount, 0);
     let feedDuration = !nursingFeeds.length
       ? 0
       : nursingFeeds.reduce((acc, curr) => acc + curr.duration, 0);
-    setTotals({
+    setTotals((data) => ({
+      ...data,
       duration: feedDuration,
       amount: feedAmt,
+    }));
+  };
+
+  const addDiaper = async (diaper) => {
+    let newDiaper = await BablyApi.addDiaper(diaper);
+    const { lastMidnight, nextMidnight } = getMidnights();
+    let dateTime = parseInt(newDiaper.changed_at);
+    if (dateTime > lastMidnight && dateTime < nextMidnight) {
+      pushAndSortDiapers(newDiaper);
+    }
+  };
+
+  const pushAndSortDiapers = (newDiaper) => {
+    let diapersCopy = [...diapers];
+    diapersCopy.push(newDiaper);
+    diapersCopy.sort((a, b) => b.changed_at - a.changed_at);
+    setDiapers(diapersCopy);
+    updateDiaperCard(diapersCopy);
+  };
+
+  const updateDiaperCard = (todaysDiapers) => {
+    const wetDiapers = todaysDiapers.filter((f) => f.type !== "soiled");
+    const soiledDiapers = todaysDiapers.filter((f) => f.type !== "wet");
+    setTotals((data) => ({
+      ...data,
       wet: wetDiapers.length,
       soiled: soiledDiapers.length,
-    });
+    }));
   };
 
   function toDateStr(timestamp) {
@@ -86,8 +124,16 @@ function Home() {
   if (!currChild) return <Navigate to="/register" replace={true} />;
   return (
     <>
-      <DiaperForm show={showDiaperForm} setShow={setShowDiaperForm} />
-      <FeedForm show={showFeedForm} setShow={setShowFeedForm} />
+      <DiaperForm
+        show={showDiaperForm}
+        setShow={setShowDiaperForm}
+        submit={addDiaper}
+      />
+      <FeedForm
+        show={showFeedForm}
+        setShow={setShowFeedForm}
+        submit={addFeed}
+      />
       <div className="mt-3 col-11 col-xl-6 text-center">
         <h2 className="mb-4">Today's Activity</h2>
         {!feeds.length && !diapers.length ? (
