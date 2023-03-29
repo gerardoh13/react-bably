@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import UserContext from "../users/UserContext";
 import Modal from "react-bootstrap/Modal";
 
-function DiaperForm({ show, setShow, submit, diaper }) {
+function DiaperForm({ show, setShow, submit, onDelete, diaper }) {
   const INITIAL_STATE = {
     type: "dry",
     size: "light",
@@ -205,6 +205,15 @@ function DiaperForm({ show, setShow, submit, diaper }) {
             >
               Close
             </button>
+            {diaper ? (
+              <button
+                type="button"
+                className="btn btn-danger form-control col me-2"
+                onClick={() => onDelete(diaper.id, "diaper")}
+              >
+                Delete
+              </button>
+            ) : null}
             <button className="btn btn-success col form-control">
               {diaper ? "Edit" : "Log"} Diaper
             </button>

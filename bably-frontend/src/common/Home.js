@@ -103,8 +103,12 @@ function Home() {
   };
 
   const updateDiaperCard = (todaysDiapers) => {
-    const wetDiapers = todaysDiapers.filter((f) => f.type !== "soiled");
-    const soiledDiapers = todaysDiapers.filter((f) => f.type !== "wet");
+    const wetDiapers = todaysDiapers.filter(
+      (f) => f.type === "wet" || f.type === "mixed"
+    );
+    const soiledDiapers = todaysDiapers.filter(
+      (f) => f.type === "soiled" || f.type === "mixed"
+    );
     setTotals((data) => ({
       ...data,
       wet: wetDiapers.length,

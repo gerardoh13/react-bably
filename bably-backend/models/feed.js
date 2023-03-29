@@ -1,7 +1,7 @@
 "use strict";
 
 const db = require("../db");
-const { NotFoundError} = require("../expressError");
+const { NotFoundError } = require("../expressError");
 const { sqlForPartialUpdate } = require("../helpers/sql");
 
 /** Related functions for feeds. */
@@ -73,12 +73,25 @@ class Feed {
                       SET ${setCols} 
                       WHERE id = ${idVarIdx} 
                       RETURNING id, method, fed_at, amount, duration, infant_id`;
-                      const result = await db.query(querySql, [...values, id]);
+    const result = await db.query(querySql, [...values, id]);
     const feed = result.rows[0];
 
     if (!feed) throw new NotFoundError(`No feed: ${id}`);
 
     return feed;
+  }
+
+  static async delete(id) {
+    const result = await db.query(
+      `DELETE
+           FROM feeds
+           WHERE id = $1
+           RETURNING id`,
+      [id]
+    );
+    const feed = result.rows[0];
+
+    if (!feed) throw new NotFoundError(`No feed: ${id}`);
   }
 
   static async getEvents(infant_id, start, end) {

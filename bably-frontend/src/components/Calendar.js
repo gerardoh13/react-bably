@@ -9,6 +9,7 @@ import BablyApi from "../api";
 import UserContext from "../users/UserContext";
 import FeedForm from "./FeedForm";
 import DiaperForm from "./DiaperForm";
+import ConfirmModal from "./ConfirmModal";
 import "./Calendar.css";
 
 function Calendar() {
@@ -16,6 +17,8 @@ function Calendar() {
   const { currChild } = useContext(UserContext);
   const [showDiaperForm, setShowDiaperForm] = useState(false);
   const [showFeedForm, setShowFeedForm] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [toDelete, setToDelete] = useState(null);
 
   const getEvents = async (start, end) => {
     start = start.getTime() / 1000;
@@ -63,11 +66,29 @@ function Calendar() {
     await BablyApi.updateFeed(currChild.id, feed_id, feed);
   };
 
+  const confirmDelete = async () => {
+        console.log(toDelete[0], toDelete[1]);
+        console.log(currChild.id)
+    if (toDelete[1] === "diaper") {
+      await BablyApi.deleteDiaper(currChild.id, toDelete[0]);
+    } else if (toDelete[1] === "feed") {
+      await BablyApi.deleteFeed(currChild.id, toDelete[0]);
+    }
+    setToDelete(null);
+    setShowConfirmModal(false);
+  };
+
+  const onDelete = (id, type) => {
+    setToDelete([id, type]);
+    showModal(type);
+    setShowConfirmModal(true);
+  };
+
   const showModal = (type) => {
     if (type === "feed") {
-      setShowFeedForm(true);
+      setShowFeedForm((prev) => !prev);
     } else if (type === "diaper") {
-      setShowDiaperForm(true);
+      setShowDiaperForm((prev) => !prev);
     }
   };
 
@@ -78,12 +99,20 @@ function Calendar() {
         setShow={setShowFeedForm}
         submit={updateFeed}
         feed={currEvent}
+        onDelete={onDelete}
       />
       <DiaperForm
         show={showDiaperForm}
         setShow={setShowDiaperForm}
         submit={updateDiaper}
         diaper={currEvent}
+        onDelete={onDelete}
+      />
+      <ConfirmModal
+        show={showConfirmModal}
+        setShow={setShowConfirmModal}
+        confirm={confirmDelete}
+        cancel={setToDelete}
       />
       <div className="col-12 col-sm-8 mt-3 calendar">
         <FullCalendar

@@ -77,6 +77,20 @@ class Diaper {
     return diaper;
   }
 
+  static async delete(id) {
+    console.log("diaper_id =", id);
+    const result = await db.query(
+      `DELETE
+           FROM diapers
+           WHERE id = $1
+           RETURNING id`,
+      [id]
+    );
+    const diaper = result.rows[0];
+
+    if (!diaper) throw new NotFoundError(`No diaper: ${id}`);
+  }
+
   static async getEvents(infant_id, start, end) {
     const result = await db.query(
       `SELECT id,

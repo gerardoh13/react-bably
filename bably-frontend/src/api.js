@@ -76,20 +76,30 @@ class BablyApi {
     let res = await this.request(`feeds/${infant_id}/${feed_id}`, data, "patch");
     return res.feed;
   }
+
+  static async deleteFeed(infant_id, feed_id) {
+    let res = await this.request(`feeds/${infant_id}/${feed_id}`, {}, "delete");
+    return res;
+  }
   // ------------------DIAPERS-----------------------
   static async addDiaper(data) {
     let res = await this.request("diapers", data, "post");
     return res.diaper;
   }
 
-  static async getDiaper(infant_id, feed_id) {
-    let res = await this.request(`diapers/${infant_id}/${feed_id}`);
+  static async getDiaper(infant_id, diaper_id) {
+    let res = await this.request(`diapers/${infant_id}/${diaper_id}`);
     return res.diaper;
   }
 
   static async updateDiaper(infant_id, diaper_id, data) {
     let res = await this.request(`diapers/${infant_id}/${diaper_id}`, data, "patch");
     return res.diaper;
+  }
+
+  static async deleteDiaper(infant_id, diaper_id) {
+    let res = await this.request(`diapers/${infant_id}/${diaper_id}`, {}, "delete");
+    return res;
   }
   // ------------------EVENTS-----------------------
   static async getEvents(infant_id, start, end) {

@@ -74,4 +74,21 @@ router.patch(
   }
 );
 
+router.delete(
+  "/:infant_id/:diaper_id",
+  ensureLoggedIn,
+  async function (req, res, next) {
+    const { infant_id, diaper_id } = req.params;
+
+    try {
+      if (await Infant.checkAuthorized(res.locals.user.email, infant_id)) {
+        await Diaper.delete(diaper_id);
+        return res.json({ deleted: diaper_id });
+      }
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
+
 module.exports = router;

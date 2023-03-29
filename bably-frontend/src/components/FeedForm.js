@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import UserContext from "../users/UserContext";
 import Modal from "react-bootstrap/Modal";
 
-function FeedForm({ show, setShow, submit, feed }) {
+function FeedForm({ show, setShow, submit, onDelete, feed }) {
   let INITIAL_STATE = {
     method: "bottle",
     amount: 6,
@@ -186,6 +186,15 @@ function FeedForm({ show, setShow, submit, feed }) {
             >
               Close
             </button>
+            {feed ? (
+              <button
+                type="button"
+                className="btn btn-danger form-control col me-2"
+                onClick={() => onDelete(feed.id, "feed")}
+              >
+                Delete
+              </button>
+            ) : null}
             <button className="btn btn-success col form-control">
               {feed ? "Edit" : "Log"} Feed
             </button>
