@@ -11,36 +11,55 @@ import Navbar from "./navigation/Navbar";
 
 function App() {
   const [token, setToken] = useLocalStorage("bably-token");
+  const [childId, setChildId] = useLocalStorage("childId");
   const [currUser, setCurrUser] = useState(null);
   const [currChild, setCurrChild] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function getCurrUser() {
-      if (!token) {
-        setLoading(false);
-        return;
+      if (token) {
+        try {
+          let { email } = decodeToken(token);
+          BablyApi.token = token;
+          let user = await BablyApi.getCurrUser(email);
+          setCurrUser(user);
+          if (user.infants.length && !childId) {
+            setChildId(user.infants[0].id);
+          }
+        } catch (err) {
+          console.log(err);
+          setCurrUser(null);
+        }
       }
-      try {
-        let { email } = decodeToken(token);
-        BablyApi.token = token;
-        let user = await BablyApi.getCurrUser(email);
-        setCurrUser(user);
-        setCurrChild(user.infants[0]);
-      } catch (err) {
-        console.log(err);
-        setCurrUser(null);
-      }
-      setLoading(false);
+      // setLoading(false);
     }
     setLoading(true);
     getCurrUser();
-  }, [token]);
+  }, [token, setChildId, childId]);
+
+  useEffect(() => {
+    async function getCurrChild() {
+      if (childId) {
+        try {
+          let child = await BablyApi.getCurrChild(childId);
+          setCurrChild(child);
+        } catch (err) {
+          console.log(err);
+          setCurrChild(null);
+        }
+      }
+      setLoading(false);
+    }
+    // setLoading(true);
+    getCurrChild();
+  }, [childId]);
 
   const login = async (data) => {
     try {
       let userToken = await BablyApi.login(data);
       setToken(userToken);
+      // setLoading(true);
       return { valid: true };
     } catch (errors) {
       return { valid: false, errors };
@@ -51,6 +70,7 @@ function App() {
     try {
       let userToken = await BablyApi.registerUser(data);
       setToken(userToken);
+      // setLoading(true);
       return { success: true };
     } catch (errors) {
       return { success: false, errors };
@@ -59,13 +79,17 @@ function App() {
 
   const logout = async () => {
     setCurrUser(null);
+    setCurrChild(null);
     setToken(null);
+    setChildId(null);
   };
 
   const registerInfant = async (data) => {
-    if (!currUser) return;
     try {
-      await BablyApi.registerInfant(currUser.id, data);
+      let newChild = await BablyApi.registerInfant(currUser.id, data);
+      console.log(newChild);
+      setChildId(newChild.id);
+      setLoading(true);
     } catch (e) {
       console.log(e);
     }
@@ -79,9 +103,10 @@ function App() {
             currUser,
             currChild,
             registerInfant,
+            setChildId,
           }}
         >
-          <Navbar logout={logout} />
+          {loading ? null : <Navbar logout={logout} />}
           {loading ? <Spinner /> : <NavRoutes login={login} signup={signup} />}
         </UserContext.Provider>
       </BrowserRouter>

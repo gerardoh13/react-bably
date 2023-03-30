@@ -42,6 +42,18 @@ router.post(
   }
 );
 
+router.get("/:infant_id", ensureLoggedIn, async function (req, res, next) {
+  const { infant_id } = req.params;
+  try {
+    if (await Infant.checkAuthorized(res.locals.user.email, infant_id)) {
+      const infant = await Infant.get(infant_id);
+      return res.json({ infant });
+    }
+  } catch (err) {
+    return next(err);
+  }
+});
+
 router.get(
   "/events/:infant_id/:start/:end",
   ensureLoggedIn,

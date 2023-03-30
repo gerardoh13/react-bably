@@ -54,7 +54,12 @@ class BablyApi {
   // ------------------INFANTS-----------------------
   static async registerInfant(userId, data) {
     let res = await this.request(`infants/register/${userId}`, data, "post");
-    return res.token;
+    return res.infant;
+  }
+
+  static async getCurrChild(id) {
+    let res = await this.request(`infants/${id}`);
+    return res.infant;
   }
 
   static async getTodaysData(infant_id, start, end) {

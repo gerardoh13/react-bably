@@ -34,6 +34,23 @@ class Infant {
     );
     return infant;
   }
+
+  static async get(infant_id) {
+    const infantRes = await db.query(
+      `SELECT id,
+              first_name AS "firstName",
+              dob,
+              gender,
+              public_id AS "publicId"
+           FROM infants
+           WHERE id = $1`,
+      [infant_id]
+    );
+    const infant = infantRes.rows[0];
+    if (!infant) throw new NotFoundError(`No infant: ${infant_id}`);
+    return infant;
+  }
+
   static async checkAuthorized(email, infant_id) {
     const result = await db.query(
       `SELECT ui.infant_id,

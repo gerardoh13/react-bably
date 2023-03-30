@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import UserContext from "../users/UserContext";
 import BablyApi from "../api";
-import { Navigate } from "react-router-dom";
+// import { Navigate } from "react-router-dom";
 import DiaperForm from "../components/DiaperForm";
 import FeedForm from "../components/FeedForm";
 import FeedTable from "../components/FeedTable";
@@ -125,7 +125,7 @@ function Home() {
     });
     return `${time}`;
   }
-  if (!currChild) return <Navigate to="/register" replace={true} />;
+  // if (!currChild) return <Navigate to="/register" replace={true} />;
   return (
     <>
       <DiaperForm

@@ -12,3 +12,7 @@ nav {
 .navbar {
   background-color: rgb(33, 48, 54);
 }
+
+.navbar-nav .dropdown-menu {
+  position: absolute !important;
+}

@@ -114,7 +114,7 @@ function Calendar() {
         confirm={confirmDelete}
         cancel={setToDelete}
       />
-      <div className="col-12 col-sm-8 mt-3 calendar">
+      <div className="col-12 col-sm-8 col-xl-6 mt-3 calendar">
         <FullCalendar
           plugins={[
             dayGridPlugin,

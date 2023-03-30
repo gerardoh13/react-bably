@@ -9,6 +9,7 @@ import PublicRoutes from "./PublicRoutes";
 import Register from "../users/Register";
 import Calendar from "../components/Calendar";
 import UserContext from "../users/UserContext";
+import Profile from "../components/Profile";
 
 function NavRoutes({ login, signup }) {
   const { currUser } = useContext(UserContext);
@@ -23,6 +24,8 @@ function NavRoutes({ login, signup }) {
       <Route element={<PrivateRoutes />}>
         <Route exact path="/register" element={<Register />} />
         <Route exact path="/calendar" element={<Calendar />} />
+        <Route exact path="/profile" element={<Profile />} />
+
       </Route>
     </Routes>
   );
