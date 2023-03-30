@@ -203,7 +203,7 @@ function DiaperForm({ show, setShow, submit, onDelete, diaper }) {
               data-bs-dismiss="modal"
               onClick={resetForm}
             >
-              Close
+              Cancel
             </button>
             {diaper ? (
               <button

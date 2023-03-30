@@ -3,10 +3,12 @@ import UserContext from "../users/UserContext";
 import { Outlet, Navigate } from "react-router-dom";
 
 function PrivateRoute() {
-  const { currUser } = useContext(UserContext);
+  const { currUser, currChild } = useContext(UserContext);
 
   if (!currUser) {
     return <Navigate to="/login" replace />;
+  } else if (currUser && !currChild) {
+    return <Navigate to="/register" replace />;
   }
   return <Outlet />;
 }

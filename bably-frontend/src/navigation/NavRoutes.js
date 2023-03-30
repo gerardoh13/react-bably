@@ -12,21 +12,20 @@ import UserContext from "../users/UserContext";
 import Profile from "../components/Profile";
 
 function NavRoutes({ login, signup }) {
-  const { currUser } = useContext(UserContext);
+  const { currUser, currChild } = useContext(UserContext);
 
   return (
     <Routes>
-      <Route exact path="/" element={currUser ? <Home /> : <HomeAnon />} />
+      <Route exact path="/" element={currUser && currChild ? <Home /> : <HomeAnon />} />
       <Route element={<PublicRoutes />}>
         <Route exact path="/login" element={<Login login={login} />} />
         <Route exact path="/signup" element={<Signup signup={signup} />} />
       </Route>
       <Route element={<PrivateRoutes />}>
-        <Route exact path="/register" element={<Register />} />
         <Route exact path="/calendar" element={<Calendar />} />
         <Route exact path="/profile" element={<Profile />} />
-
       </Route>
+      <Route exact path="/register" element={<Register />} />
     </Routes>
   );
 }

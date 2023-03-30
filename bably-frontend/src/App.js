@@ -32,7 +32,6 @@ function App() {
           setCurrUser(null);
         }
       }
-      // setLoading(false);
     }
     setLoading(true);
     getCurrUser();
@@ -51,15 +50,13 @@ function App() {
       }
       setLoading(false);
     }
-    // setLoading(true);
     getCurrChild();
-  }, [childId]);
+  }, [token, childId]);
 
   const login = async (data) => {
     try {
       let userToken = await BablyApi.login(data);
       setToken(userToken);
-      // setLoading(true);
       return { valid: true };
     } catch (errors) {
       return { valid: false, errors };
@@ -70,7 +67,6 @@ function App() {
     try {
       let userToken = await BablyApi.registerUser(data);
       setToken(userToken);
-      // setLoading(true);
       return { success: true };
     } catch (errors) {
       return { success: false, errors };

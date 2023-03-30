@@ -72,7 +72,7 @@ function FeedForm({ show, setShow, submit, onDelete, feed }) {
   return (
     <Modal show={show} centered>
       <Modal.Header>
-        <Modal.Title> {feed ? "Edit" : "Log New"} Feed</Modal.Title>
+        <Modal.Title>{feed ? "Edit" : "Log New"} Feed</Modal.Title>
         <button
           className="btn-close"
           aria-label="Close"
@@ -184,7 +184,7 @@ function FeedForm({ show, setShow, submit, onDelete, feed }) {
               data-bs-dismiss="modal"
               onClick={resetForm}
             >
-              Close
+              Cancel
             </button>
             {feed ? (
               <button

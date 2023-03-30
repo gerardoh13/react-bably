@@ -3,7 +3,7 @@ import React from "react";
 function StepTwo({ data, handleChange, changeStep }) {
   const handleSubmit = (e) => {
     e.preventDefault();
-    changeStep(1);
+    if (data.dob) changeStep(1);
   };
   return (
     <form className="needs-validation" onSubmit={handleSubmit}>
@@ -22,17 +22,14 @@ function StepTwo({ data, handleChange, changeStep }) {
         Please enter your child's date of birth.
       </div>
       <div className="row">
-      <button
-        className="btn btn-success mt-3 me-2 form-control col"
-        onClick={() => changeStep(-1)}
-      >
-        Previous
-      </button>
-      <button className="btn btn-success mt-3 form-control col">
-        Next
-      </button>
+        <button
+          className="btn btn-success mt-3 me-2 form-control col"
+          onClick={() => changeStep(-1)}
+        >
+          Previous
+        </button>
+        <button className="btn btn-success mt-3 form-control col">Next</button>
       </div>
-
     </form>
   );
 }

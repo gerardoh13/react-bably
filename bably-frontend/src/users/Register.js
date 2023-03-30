@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import StepOne from "./StepOne";
 import StepTwo from "./StepTwo";
+import StepThree from "./StepThree";
 import UserContext from "../users/UserContext";
 import { useNavigate } from "react-router-dom";
 import "./Register.css";
@@ -55,10 +56,16 @@ function Register() {
         />
       );
       break;
-    // case 2:
-    //   break;
-    // case 3:
     case 2:
+      currStep = (
+        <StepThree
+          data={formData}
+          setFormData={setFormData}
+          changeStep={changeStep}
+        />
+      );
+      break;
+    case 3:
       currStep = (
         <div>
           <h3>Almost done!</h3>
@@ -75,7 +82,10 @@ function Register() {
             >
               Previous
             </button>
-            <button className="btn btn-success mt-3 form-control col" onClick={submit}>
+            <button
+              className="btn btn-success mt-3 form-control col"
+              onClick={submit}
+            >
               Sumbit
             </button>
           </div>

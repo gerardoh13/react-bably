@@ -3,11 +3,11 @@ import React from "react";
 function StepOne({ data, handleChange, changeStep }) {
   const handleSubmit = (e) => {
     e.preventDefault();
-    changeStep(1);
+    if (data.firstName && data.gender) changeStep(1);
   };
   return (
     <form onSubmit={handleSubmit} className="needs-validation">
-      <h4 className="my-4">How shall we refer to your child?</h4>
+      <h4 className="my-4">Tell us about your child</h4>
       <div className="form-floating">
         <input
           type="text"
@@ -39,7 +39,6 @@ function StepOne({ data, handleChange, changeStep }) {
       <label className="btn btn-outline-dark me-2" htmlFor="boy">
         <i className="bi bi-gender-male"></i> Boy
       </label>
-
       <input
         type="radio"
         className="btn-check gender"
@@ -54,9 +53,7 @@ function StepOne({ data, handleChange, changeStep }) {
         <i className="bi bi-gender-female"></i> Girl
       </label>
       <div className="invalid-feedback">Please select your child's gender.</div>
-      <button className="btn btn-success mt-3 form-control">
-        Next
-      </button>
+      <button className="btn btn-success mt-3 form-control">Next</button>
     </form>
   );
 }
