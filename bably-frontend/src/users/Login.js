@@ -64,7 +64,7 @@ function Login({ login }) {
             />
             <label htmlFor="password">Password:</label>
           </div>
-          <button className="btn bablyBlue form-control">Submit</button>
+          <button className="btn btn-bablyBlue form-control">Submit</button>
         </form>
         <p className="text-center mt-2">
           New to Bably?

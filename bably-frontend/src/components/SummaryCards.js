@@ -5,7 +5,7 @@ function SummaryCards({ feeds, totals, diapers, changeTable }) {
     <>
       <div className="row mb-3 px-1 text-center">
         <div
-          className="col card bablyOffWhite mx-2"
+          className="col card bablyOffWhite mx-2 pointer"
           onClick={() => changeTable("feeds")}
         >
           <div className="card-body">
@@ -18,7 +18,7 @@ function SummaryCards({ feeds, totals, diapers, changeTable }) {
           </div>
         </div>
         <div
-          className="col card bablyOffWhite mx-2"
+          className="col card bablyOffWhite mx-2 pointer"
           onClick={() => changeTable("diapers")}
         >
           <div className="card-body">

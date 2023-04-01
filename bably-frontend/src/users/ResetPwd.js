@@ -2,37 +2,72 @@ import React, { useState, useEffect } from "react";
 import Alerts from "../common/Alerts";
 import BablyApi from "../api";
 import { useQuery } from "../hooks";
+import { decodeToken } from "react-jwt";
 
 function ResetPwd() {
   const INITIAL_STATE = {
     email: "",
     password: "",
-    confirmPwd: ""
+    confirmPwd: "",
   };
   const [formData, setFormData] = useState(INITIAL_STATE);
-  const [email, setEmail] = useState("")
+  const [email, setEmail] = useState("");
   const [msgs, setMsgs] = useState([]);
+  const [errors, setErrors] = useState([]);
   const [token, setToken] = useState("");
   let query = useQuery();
 
   useEffect(() => {
     let queryToken = query.get("token");
-    if (queryToken) setToken(queryToken);
+    if (queryToken) {
+      setToken(queryToken);
+      let { email } = decodeToken(queryToken);
+      setFormData((data) => ({
+        ...data,
+        email: email,
+      }));
+    }
   }, [query]);
 
   const handleSubmitRequest = async (e) => {
     e.preventDefault();
-    let response = await BablyApi.requestPwdReset(formData);
-    if (response.emailSent) {
-      setMsgs(["Email sent! Check your inbox."]);
-    } else console.log("oops!");
+    setErrors([]);
+    try {
+      let response = await BablyApi.requestPwdReset({
+        email: email.toLowerCase(),
+      });
+      if (response.emailSent) {
+        setMsgs(["Email sent! Check your inbox."]);
+      }
+    } catch (e) {
+      setErrors(e);
+    }
     setFormData(INITIAL_STATE);
   };
 
-const handleSubmitNewPwd = async (e) => {
-e.preventDefault()
+  const handleSubmitNewPwd = async (e) => {
+    e.preventDefault();
+    setErrors([]);
+    if (!confirmPasswords()) return;
+    let data = structuredClone(formData);
+    console.log(data);
+    delete data.confirmPwd;
+    try {
+      let res = await BablyApi.resetPwd(token, data);
+      if (res.passwordUpdated) setMsgs(["Password updated!"]);
+    } catch (e) {
+      console.log(e);
+      setErrors(["Token is no longer valid"]);
+    }
+  };
 
-}
+  const confirmPasswords = () => {
+    console.log("sdf");
+    if (formData.password !== formData.confirmPwd) {
+      setErrors(["Passwords do not match"]);
+      return false;
+    } else return true;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -48,6 +83,7 @@ e.preventDefault()
         <div className="card-body">
           <h5 className="card-title">Enter a new password </h5>
           {msgs.length ? <Alerts msgs={msgs} type="success" /> : null}
+          {errors.length ? <Alerts msgs={errors} /> : null}
           <form onSubmit={handleSubmitNewPwd}>
             <div className="form-floating my-4">
               <input
@@ -104,13 +140,14 @@ e.preventDefault()
             Enter the email address asociated with your account
           </h5>
           {msgs.length ? <Alerts msgs={msgs} type="success" /> : null}
+          {errors.length ? <Alerts msgs={errors} /> : null}
           <form onSubmit={handleSubmitRequest}>
             {!msgs.length ? (
               <>
                 <div className="form-floating my-4">
                   <input
                     className="form-control"
-                    type="text"
+                    type="email"
                     name="email"
                     id="email"
                     value={email}

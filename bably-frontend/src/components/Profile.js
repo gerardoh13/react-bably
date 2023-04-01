@@ -24,14 +24,14 @@ function Profile() {
   return (
     <>
       <EditChildForm show={showForm} setShow={setShowForm} child={currChild} />
-      <div className="col-11 col-lg-6 mt-3 card text-center">
+      <div className="col-11 col-lg-5 mt-3 card text-center">
         <div className="card-body">
           <div className="row">
 
           {currChild.publicId ? (
             <div className="col">
             <img
-              className="profileImg rounded-circle"
+              className="profileImg rounded"
               src={`https://res.cloudinary.com/dolnu62zm/image/upload/${currChild.publicId}`}
               alt={currChild.firstName}
             />
@@ -40,13 +40,13 @@ function Profile() {
           <div className="col">
           <h1 className="card-title">{currChild.firstName}</h1>
 
-            <button className="btn bablyGreen" onClick={() => setShowForm(true)}>
+            <button className="btn btn-bablyGreen" onClick={() => setShowForm(true)}>
               Edit Profile
             </button>
           </div>
           </div>
 
-          <div className="text-start mt-4">
+          <div className="text-start mt-4 mx-lg-4">
             <Milestones gender={currChild.gender} months={months} />
           </div>
         </div>

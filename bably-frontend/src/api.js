@@ -46,11 +46,15 @@ class BablyApi {
     return res.user;
   }
 
+  static async resetPwd(token, data) {
+    let res = await this.request(`users/new-password?token=${token}`, data, "post");
+    return res;
+  }
+  
   static async requestPwdReset(data) {
     let res = await this.request("users/reset", data, "post");
     return res;
   }
-
   // static async updateUser(email, data) {
   //   let res = await this.request(`users/${email}`, data, "patch");
   //   return res.user;

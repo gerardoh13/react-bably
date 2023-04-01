@@ -35,7 +35,7 @@ function ImageUpload({ uploadSuccess }) {
 
   return (
     <>
-      <button id="upload_widget" className="btn bablyBlue" type="button" onClick={() => myWidget.open()}>
+      <button id="upload_widget" className="btn btn-bablyBlue" type="button" onClick={() => myWidget.open()}>
         Upload
       </button>
     </>

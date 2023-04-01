@@ -189,13 +189,13 @@ function FeedForm({ show, setShow, submit, onDelete, feed }) {
             {feed ? (
               <button
                 type="button"
-                className="btn bablyRed form-control col me-2"
+                className="btn btn-bablyRed form-control col me-2"
                 onClick={() => onDelete(feed.id, "feed")}
               >
                 Delete
               </button>
             ) : null}
-            <button className="btn bablyGreen col form-control">
+            <button className="btn btn-bablyGreen col form-control">
               {feed ? "Edit" : "Log"} Feed
             </button>
           </div>

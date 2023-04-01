@@ -146,7 +146,7 @@ function EditChildForm({ show, setShow, child }) {
             >
               Cancel
             </button>
-            <button className="btn bablyGreen col form-control">
+            <button className="btn btn-bablyGreen col form-control">
               Save Changes
             </button>
           </div>

@@ -1,5 +1,6 @@
 import { BrowserRouter } from "react-router-dom";
 import "./App.css";
+import "./buttons.css"
 import { useState, useEffect } from "react";
 import BablyApi from "./api";
 import { decodeToken } from "react-jwt";

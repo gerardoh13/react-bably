@@ -40,7 +40,7 @@ function Signup({ signup }) {
 
   const confirmPasswords = () => {
     if (formData.password !== formData.confirmPwd) {
-      setErrors(["Password does not match"]);
+      setErrors(["Passwords do not match"]);
       return false;
     } else return true;
   };
@@ -117,7 +117,7 @@ function Signup({ signup }) {
             />
             <label htmlFor="confirmPwd">Confirm Password</label>
           </div>
-          <button className="btn bablyBlue form-control">Next</button>
+          <button className="btn btn-bablyBlue form-control">Next</button>
         </form>
         <p className="text-center mt-2">
           Have an account?

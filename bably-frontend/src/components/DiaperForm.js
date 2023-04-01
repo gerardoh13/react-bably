@@ -208,13 +208,13 @@ function DiaperForm({ show, setShow, submit, onDelete, diaper }) {
             {diaper ? (
               <button
                 type="button"
-                className="btn btn-danger form-control col me-2"
+                className="btn btn-bablyRed form-control col me-2"
                 onClick={() => onDelete(diaper.id, "diaper")}
               >
                 Delete
               </button>
             ) : null}
-            <button className="btn btn-success col form-control">
+            <button className="btn btn-bablyGreen col form-control">
               {diaper ? "Edit" : "Log"} Diaper
             </button>
           </div>

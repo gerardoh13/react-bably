@@ -138,7 +138,7 @@ function Home() {
         setShow={setShowFeedForm}
         submit={addFeed}
       />
-      <div className="my-auto col-11 col-xl-6 text-center text-light">
+      <div className="my-auto col-11 col-lg-5 text-center text-light">
         <h1 className="mb-4">{currChild.firstName}'s Daily Activity</h1>
         {!feeds.length && !diapers.length ? (
           <div>
@@ -170,7 +170,7 @@ function Home() {
         )}
 
         <div
-          className="card bablyGrey text-light mb-3"
+          className="card bablyGrey text-light mb-3 pointer"
           onClick={() => setShowFeedForm(true)}
         >
           <div className="card-body">
@@ -179,7 +179,7 @@ function Home() {
         </div>
 
         <div
-          className="card bablyBlue text-light mb-3"
+          className="card bablyBlue text-light mb-3 pointer"
           onClick={() => setShowDiaperForm(true)}
         >
           <div className="card-body">

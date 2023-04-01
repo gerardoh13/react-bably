@@ -5,13 +5,14 @@
 const jsonschema = require("jsonschema");
 
 const User = require("../models/user");
-const Email = require("../email")
+const Email = require("../email");
 const express = require("express");
 const { ensureCorrectUser } = require("../middleware/auth");
 const { createToken, createPwdResetToken } = require("../helpers/tokens");
 const userAuthSchema = require("../schemas/userAuth.json");
 const userNewSchema = require("../schemas/userNew.json");
 const { BadRequestError } = require("../expressError");
+const jwt = require("jsonwebtoken");
 
 const router = new express.Router();
 
@@ -43,17 +44,26 @@ router.post("/token", async function (req, res, next) {
 
 router.post("/reset", async function (req, res, next) {
   try {
-    // const validator = jsonschema.validate(req.body, userAuthSchema);
-    // if (!validator.valid) {
-    //   const errs = validator.errors.map((e) => e.stack);
-    //   throw new BadRequestError(errs);
-    // }
-
     const { email } = req.body;
     const user = await User.getWithPassword(email);
     const token = createPwdResetToken(user);
-    await Email.sendPwdReset(email, token)
+    await Email.sendPwdReset(email, token);
     return res.json({ emailSent: true });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+router.post("/new-password", async function (req, res, next) {
+  try {
+    const { token } = req.query;
+    const { email, password } = req.body;
+    const user = await User.getWithPassword(email);
+    const tokenUser = jwt.verify(token, user.password);
+    if (user.email === tokenUser.email) {
+      await User.update(email, { password: password });
+      return res.json({ passwordUpdated: true });
+    }
   } catch (err) {
     return next(err);
   }
@@ -93,12 +103,12 @@ router.post("/register", async function (req, res, next) {
  **/
 
 router.get("/:email", ensureCorrectUser, async function (req, res, next) {
-    try {
-      const user = await User.get(req.params.email);
-      return res.json({ user });
-    } catch (err) {
-      return next(err);
-    }
-  });
+  try {
+    const user = await User.get(req.params.email);
+    return res.json({ user });
+  } catch (err) {
+    return next(err);
+  }
+});
 
 module.exports = router;
