@@ -7,7 +7,6 @@ const jsonschema = require("jsonschema");
 const Infant = require("../models/infant");
 const Feed = require("../models/feed");
 const Diaper = require("../models/diaper");
-
 const express = require("express");
 const infantNewSchema = require("../schemas/infantNew.json");
 const { BadRequestError } = require("../expressError");
@@ -47,6 +46,23 @@ router.get("/:infant_id", ensureLoggedIn, async function (req, res, next) {
   try {
     if (await Infant.checkAuthorized(res.locals.user.email, infant_id)) {
       const infant = await Infant.get(infant_id);
+      return res.json({ infant });
+    }
+  } catch (err) {
+    return next(err);
+  }
+});
+
+router.patch("/:infant_id/", ensureLoggedIn, async function (req, res, next) {
+  const { infant_id } = req.params;
+  try {
+    const validator = jsonschema.validate(req.body, infantNewSchema);
+    if (!validator.valid) {
+      const errs = validator.errors.map((e) => e.stack);
+      throw new BadRequestError(errs);
+    }
+    if (await Infant.checkAuthorized(res.locals.user.email, infant_id)) {
+      const infant = await Infant.update(infant_id, req.body);
       return res.json({ infant });
     }
   } catch (err) {

@@ -83,6 +83,20 @@ class User {
     return user;
   }
 
+  static async getWithPassword(email) {
+    const userRes = await db.query(
+      `SELECT id,
+              email,
+              first_name AS "firstName",
+              password
+           FROM users
+           WHERE email = $1`,
+      [email]
+    );
+    const user = userRes.rows[0];
+    if (!user) throw new NotFoundError(`No user: ${email}`);
+    return user;
+  }
   /** Given a username, return data about user.
    *
    * Returns { username, first_name, last_name, is_admin, jobs }

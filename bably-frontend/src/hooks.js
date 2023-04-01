@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 
 const useLocalStorage = (key, defaultVal = null) => {
   const [state, setState] = useState(() => {
@@ -12,4 +13,9 @@ const useLocalStorage = (key, defaultVal = null) => {
   return [state, setState];
 };
 
-export { useLocalStorage };
+function useQuery() {
+  const { search } = useLocation();
+  return React.useMemo(() => new URLSearchParams(search), [search]);
+}
+
+export { useLocalStorage, useQuery };

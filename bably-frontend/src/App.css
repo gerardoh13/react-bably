@@ -18,9 +18,40 @@ nav {
 }
 
 .profileImg {
-  max-height: 200px;
+  max-height: 300px;
   padding: 0.25rem;
   border: 1px solid var(--bs-border-color);
   background-color: #fff;
   border-radius: 0.375rem;
+}
+
+.bablyGreen {
+  background-color: #567c69;
+  color: white;
+}
+.bablyGrey {
+  background-color: #546a77;
+}
+.bablyBlue {
+  background-color: #659aab;
+  color: white;
+}
+
+.bablyColor {
+  background-color: #516768;
+}
+
+.bablyBabyBlue {
+  background-color: #b4ced6;
+}
+
+.bablyOffWhite {
+  background-color: #eefaf7;
+  color: #546a77;
+  font-weight: bold;
+}
+
+.bablyRed {
+  background-color: rgb(129, 29, 29);
+  color: white;
 }

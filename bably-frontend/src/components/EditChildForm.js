@@ -1,21 +1,30 @@
-import React, { useState, useEffect } from "react";
-import UserContext from "../users/UserContext";
+import React, { useState, useEffect, useContext } from "react";
 import Modal from "react-bootstrap/Modal";
+import ImageUpload from "../common/ImageUpload";
+import UserContext from "../users/UserContext";
 
 function EditChildForm({ show, setShow, child }) {
+  const { updateInfant } = useContext(UserContext);
+
   const [formData, setFormData] = useState({
-    firstName: child.firstName,
-    dob: child.dob.slice(0, 10),
-    gender: child.gender,
+    firstName: "",
+    dob: "",
+    gender: "",
+    publicId: "",
   });
+  let defaultURL = child.publicId
+    ? `https://res.cloudinary.com/dolnu62zm/image/upload/${child.publicId}`
+    : "";
+  const [photoUrl, setPhotoUrl] = useState(defaultURL);
 
   useEffect(() => {
     setFormData({
       firstName: child.firstName,
       dob: child.dob.slice(0, 10),
       gender: child.gender,
+      publicId: child.publicId || "",
     });
-  }, [show]);
+  }, [show, child]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,15 +34,25 @@ function EditChildForm({ show, setShow, child }) {
     }));
   };
 
-  const resetForm = () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    let updatedData = structuredClone(formData);
+    if (!updatedData.publicId) delete updatedData.publicId;
+    await updateInfant(child.id, updatedData);
     setShow(false);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log(formData);
-    // resetForm();
+  const uploadSuccess = (error, result) => {
+    if (!error && result && result.event === "success") {
+      console.log("Done! Here is the image info: ", result.info);
+      setPhotoUrl(result.info.secure_url);
+      setFormData((data) => ({
+        ...data,
+        publicId: result.info.public_id,
+      }));
+    } else console.log(error);
   };
+
   return (
     <Modal show={show} centered>
       <Modal.Header>
@@ -41,11 +60,22 @@ function EditChildForm({ show, setShow, child }) {
         <button
           className="btn-close"
           aria-label="Close"
-          onClick={resetForm}
+          onClick={() => setShow(false)}
         ></button>
       </Modal.Header>
       <Modal.Body>
-        <form onSubmit={handleSubmit} className="text-centers">
+        {photoUrl ? (
+          <div className="text-center mb-3">
+            <img className="babyPic" src={photoUrl} alt="your baby" />
+          </div>
+        ) : null}
+        <form onSubmit={handleSubmit}>
+          <div className="row mb-3">
+            <div className="col-8">{`Upload photo of ${formData.firstName}`}</div>
+            <div className="col-4 text-end">
+              <ImageUpload uploadSuccess={uploadSuccess} />
+            </div>
+          </div>
           <div className="form-floating">
             <input
               type="text"
@@ -64,41 +94,37 @@ function EditChildForm({ show, setShow, child }) {
           </div>
           <br />
           <div className="text-center">
-
-          <small className="me-2">Gender:</small>
-
-          <input
-            type="radio"
-            className="btn-check gender"
-            name="gender"
-            id="boy"
-            autoComplete="off"
-            checked={formData.gender === "male"}
-            value="male"
-            required
-            onChange={handleChange}
-          />
-          <label className="btn btn-outline-dark me-2" htmlFor="boy">
-            <i className="bi bi-gender-male"></i> Boy
-          </label>
-          <input
-            type="radio"
-            className="btn-check gender"
-            name="gender"
-            id="girl"
-            autoComplete="off"
-            checked={formData.gender === "female"}
-            value="female"
-            onChange={handleChange}
-          />
-          <label className="btn btn-outline-dark" htmlFor="girl">
-            <i className="bi bi-gender-female"></i> Girl
-          </label>
+            <small className="me-2">Gender:</small>
+            <input
+              type="radio"
+              className="btn-check gender"
+              name="gender"
+              id="boy"
+              autoComplete="off"
+              checked={formData.gender === "male"}
+              value="male"
+              required
+              onChange={handleChange}
+            />
+            <label className="btn btn-outline-dark me-2" htmlFor="boy">
+              <i className="bi bi-gender-male"></i> Boy
+            </label>
+            <input
+              type="radio"
+              className="btn-check gender"
+              name="gender"
+              id="girl"
+              autoComplete="off"
+              checked={formData.gender === "female"}
+              value="female"
+              onChange={handleChange}
+            />
+            <label className="btn btn-outline-dark" htmlFor="girl">
+              <i className="bi bi-gender-female"></i> Girl
+            </label>
           </div>
           <br />
-          <label className="text-start" htmlFor="dob">
-            Date of Birth
-          </label>
+          <label htmlFor="dob">Date of Birth</label>
           <input
             className="form-control"
             type="date"
@@ -116,11 +142,11 @@ function EditChildForm({ show, setShow, child }) {
               type="button"
               className="btn btn-secondary form-control col me-2"
               data-bs-dismiss="modal"
-              onClick={resetForm}
+              onClick={() => setShow(false)}
             >
               Cancel
             </button>
-            <button className="btn btn-success col form-control">
+            <button className="btn bablyGreen col form-control">
               Save Changes
             </button>
           </div>

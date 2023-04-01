@@ -46,6 +46,11 @@ class BablyApi {
     return res.user;
   }
 
+  static async requestPwdReset(data) {
+    let res = await this.request("users/reset", data, "post");
+    return res;
+  }
+
   // static async updateUser(email, data) {
   //   let res = await this.request(`users/${email}`, data, "patch");
   //   return res.user;
@@ -65,6 +70,11 @@ class BablyApi {
   static async getTodaysData(infant_id, start, end) {
     let res = await this.request(`infants/today/${infant_id}/${start}/${end}`);
     return res.today;
+  }
+
+  static async updateInfant(infant_id, data) {
+    let res = await this.request(`infants/${infant_id}`, data, "patch");
+    return res.infant;
   }
   // ------------------FEEDS-----------------------
   static async addFeed(data) {

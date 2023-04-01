@@ -64,12 +64,18 @@ function Login({ login }) {
             />
             <label htmlFor="password">Password:</label>
           </div>
-          <button className="btn btn-primary form-control">Submit</button>
+          <button className="btn bablyBlue form-control">Submit</button>
         </form>
         <p className="text-center mt-2">
           New to Bably?
           <span className="ms-1">
             <Link to="/signup">Sign up</Link>
+          </span>
+        </p>
+        <p className="text-center mt-2">
+          Forgot password?
+          <span className="ms-1">
+            <Link to="/reset">Reset password</Link>
           </span>
         </p>
       </div>

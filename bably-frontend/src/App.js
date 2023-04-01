@@ -91,6 +91,11 @@ function App() {
     }
   };
 
+  const updateInfant = async (id, data) => {
+    let child = await BablyApi.updateInfant(id, data)
+    setCurrChild(child);
+
+  }
   return (
     <div className="App">
       <BrowserRouter>
@@ -99,6 +104,7 @@ function App() {
             currUser,
             currChild,
             registerInfant,
+            updateInfant,
             setChildId,
           }}
         >

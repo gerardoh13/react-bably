@@ -138,12 +138,12 @@ function Home() {
         setShow={setShowFeedForm}
         submit={addFeed}
       />
-      <div className="mt-3 col-11 col-xl-6 text-center">
-        <h2 className="mb-4">Today's Activity</h2>
+      <div className="my-auto col-11 col-xl-6 text-center text-light">
+        <h1 className="mb-4">{currChild.firstName}'s Daily Activity</h1>
         {!feeds.length && !diapers.length ? (
           <div>
             <hr />
-            <h4 className="my-3">
+            <h4 className="my-3 text-light">
               Log {currChild.firstName}'s feeds and diapers to see your latest
               activity here!
             </h4>
@@ -170,7 +170,7 @@ function Home() {
         )}
 
         <div
-          className="card text-bg-primary mb-3"
+          className="card bablyGrey text-light mb-3"
           onClick={() => setShowFeedForm(true)}
         >
           <div className="card-body">
@@ -179,7 +179,7 @@ function Home() {
         </div>
 
         <div
-          className="card text-bg-warning mb-3"
+          className="card bablyBlue text-light mb-3"
           onClick={() => setShowDiaperForm(true)}
         >
           <div className="card-body">
@@ -187,7 +187,7 @@ function Home() {
           </div>
         </div>
 
-        <div className="card text-bg-info mb-3">
+        <div className="card bablyGreen text-light mb-3">
           <a className="nav-link" href="/reminders">
             <div className="card-body">
               <h5 className="card-title">Reminders</h5>
@@ -195,7 +195,7 @@ function Home() {
           </a>
         </div>
 
-        <div className="card text-bg-success mb-3">
+        <div className="card bablyColor text-light mb-3">
           <a className="nav-link" href="/calendar">
             <div className="card-body">
               <h5 className="card-title">Calendar</h5>

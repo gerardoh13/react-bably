@@ -2,6 +2,7 @@
 
 const db = require("../db");
 const { UnauthorizedError } = require("../expressError");
+const { sqlForPartialUpdate } = require("../helpers/sql");
 
 /** Related functions for infants. */
 
@@ -48,6 +49,25 @@ class Infant {
     );
     const infant = infantRes.rows[0];
     if (!infant) throw new NotFoundError(`No infant: ${infant_id}`);
+    return infant;
+  }
+
+  static async update(id, data) {
+    const { setCols, values } = sqlForPartialUpdate(data, {
+      firstName: "first_name",
+      publicId: "public_id",
+    });
+    const idVarIdx = "$" + (values.length + 1);
+
+    const querySql = `UPDATE infants
+                      SET ${setCols} 
+                      WHERE id = ${idVarIdx} 
+                      RETURNING id, first_name AS "firstName", dob, gender, public_id AS "publicId"`;
+    const result = await db.query(querySql, [...values, id]);
+    const infant = result.rows[0];
+
+    if (!infant) throw new NotFoundError(`No infant: ${id}`);
+
     return infant;
   }
 

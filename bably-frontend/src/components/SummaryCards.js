@@ -5,11 +5,11 @@ function SummaryCards({ feeds, totals, diapers, changeTable }) {
     <>
       <div className="row mb-3 px-1 text-center">
         <div
-          className="col card text-bg-primary mx-2"
+          className="col card bablyOffWhite mx-2"
           onClick={() => changeTable("feeds")}
         >
           <div className="card-body">
-            <div className="card-title">Feeds</div>
+            <h4 className="card-title">Feeds</h4>
             <span>Total: {feeds.length}</span>
             <br />
             <span>Minutes: {totals.duration}</span>
@@ -18,11 +18,11 @@ function SummaryCards({ feeds, totals, diapers, changeTable }) {
           </div>
         </div>
         <div
-          className="col card text-bg-primary mx-2"
+          className="col card bablyOffWhite mx-2"
           onClick={() => changeTable("diapers")}
         >
           <div className="card-body">
-            <div className="card-title text-center">Diapers</div>
+            <h4 className="card-title text-center">Diapers</h4>
 
             <span>Total: {diapers.length}</span>
             <br />

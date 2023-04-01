@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import UserContext from "../users/UserContext";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import Nav from "react-bootstrap/Nav";
@@ -51,9 +51,9 @@ function Navigation({ logout }) {
         </Nav>
         <Nav>
           {currUser ? (
-            <li className="nav-item nav-link" onClick={logout}>
+            <Link to="/" onClick={logout} className="nav-link me-4">
               Logout
-            </li>
+            </Link>
           ) : null}
         </Nav>
       </Navbar.Collapse>

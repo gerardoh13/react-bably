@@ -117,7 +117,7 @@ function Signup({ signup }) {
             />
             <label htmlFor="confirmPwd">Confirm Password</label>
           </div>
-          <button className="btn btn-primary form-control">Next</button>
+          <button className="btn bablyBlue form-control">Next</button>
         </form>
         <p className="text-center mt-2">
           Have an account?

@@ -1,6 +1,8 @@
 .fc-view {
-  background-color: #5c8a92;
-  color: white;
+  /* background-color: #5c8a92;
+  color: white; */
+  background-color: white;
+  color:#354e53;
 }
 
 @media (max-width: 576px) {
@@ -26,5 +28,6 @@
 }
 
 .fc-col-header {
-  background-color: #354e53;
+  background-color: #546a77;
+  color: white;
 }
