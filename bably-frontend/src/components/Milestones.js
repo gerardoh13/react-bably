@@ -2,12 +2,13 @@ import React from "react";
 
 function Milestones({ gender, months }) {
   let age;
-  if (months <= 12) {
+  if (months <= 13) {
     let counts = [0, 2, 4, 6, 9, 12];
     let goal = months;
-    age = counts.reduce(function (prev, curr) {
-      return Math.abs(curr - goal) < Math.abs(prev - goal) ? curr : prev;
-    });
+    age = counts.reduce((prev, curr) =>
+      Math.abs(curr - goal) < Math.abs(prev - goal) ? curr : prev
+    );
+    console.log(age)
   }
   let pronoun = gender === "male" ? "him" : "her";
   let possPronoun = gender === "male" ? "his" : "her";
@@ -33,7 +34,7 @@ function Milestones({ gender, months }) {
     case 2:
       return (
         <>
-          <h3>Milestones at this age:</h3>
+          <h3>Milestones starting at 2 months:</h3>
           <h4>Social/Emotional</h4>
           <ul>
             <li>Calms down when spoken to or picked up</li>
@@ -62,7 +63,7 @@ function Milestones({ gender, months }) {
     case 4:
       return (
         <>
-          <h3>Milestones at this age:</h3>
+          <h3>Milestones starting at 4 months:</h3>
           <h4>Social/Emotional</h4>
           <ul>
             <li>Smiles on {possPronoun} own to get your attention</li>
@@ -102,7 +103,7 @@ function Milestones({ gender, months }) {
     case 6:
       return (
         <>
-          <h3>Milestones at this age:</h3>
+          <h3>Milestones starting at 6 months:</h3>
           <h4>Social/Emotional</h4>
           <ul>
             <li>Knows familiar people</li>
@@ -133,7 +134,7 @@ function Milestones({ gender, months }) {
     case 9:
       return (
         <>
-          <h3>Milestones at this age:</h3>
+          <h3>Milestones starting at 9 months:</h3>
           <h4>Social/Emotional</h4>
           <ul>
             <li>Is shy, clingy, or fearful around strangers</li>
@@ -173,7 +174,7 @@ function Milestones({ gender, months }) {
     case 12:
       return (
         <>
-          <h3>Milestones at this age:</h3>
+          <h3>Milestones starting at 12 months:</h3>
           <h4>Social/Emotional</h4>
           <ul>
             <li>Plays games with you, like pat-a-cake</li>
@@ -208,7 +209,7 @@ function Milestones({ gender, months }) {
     default:
       return (
         <div className="text-center">
-          <h2>Thank you for Using Bably! </h2>
+          {/* <h2>Thank you for Using Bably! </h2> */}
           <p>
             Bably milestones are intended for ages 0 to 12 months but feel free
             to stick around.
