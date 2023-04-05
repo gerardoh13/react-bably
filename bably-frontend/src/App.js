@@ -9,6 +9,7 @@ import Spinner from "./common/Spinner";
 import { useLocalStorage } from "./hooks";
 import NavRoutes from "./navigation/NavRoutes";
 import Navbar from "./navigation/Navbar";
+import PushNotifications from "./common/PushNotifications";
 
 function App() {
   const [token, setToken] = useLocalStorage("bably-token");
@@ -99,6 +100,7 @@ function App() {
   }
   return (
     <div className="App">
+      <PushNotifications/>
       <BrowserRouter>
         <UserContext.Provider
           value={{

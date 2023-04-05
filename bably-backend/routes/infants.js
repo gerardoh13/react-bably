@@ -11,7 +11,7 @@ const express = require("express");
 const infantNewSchema = require("../schemas/infantNew.json");
 const { BadRequestError } = require("../expressError");
 const { ensureLoggedIn } = require("../middleware/auth");
-
+const PushNotifications = require("../pushNotifications")
 const router = new express.Router();
 
 /** POST /register/:userId:   { infant } => { infant }
@@ -77,6 +77,7 @@ router.get(
     const { infant_id, start, end } = req.params;
     try {
       if (await Infant.checkAuthorized(res.locals.user.email, infant_id)) {
+        PushNotifications.send()
         let events = {};
         events.feeds = await Feed.getEvents(infant_id, start, end);
         events.diapers = await Diaper.getEvents(infant_id, start, end);
