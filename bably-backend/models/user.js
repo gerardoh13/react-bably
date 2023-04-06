@@ -80,6 +80,13 @@ class User {
 
     const user = result.rows[0];
 
+    await db.query(
+      `INSERT INTO reminders
+              (user_id)
+              VALUES ($1)`,
+      [user.id]
+    );
+
     return user;
   }
 
@@ -128,11 +135,51 @@ class User {
       [user.id]
     );
 
+    const reminderRes = await db.query(
+      `SELECT id,
+              enabled,
+              hours,
+              minutes,
+              cutoff_enabled AS "cutoffEnabled",
+              cutoff,
+              start
+           FROM reminders
+           WHERE user_id = $1`,
+      [user.id]
+    );
+
     user.infants = infantsRes.rows;
+    user.reminders = reminderRes.rows[0];
 
     return user;
   }
 
+  static async updateReminders(email, data) {
+    const userRes = await db.query(
+      `SELECT id
+           FROM users
+           WHERE email = $1`,
+      [email]
+    );
+
+    const user = userRes.rows[0];
+
+    if (!user) throw new NotFoundError(`No reminders for user: ${email}`);
+
+    const { setCols, values } = sqlForPartialUpdate(data, {
+      cutoffEnabled: "cutoff_enabled",
+    });
+    const idVarIdx = "$" + (values.length + 1);
+
+    const querySql = `UPDATE reminders
+                      SET ${setCols} 
+                      WHERE user_id = ${idVarIdx} 
+                      RETURNING id, enabled, hours, minutes, cutoff_enabled AS "cutoffEnabled", cutoff, start`;
+    const result = await db.query(querySql, [...values, user.id]);
+    const reminders = result.rows[0];
+
+    return reminders;
+  }
   /** Update user data with `data`.
    *
    * This is a "partial update" --- it's fine if data doesn't contain

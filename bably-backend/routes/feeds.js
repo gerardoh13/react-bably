@@ -6,8 +6,9 @@ const jsonschema = require("jsonschema");
 
 const Feed = require("../models/feed");
 const Infant = require("../models/infant");
+const Notification = require("../models/notification");
 const express = require("express");
-const { ensureLoggedIn } = require("../middleware/auth");
+const { ensureLoggedIn, ensureCorrectUser } = require("../middleware/auth");
 const feedNewSchema = require("../schemas/feedNew.json");
 const feedUpdateSchema = require("../schemas/feedUpdate.json");
 const { BadRequestError } = require("../expressError");
@@ -85,6 +86,20 @@ router.delete(
         await Feed.delete(feed_id);
         return res.json({ deleted: feed_id });
       }
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
+
+router.post(
+  "/reminders/:email/",
+  ensureCorrectUser,
+  async function (req, res, next) {
+    const { timestamp } = req.body;
+    try {
+      Notification.scheduleFeedReminder(timestamp);
+      return res.json({ scheduled: true });
     } catch (err) {
       return next(err);
     }

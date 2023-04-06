@@ -1,9 +1,11 @@
 const PushNotifications = require("@pusher/push-notifications-server");
+const schedule = require("node-schedule");
 
 class Notification {
   static pushNotifications = new PushNotifications({
     instanceId: "0c2efc77-8e04-4f45-a1ac-558892357612",
-    secretKey: "1C54B5C2EDF1101286012D0C0CEA11FF82592492F4ED3F10F0B346C55511EFFA",
+    secretKey:
+      "1C54B5C2EDF1101286012D0C0CEA11FF82592492F4ED3F10F0B346C55511EFFA",
   });
 
   static send() {
@@ -22,6 +24,13 @@ class Notification {
       .catch((error) => {
         console.log("Error:", error);
       });
+  }
+
+  static scheduleFeedReminder(timestamp) {
+    const date = new Date(timestamp);
+    schedule.scheduleJob(date, () => {
+      this.send();
+    });
   }
 }
 

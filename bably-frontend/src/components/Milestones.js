@@ -8,7 +8,6 @@ function Milestones({ gender, months }) {
     age = counts.reduce((prev, curr) =>
       Math.abs(curr - goal) < Math.abs(prev - goal) ? curr : prev
     );
-    console.log(age)
   }
   let pronoun = gender === "male" ? "him" : "her";
   let possPronoun = gender === "male" ? "his" : "her";

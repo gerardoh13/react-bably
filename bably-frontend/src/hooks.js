@@ -18,4 +18,8 @@ function useQuery() {
   return React.useMemo(() => new URLSearchParams(search), [search]);
 }
 
-export { useLocalStorage, useQuery };
+function usePusherBeams() {
+
+}
+
+export { useLocalStorage, useQuery, usePusherBeams };

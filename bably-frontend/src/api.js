@@ -47,14 +47,24 @@ class BablyApi {
   }
 
   static async resetPwd(token, data) {
-    let res = await this.request(`users/new-password?token=${token}`, data, "post");
+    let res = await this.request(
+      `users/new-password?token=${token}`,
+      data,
+      "post"
+    );
     return res;
   }
-  
+
   static async requestPwdReset(data) {
     let res = await this.request("users/reset", data, "post");
     return res;
   }
+
+  static async updateReminders(email, data) {
+    let res = await this.request(`users/reminders/${email}`, data, "patch");
+    return res.reminders;
+  }
+
   // static async updateUser(email, data) {
   //   let res = await this.request(`users/${email}`, data, "patch");
   //   return res.user;
@@ -92,12 +102,21 @@ class BablyApi {
   }
 
   static async updateFeed(infant_id, feed_id, data) {
-    let res = await this.request(`feeds/${infant_id}/${feed_id}`, data, "patch");
+    let res = await this.request(
+      `feeds/${infant_id}/${feed_id}`,
+      data,
+      "patch"
+    );
     return res.feed;
   }
 
   static async deleteFeed(infant_id, feed_id) {
     let res = await this.request(`feeds/${infant_id}/${feed_id}`, {}, "delete");
+    return res;
+  }
+
+  static async scheduleReminder(email, data) {
+    let res = await this.request(`feeds/reminders/${email}`, data, "post");
     return res;
   }
   // ------------------DIAPERS-----------------------
@@ -112,12 +131,20 @@ class BablyApi {
   }
 
   static async updateDiaper(infant_id, diaper_id, data) {
-    let res = await this.request(`diapers/${infant_id}/${diaper_id}`, data, "patch");
+    let res = await this.request(
+      `diapers/${infant_id}/${diaper_id}`,
+      data,
+      "patch"
+    );
     return res.diaper;
   }
 
   static async deleteDiaper(infant_id, diaper_id) {
-    let res = await this.request(`diapers/${infant_id}/${diaper_id}`, {}, "delete");
+    let res = await this.request(
+      `diapers/${infant_id}/${diaper_id}`,
+      {},
+      "delete"
+    );
     return res;
   }
   // ------------------EVENTS-----------------------

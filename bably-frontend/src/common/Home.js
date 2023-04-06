@@ -1,7 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import UserContext from "../users/UserContext";
 import BablyApi from "../api";
-// import { Navigate } from "react-router-dom";
 import DiaperForm from "../components/DiaperForm";
 import FeedForm from "../components/FeedForm";
 import FeedTable from "../components/FeedTable";
@@ -20,7 +19,7 @@ function Home() {
     wet: 0,
     soiled: 0,
   });
-  const { currChild } = useContext(UserContext);
+  const { currChild, currUser } = useContext(UserContext);
 
   useEffect(() => {
     const getActivity = async () => {
@@ -55,10 +54,25 @@ function Home() {
   const addFeed = async (feed) => {
     let newFeed = await BablyApi.addFeed(feed);
     const { lastMidnight, nextMidnight } = getMidnights();
-    let dateTime = parseInt(newFeed.fed_at);
-    if (dateTime > lastMidnight && dateTime < nextMidnight) {
+    let newFeedTime = parseInt(newFeed.fed_at);
+    if (newFeedTime > lastMidnight && newFeedTime < nextMidnight) {
+      let latestFeedTime = feeds.length ? feeds[0].fed_at : 0;
+      handleNotifications(newFeedTime, latestFeedTime);
       pushAndSortFeeds(newFeed);
     }
+  };
+
+  const handleNotifications = async (newFeedTime, latestFeedTime) => {
+    if (newFeedTime < latestFeedTime) return;
+    if (!currUser.reminders.enabled) return;
+    const { hours, minutes } = currUser.reminders;
+    let futureTime = (hours * 60 + minutes) * 60;
+    let futureDate = newFeedTime + futureTime;
+    console.log("set reminder at", futureDate * 1000);
+    let res = await BablyApi.scheduleReminder(currUser.email, {
+      timestamp: futureDate * 1000,
+    });
+    console.log(res);
   };
 
   const pushAndSortFeeds = (newFeed) => {
@@ -125,7 +139,7 @@ function Home() {
     });
     return `${time}`;
   }
-  // if (!currChild) return <Navigate to="/register" replace={true} />;
+
   return (
     <>
       <DiaperForm
@@ -188,9 +202,9 @@ function Home() {
         </div>
 
         <div className="card bablyGreen text-light mb-3">
-          <a className="nav-link" href="/reminders">
+          <a className="nav-link" href="/settings">
             <div className="card-body">
-              <h5 className="card-title">Reminders</h5>
+              <h5 className="card-title">Settings</h5>
             </div>
           </a>
         </div>

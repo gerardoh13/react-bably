@@ -1,6 +1,6 @@
 import { BrowserRouter } from "react-router-dom";
 import "./App.css";
-import "./buttons.css"
+import "./buttons.css";
 import { useState, useEffect } from "react";
 import BablyApi from "./api";
 import { decodeToken } from "react-jwt";
@@ -9,7 +9,7 @@ import Spinner from "./common/Spinner";
 import { useLocalStorage } from "./hooks";
 import NavRoutes from "./navigation/NavRoutes";
 import Navbar from "./navigation/Navbar";
-import PushNotifications from "./common/PushNotifications";
+// import PushNotifications from "./common/PushNotifications";
 
 function App() {
   const [token, setToken] = useLocalStorage("bably-token");
@@ -21,6 +21,8 @@ function App() {
   useEffect(() => {
     async function getCurrUser() {
       if (token) {
+        console.log("GETTING USER")
+
         try {
           let { email } = decodeToken(token);
           BablyApi.token = token;
@@ -42,6 +44,7 @@ function App() {
   useEffect(() => {
     async function getCurrChild() {
       if (childId) {
+        console.log("GETTING CHILD")
         try {
           let child = await BablyApi.getCurrChild(childId);
           setCurrChild(child);
@@ -53,7 +56,7 @@ function App() {
       setLoading(false);
     }
     getCurrChild();
-  }, [token, childId]);
+  }, [childId]);
 
   const login = async (data) => {
     try {
@@ -94,13 +97,12 @@ function App() {
   };
 
   const updateInfant = async (id, data) => {
-    let child = await BablyApi.updateInfant(id, data)
+    let child = await BablyApi.updateInfant(id, data);
     setCurrChild(child);
-
-  }
+  };
   return (
     <div className="App">
-      <PushNotifications/>
+      {/* <PushNotifications /> */}
       <BrowserRouter>
         <UserContext.Provider
           value={{
@@ -111,7 +113,7 @@ function App() {
             setChildId,
           }}
         >
-          {loading ? null : <Navbar logout={logout} />}
+          <Navbar logout={logout} />
           {loading ? <Spinner /> : <NavRoutes login={login} signup={signup} />}
         </UserContext.Provider>
       </BrowserRouter>

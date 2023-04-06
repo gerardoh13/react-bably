@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from "react";
 import * as PusherPushNotifications from "@pusher/push-notifications-web";
 
 function PushNotifications() {

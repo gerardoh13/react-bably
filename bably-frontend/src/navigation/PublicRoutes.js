@@ -6,6 +6,7 @@ function PublicRoutes() {
   const { currUser } = useContext(UserContext);
 
   if (currUser) {
+    console.log("NAVIGATE TO HOME")
     return <Navigate to="/" replace />;
   }
   return <Outlet />;

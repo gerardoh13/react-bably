@@ -5,7 +5,7 @@
 const jsonschema = require("jsonschema");
 
 const User = require("../models/user");
-const Email = require("../email");
+const Email = require("../models/email");
 const express = require("express");
 const { ensureCorrectUser } = require("../middleware/auth");
 const { createToken, createPwdResetToken } = require("../helpers/tokens");
@@ -106,6 +106,17 @@ router.get("/:email", ensureCorrectUser, async function (req, res, next) {
   try {
     const user = await User.get(req.params.email);
     return res.json({ user });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+
+router.patch("/reminders/:email", ensureCorrectUser, async function (req, res, next) {
+  const { email } = req.params;
+  try {
+      const reminders = await User.updateReminders(email, req.body);
+      return res.json({ reminders });
   } catch (err) {
     return next(err);
   }
