@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Alerts from "../common/Alerts";
 
 function Reminders({ reminders, update }) {
   const [formData, setFormData] = useState({
@@ -9,13 +10,43 @@ function Reminders({ reminders, update }) {
   });
   const [enabled, setEnabled] = useState(reminders.enabled);
   const [cutoffEnabled, setCutoffEnabled] = useState(reminders.cutoffEnabled);
+  const [msgs, setMsgs] = useState([]);
+  const [errs, setErrs] = useState([]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMsgs([]);
+    setErrs([]);
+    const validTime = validateTime();
+    const validStartCutoff = validateStartCutoff();
+    if (!validTime || !validStartCutoff) return;
     let updatedReminders = structuredClone(formData);
     updatedReminders.enabled = enabled;
     updatedReminders.cutoffEnabled = cutoffEnabled;
-    await update(updatedReminders);
+    let res = await update(updatedReminders);
+    if (res.updated) setMsgs(["Reminder settings updated!"]);
+  };
+
+  const validateTime = () => {
+    if (!enabled) return true;
+    let time = parseInt(formData.hours) + parseInt(formData.minutes);
+    if (time === 0) setErrs(["If enabled, 'Remind After' time can't be 0"]);
+    return time > 0;
+  };
+
+  const validateStartCutoff = () => {
+    const startDate = getDate(formData.start);
+    const cutoffDate = getDate(formData.cutoff);
+    if (startDate >= cutoffDate)
+      setErrs((prev) => [...prev, "Start time must be before cutoff"]);
+    return startDate < cutoffDate;
+  };
+
+  const getDate = (time) => {
+    let date = new Date();
+    const [hrs, mins] = time.split(":").map((t) => parseInt(t));
+    date.setHours(hrs, mins, 0);
+    return date;
   };
 
   const handleChange = (e) => {
@@ -34,6 +65,9 @@ function Reminders({ reminders, update }) {
 
   return (
     <form onSubmit={handleSubmit}>
+      {msgs.length ? <Alerts msgs={msgs} type="primary" /> : null}
+      {errs.length ? <Alerts msgs={errs} /> : null}
+
       <div className="row mt-3">
         <p>
           If enabled, you will receive a push notification after each feed after
@@ -60,7 +94,7 @@ function Reminders({ reminders, update }) {
         </div>
         <div className="col-6">
           <div className="row">
-            <div className="col">
+            <div className="col pe-1">
               <span>Hours</span>
               <select
                 name="hours"
@@ -76,7 +110,7 @@ function Reminders({ reminders, update }) {
                 <option value="4">4</option>
               </select>
             </div>
-            <div className="col">
+            <div className="col ps-1">
               <span>Mins</span>
               <select
                 name="minutes"
@@ -91,9 +125,6 @@ function Reminders({ reminders, update }) {
                 <option value="45">45</option>
               </select>
             </div>
-          </div>
-          <div id="hrsMinsFeedback" className="invalid-feedback">
-            Time cannot be 0
           </div>
         </div>
       </div>
@@ -130,9 +161,6 @@ function Reminders({ reminders, update }) {
             disabled={!cutoffEnabled || !enabled}
           />
         </div>
-      </div>
-      <div id="timeFeedback" className="invalid-feedback">
-        Start time must be before cutoff
       </div>
       <div className="row mt-3">
         <div className="col text-start">

@@ -63,14 +63,30 @@ function Home() {
   };
 
   const handleNotifications = async (newFeedTime, latestFeedTime) => {
+    const { enabled, hours, minutes, cutoffEnabled, start, cutoff } =
+      currUser.reminders;
+    // if feed is not the latest feed, do nothing
     if (newFeedTime < latestFeedTime) return;
-    if (!currUser.reminders.enabled) return;
-    const { hours, minutes } = currUser.reminders;
+    // if reminders are disabled, do nothing
+    if (!enabled) return;
+    let now = new Date();
     let futureTime = (hours * 60 + minutes) * 60;
-    let futureDate = newFeedTime + futureTime;
-    console.log("set reminder at", futureDate * 1000);
+    let futureDate = new Date((newFeedTime + futureTime) * 1000);
+    // if future reminder date already passed, do nothing
+    if (futureDate.getTime() < now.getTime()) return;
+    if (cutoffEnabled) {
+      const [startHours, startMins] = start.split(":").map((t) => parseInt(t));
+      const [endHours, endMins] = cutoff.split(":").map((t) => parseInt(t));
+      const startTime = startHours * 60 + startMins;
+      const endTime = endHours * 60 + endMins;
+      const futureMins = futureDate.getHours() * 60 + futureDate.getMinutes();
+      // if cutoff is enabled and reminder falls after cutoff or before start, do nothing
+      if (futureMins >= endTime || futureMins <= startTime) return;
+    }
+    console.log("set reminder at", futureDate.toLocaleString());
     let res = await BablyApi.scheduleReminder(currUser.email, {
-      timestamp: futureDate * 1000,
+      timestamp: futureDate.getTime(),
+      infant: currChild.firstName,
     });
     console.log(res);
   };

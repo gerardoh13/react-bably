@@ -67,8 +67,6 @@ function Calendar() {
   };
 
   const confirmDelete = async () => {
-        console.log(toDelete[0], toDelete[1]);
-        console.log(currChild.id)
     if (toDelete[1] === "diaper") {
       await BablyApi.deleteDiaper(currChild.id, toDelete[0]);
     } else if (toDelete[1] === "feed") {
@@ -114,7 +112,7 @@ function Calendar() {
         confirm={confirmDelete}
         cancel={setToDelete}
       />
-      <div className="col-12 col-sm-8 col-xl-6 mt-3 calendar">
+      <div className="col-12 col-sm-8 col-xl-6 col-xxl-5 mt-4 mt-sm-5">
         <FullCalendar
           plugins={[
             dayGridPlugin,

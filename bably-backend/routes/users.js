@@ -115,8 +115,8 @@ router.get("/:email", ensureCorrectUser, async function (req, res, next) {
 router.patch("/reminders/:email", ensureCorrectUser, async function (req, res, next) {
   const { email } = req.params;
   try {
-      const reminders = await User.updateReminders(email, req.body);
-      return res.json({ reminders });
+      await User.updateReminders(email, req.body);
+      return res.json({ updated: true });
   } catch (err) {
     return next(err);
   }

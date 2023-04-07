@@ -15,9 +15,8 @@ function Settings() {
   }, [currUser]);
 
   const updateReminders = async (data) => {
-    console.log(data)
     let res = await BablyApi.updateReminders(currUser.email, data);
-    console.log(res);
+    return res;
   };
 
   return (

@@ -26,10 +26,24 @@ class Notification {
       });
   }
 
-  static scheduleFeedReminder(timestamp) {
+  static scheduleFeedReminder(timestamp, infant) {
     const date = new Date(timestamp);
     schedule.scheduleJob(date, () => {
-      this.send();
+      this.pushNotifications
+        .publishToInterests(["hello"], {
+          web: {
+            notification: {
+              title: "Heads up!",
+              body: `Time to feed ${infant}`,
+            },
+          },
+        })
+        .then((publishResponse) => {
+          console.log("Just published:", publishResponse.publishId);
+        })
+        .catch((error) => {
+          console.log("Error:", error);
+        });
     });
   }
 }

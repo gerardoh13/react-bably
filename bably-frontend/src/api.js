@@ -62,7 +62,7 @@ class BablyApi {
 
   static async updateReminders(email, data) {
     let res = await this.request(`users/reminders/${email}`, data, "patch");
-    return res.reminders;
+    return res;
   }
 
   // static async updateUser(email, data) {
