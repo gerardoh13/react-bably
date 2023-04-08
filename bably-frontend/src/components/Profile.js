@@ -51,7 +51,7 @@ function Profile() {
   return (
     <>
       <EditChildForm show={showForm} setShow={setShowForm} child={currChild} />
-      <div className="col-11 col-lg-6 mt-3 card text-center">
+      <div className="col-11 col-lg-6 col-xxl-5 mt-3 card text-center">
         <div className="card-body">
           <div className="row mt-3">
             {currChild.publicId ? (

@@ -96,9 +96,10 @@ router.post(
   "/reminders/:email/",
   ensureCorrectUser,
   async function (req, res, next) {
+    const { email } = req.params;
     const { timestamp, infant } = req.body;
     try {
-      Notification.scheduleFeedReminder(timestamp, infant);
+      Notification.scheduleFeedReminder(timestamp, infant, email);
       return res.json({ scheduled: true });
     } catch (err) {
       return next(err);

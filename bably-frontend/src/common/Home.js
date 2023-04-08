@@ -6,7 +6,7 @@ import FeedForm from "../components/FeedForm";
 import FeedTable from "../components/FeedTable";
 import SummaryCards from "../components/SummaryCards";
 import DiaperTable from "../components/DiaperTable";
-
+import { startBeams } from "../common/PushNotifications";
 function Home() {
   const [feeds, setFeeds] = useState([]);
   const [diapers, setDiapers] = useState([]);
@@ -36,6 +36,15 @@ function Home() {
     };
     if (currChild) getActivity();
   }, [currChild]);
+
+  useEffect(() => {
+    if (diapers.length && !feeds.length) setCurrTable("diapers");
+    if (feeds.length && !diapers.length) setCurrTable("feeds");
+  }, [feeds, diapers]);
+
+  useEffect(() => {
+    startBeams(currUser.email)
+  }, [currUser.email]);
 
   const getMidnights = () => {
     let midnight = new Date();
@@ -168,13 +177,18 @@ function Home() {
         setShow={setShowFeedForm}
         submit={addFeed}
       />
-      <div className="my-auto col-11 col-lg-5 text-center text-light">
-        <h1 className="mb-4">{currChild.firstName}'s Daily Activity</h1>
+      <div className="my-auto col-11 col-lg-6 col-xxl-5 text-center text-light">
+        <h1 className="mb-4">
+          {currChild.firstName}
+          {currChild.firstName.endsWith("s") ? "'" : "'s"} Daily Activity
+        </h1>
         {!feeds.length && !diapers.length ? (
           <div>
             <hr />
             <h4 className="my-3 text-light">
-              Log {currChild.firstName}'s feeds and diapers to see your latest
+              Log {currChild.firstName}
+              {currChild.firstName.endsWith("s") ? "'" : "'s"} feeds and diapers
+              to see {currChild.gender === "male" ? "his" : "her"} latest
               activity here!
             </h4>
             <hr />
@@ -189,12 +203,19 @@ function Home() {
             />
             {currTable === "feeds" && feeds.length ? (
               <FeedTable feeds={feeds} totals={totals} toDateStr={toDateStr} />
-            ) : (
+            ) : currTable === "diapers" && diapers.length ? (
               <DiaperTable
                 diapers={diapers}
                 totals={totals}
                 toDateStr={toDateStr}
               />
+            ) : (
+              <h4 className="my-3 text-light">
+                Log {currChild.firstName}
+                {currChild.firstName.endsWith("s") ? "'" : "'s"} {currTable} to
+                see {currChild.gender === "male" ? "his" : "her"} latest
+                activity here!
+              </h4>
             )}
           </>
         )}

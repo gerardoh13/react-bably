@@ -20,9 +20,9 @@ function FeedTable({ feeds, toDateStr }) {
       <table className="table table-striped bg-light">
         <thead>
           <tr>
-            <th scope="col">Time</th>
-            <th scope="col">Method</th>
-            <th scope="col">oz/Mins</th>
+            <th className="wThird" scope="col">Time</th>
+            <th className="wThird" scope="col">Method</th>
+            <th className="wThird" scope="col">oz/Mins</th>
           </tr>
         </thead>
         <tbody id="table">

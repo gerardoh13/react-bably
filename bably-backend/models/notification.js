@@ -1,15 +1,11 @@
-const PushNotifications = require("@pusher/push-notifications-server");
+// const PushNotifications = require("@pusher/push-notifications-server");
 const schedule = require("node-schedule");
+const { pushNotifications } = require("../services");
 
 class Notification {
-  static pushNotifications = new PushNotifications({
-    instanceId: "0c2efc77-8e04-4f45-a1ac-558892357612",
-    secretKey:
-      "1C54B5C2EDF1101286012D0C0CEA11FF82592492F4ED3F10F0B346C55511EFFA",
-  });
 
   static send() {
-    this.pushNotifications
+    pushNotifications
       .publishToInterests(["hello"], {
         web: {
           notification: {
@@ -26,11 +22,11 @@ class Notification {
       });
   }
 
-  static scheduleFeedReminder(timestamp, infant) {
+  static scheduleFeedReminder(timestamp, infant, email) {
     const date = new Date(timestamp);
     schedule.scheduleJob(date, () => {
-      this.pushNotifications
-        .publishToInterests(["hello"], {
+      pushNotifications
+        .publishToUsers([email], {
           web: {
             notification: {
               title: "Heads up!",

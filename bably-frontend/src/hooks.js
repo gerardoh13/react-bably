@@ -13,13 +13,9 @@ const useLocalStorage = (key, defaultVal = null) => {
   return [state, setState];
 };
 
-function useQuery() {
+const useQuery = () => {
   const { search } = useLocation();
   return React.useMemo(() => new URLSearchParams(search), [search]);
-}
+};
 
-function usePusherBeams() {
-
-}
-
-export { useLocalStorage, useQuery, usePusherBeams };
+export { useLocalStorage, useQuery };

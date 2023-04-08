@@ -18,9 +18,9 @@ function DiaperTable({ diapers, toDateStr }) {
       <table className="table table-striped bg-light">
         <thead>
           <tr>
-            <th scope="col">Time</th>
-            <th scope="col">Type</th>
-            <th scope="col">Size</th>
+            <th className="wThird" scope="col">Time</th>
+            <th className="wThird" scope="col">Type</th>
+            <th className="wThird" scope="col">Size</th>
           </tr>
         </thead>
         <tbody id="table">

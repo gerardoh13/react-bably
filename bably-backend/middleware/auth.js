@@ -56,6 +56,7 @@ function ensureCorrectUser(req, res, next) {
     }
     return next();
   } catch (err) {
+    console.log("ERR", err)
     return next(err);
   }
 }

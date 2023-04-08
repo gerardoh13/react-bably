@@ -1,20 +1,19 @@
 "use strict";
-const nodemailer = require("nodemailer");
+const { transporter } = require("../services");
 
-// async..await is not allowed in global scope, must use a wrapper
 class Email {
-  static transporter = nodemailer.createTransport({
-    // host: "smtp.ethereal.email",
-    host: "smtp-relay.sendinblue.com",
-    port: 587,
-    secure: false, // true for 465, false for other ports
-    auth: {
-      user: "gerardoh13@gmail.com",
-      pass: "YK02S157bwAz8Nm6",
-    },
-  });
+  // static transporter = nodemailer.createTransport({
+  //   // host: "smtp.ethereal.email",
+  //   host: "smtp-relay.sendinblue.com",
+  //   port: 587,
+  //   secure: false, // true for 465, false for other ports
+  //   auth: {
+  //     user: "gerardoh13@gmail.com",
+  //     pass: "YK02S157bwAz8Nm6",
+  //   },
+  // });
   static async sendPwdReset(email, token) {
-    let info = await this.transporter.sendMail({
+    let info = await transporter.sendMail({
       from: '"Bably Team" <donotreply@bably.com>', // sender address
       to: email, // list of receivers
       subject: "Reset your Bably password", // Subject line

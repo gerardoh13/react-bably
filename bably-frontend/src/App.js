@@ -9,7 +9,7 @@ import Spinner from "./common/Spinner";
 import { useLocalStorage } from "./hooks";
 import NavRoutes from "./navigation/NavRoutes";
 import Navbar from "./navigation/Navbar";
-// import PushNotifications from "./common/PushNotifications";
+import { stopBeams } from "./common/PushNotifications";
 
 function App() {
   const [token, setToken] = useLocalStorage("bably-token");
@@ -21,7 +21,7 @@ function App() {
   useEffect(() => {
     async function getCurrUser() {
       if (token) {
-        console.log("GETTING USER")
+        console.log("GETTING USER");
 
         try {
           let { email } = decodeToken(token);
@@ -44,7 +44,7 @@ function App() {
   useEffect(() => {
     async function getCurrChild() {
       if (childId) {
-        console.log("GETTING CHILD")
+        console.log("GETTING CHILD");
         try {
           let child = await BablyApi.getCurrChild(childId);
           setCurrChild(child);
@@ -83,6 +83,7 @@ function App() {
     setCurrChild(null);
     setToken(null);
     setChildId(null);
+    stopBeams();
   };
 
   const registerInfant = async (data) => {

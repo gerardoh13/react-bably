@@ -7,12 +7,13 @@ const jsonschema = require("jsonschema");
 const User = require("../models/user");
 const Email = require("../models/email");
 const express = require("express");
-const { ensureCorrectUser } = require("../middleware/auth");
+const { ensureCorrectUser, ensureLoggedIn } = require("../middleware/auth");
 const { createToken, createPwdResetToken } = require("../helpers/tokens");
 const userAuthSchema = require("../schemas/userAuth.json");
 const userNewSchema = require("../schemas/userNew.json");
 const { BadRequestError } = require("../expressError");
 const jwt = require("jsonwebtoken");
+const { pushNotifications } = require("../services");
 
 const router = new express.Router();
 
@@ -111,12 +112,29 @@ router.get("/:email", ensureCorrectUser, async function (req, res, next) {
   }
 });
 
-
-router.patch("/reminders/:email", ensureCorrectUser, async function (req, res, next) {
-  const { email } = req.params;
-  try {
+router.patch(
+  "/reminders/:email",
+  ensureCorrectUser,
+  async function (req, res, next) {
+    const { email } = req.params;
+    try {
       await User.updateReminders(email, req.body);
       return res.json({ updated: true });
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
+
+router.get("/pusher/beams-auth", function (req, res, next) {
+  const userIDInQueryParam = req.query["user_id"];
+  try {
+    const user = res.locals.user;
+    if (!(user && user.email === userIDInQueryParam)) {
+      throw new BadRequestError();
+    }
+    const beamsToken = pushNotifications.generateToken(userIDInQueryParam);
+    return res.send(JSON.stringify(beamsToken));
   } catch (err) {
     return next(err);
   }

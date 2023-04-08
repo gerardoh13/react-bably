@@ -78,7 +78,6 @@ class Diaper {
   }
 
   static async delete(id) {
-    console.log("diaper_id =", id);
     const result = await db.query(
       `DELETE
            FROM diapers
