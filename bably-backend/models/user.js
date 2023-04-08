@@ -104,6 +104,20 @@ class User {
     if (!user) throw new NotFoundError(`No user: ${email}`);
     return user;
   }
+
+  static async checkIfRegistered(email) {
+    const userRes = await db.query(
+      `SELECT id,
+              email,
+              first_name AS "firstName"
+           FROM users
+           WHERE email = $1`,
+      [email]
+    );
+    const user = userRes.rows[0];
+
+    return user;
+  }
   /** Given a username, return data about user.
    *
    * Returns { username, first_name, last_name, is_admin, jobs }

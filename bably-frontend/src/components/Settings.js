@@ -4,15 +4,18 @@ import Tabs from "react-bootstrap/Tabs";
 import BablyApi from "../api";
 import Reminders from "./Reminders";
 import UserContext from "../users/UserContext";
+import ChildSettings from "./ChildSettings";
 
 function Settings() {
-  const [key, setKey] = useState("reminders");
+  const [key, setKey] = useState("infants");
   const [reminders, setReminders] = useState(null);
+  const [infants, setInfants] = useState(null);
   const { currUser } = useContext(UserContext);
 
   useEffect(() => {
     setReminders(currUser.reminders);
-  }, [currUser]);
+    setInfants(currUser.infants);
+  }, [currUser.reminders, currUser.infants]);
 
   const updateReminders = async (data) => {
     let res = await BablyApi.updateReminders(currUser.email, data);
@@ -20,7 +23,7 @@ function Settings() {
   };
 
   return (
-    <div className="card col-11 col-lg-6 my-auto">
+    <div className="card col-11 col-lg-6 col-xxl-5 my-auto">
       <Tabs
         id="controlled-tab-example"
         activeKey={key}
@@ -28,7 +31,9 @@ function Settings() {
         className="mb-3"
       >
         <Tab eventKey="infants" title="Infants">
-          <h1>Infants</h1>
+          <div className="card-body">
+            {reminders ? <ChildSettings infants={infants} /> : null}
+          </div>
         </Tab>
         <Tab eventKey="reminders" title="Reminders">
           <div className="card-body">

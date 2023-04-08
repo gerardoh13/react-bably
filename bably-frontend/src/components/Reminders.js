@@ -179,7 +179,7 @@ function Reminders({ reminders, update }) {
           />
         </div>
       </div>
-      <button className="btn btn-success btn-lg form-control mt-3">Save</button>
+      <button className="btn btn-bablyGreen btn-lg form-control mt-3">Save</button>
     </form>
   );
 }

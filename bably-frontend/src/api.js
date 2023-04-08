@@ -90,6 +90,12 @@ class BablyApi {
     let res = await this.request(`infants/${infant_id}`, data, "patch");
     return res.infant;
   }
+  
+  static async addUser(infant_id, data) {
+    let res = await this.request(`infants/add-user/${infant_id}`, data, "post");
+    return res.details;
+  }
+
   // ------------------FEEDS-----------------------
   static async addFeed(data) {
     let res = await this.request("feeds", data, "post");

@@ -21,6 +21,7 @@ function Navigation({ logout }) {
       {currChild ? (
         <>
           <Nav.Link href="/calendar">Calendar</Nav.Link>
+          <Nav.Link href="/settings">Settings</Nav.Link>
           <Nav.Link href="/profile">{currChild.firstName}</Nav.Link>
         </>
       ) : (

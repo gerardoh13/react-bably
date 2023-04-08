@@ -3,7 +3,6 @@ const nodemailer = require("nodemailer");
 const PushNotifications = require("@pusher/push-notifications-server");
 
 const transporter = nodemailer.createTransport({
-  // host: "smtp.ethereal.email",
   host: "smtp-relay.sendinblue.com",
   port: 587,
   secure: false, // true for 465, false for other ports

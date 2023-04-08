@@ -34,8 +34,8 @@ function Home() {
       updateFeedCard(todaysData.feeds);
       updateDiaperCard(todaysData.diapers);
     };
-    if (currChild) getActivity();
-  }, [currChild]);
+     getActivity();
+  }, [currChild.id]);
 
   useEffect(() => {
     if (diapers.length && !feeds.length) setCurrTable("diapers");

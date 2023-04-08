@@ -5,6 +5,7 @@
 const jsonschema = require("jsonschema");
 
 const Infant = require("../models/infant");
+const User = require("../models/user");
 const Feed = require("../models/feed");
 const Diaper = require("../models/diaper");
 const express = require("express");
@@ -98,6 +99,32 @@ router.get(
         today.feeds = await Feed.getTodays(infant_id, start, end);
         today.diapers = await Diaper.getTodays(infant_id, start, end);
         return res.json({ today });
+      }
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
+
+router.post(
+  "/add-user/:infant_id",
+  ensureLoggedIn,
+  async function (req, res, next) {
+    try {
+      const { infant_id } = req.params;
+      const { email } = req.body;
+      if (await Infant.checkAuthorized(res.locals.user.email, infant_id)) {
+        const user = await User.checkIfRegistered(email);
+        let details = {};
+        if (user) {
+          details.recipient = user.firstName;
+          details.inviteSent = false;
+          // add user to infants_users table
+        } else {
+          details.inviteSent = true;
+          // add email to invites table, send email
+        }
+        return res.json({ details });
       }
     } catch (err) {
       return next(err);
