@@ -30,16 +30,17 @@ function Reminders({ reminders, update }) {
   const validateTime = () => {
     if (!enabled) return true;
     let time = parseInt(formData.hours) + parseInt(formData.minutes);
-    if (time === 0) setErrs(["If enabled, 'Remind After' time can't be 0"]);
+    if (time === 0) setErrs(["'Remind After' can't be 0 hours and 0 minutes"]);
     return time > 0;
   };
 
   const validateStartCutoff = () => {
-    const startDate = getDate(formData.start);
-    const cutoffDate = getDate(formData.cutoff);
-    if (startDate >= cutoffDate)
-      setErrs((prev) => [...prev, "Start time must be before cutoff"]);
-    return startDate < cutoffDate;
+    const sleepTimeEnd = getDate(formData.start);
+    const sleepTimeStart = getDate(formData.cutoff);
+    console.log(sleepTimeEnd, sleepTimeStart)
+    if (sleepTimeEnd >= sleepTimeStart)
+      setErrs((prev) => [...prev, "Reminders start time must be before end time"]);
+    return sleepTimeEnd < sleepTimeStart;
   };
 
   const getDate = (time) => {
@@ -57,6 +58,11 @@ function Reminders({ reminders, update }) {
     }));
   };
 
+  const toLocalTime = (time) => {
+    const [h, m] = time.split(":");
+    return `${h % 12 ? h % 12 : 12}:${m} ${h >= 12 ? "PM" : "AM"}`;
+  };
+
   const handleSwitch = (e) => {
     const { name } = e.target;
     if (name === "enabled") setEnabled((prev) => !prev);
@@ -69,10 +75,6 @@ function Reminders({ reminders, update }) {
       {errs.length ? <Alerts msgs={errs} /> : null}
 
       <div className="row mt-3">
-        <p>
-          If enabled, you will receive a push notification after each feed after
-          a specified time
-        </p>
         <div className="col-6 text-start">
           <p>Enabled</p>
         </div>
@@ -86,6 +88,11 @@ function Reminders({ reminders, update }) {
             onChange={handleSwitch}
           />
         </div>
+        <span className="my-1">
+          {enabled
+            ? `Disable to stop notifcations after each new feed`
+            : "Enable to receive a reminder each new feed"}
+        </span>
       </div>
       <div className="row mt-2">
         <div className="col-6 text-start">
@@ -128,10 +135,10 @@ function Reminders({ reminders, update }) {
           </div>
         </div>
       </div>
-      <p className="mt-3">Enable cutoff to stop notifications at night</p>
-      <div className="row mt-2">
+      <div className="row my-3">
         <div className="col-6 text-start">
-          <p>Cutoff Enabled</p>
+          <span>Sleep Time</span>
+          <br />
         </div>
         <div className="col-6 form-check form-switch">
           <input
@@ -144,28 +151,16 @@ function Reminders({ reminders, update }) {
             disabled={!enabled}
           />
         </div>
+        <span className="my-1">
+          {cutoffEnabled
+            ? `Reminders muted from ${toLocalTime(formData.cutoff)} to ${toLocalTime(formData.start)}`
+            : "Enable to stop reminders during sleep time"}
+        </span>
       </div>
       <div className="row mt-3">
         <div className="col text-start">
-          <label htmlFor="start">Start Time</label>
-          <p>Notifications start at:</p>
-        </div>
-        <div className="col">
-          <input
-            className="form-control"
-            type="time"
-            name="start"
-            id="start"
-            value={formData.start}
-            onChange={handleChange}
-            disabled={!cutoffEnabled || !enabled}
-          />
-        </div>
-      </div>
-      <div className="row mt-3">
-        <div className="col text-start">
-          <label htmlFor="cutoff">Cutoff Time</label>
-          <p>No notifications after:</p>
+          <label htmlFor="cutoff">Sleep Start Time</label>
+          <p>Reminders stop at:</p>
         </div>
         <div className="col">
           <input
@@ -179,7 +174,27 @@ function Reminders({ reminders, update }) {
           />
         </div>
       </div>
-      <button className="btn btn-bablyGreen btn-lg form-control mt-3">Save</button>
+
+      <div className="row mt-3">
+        <div className="col text-start">
+          <label htmlFor="start">Sleep End Time</label>
+          <p>Reminders start at:</p>
+        </div>
+        <div className="col">
+          <input
+            className="form-control"
+            type="time"
+            name="start"
+            id="start"
+            value={formData.start}
+            onChange={handleChange}
+            disabled={!cutoffEnabled || !enabled}
+          />
+        </div>
+      </div>
+      <button className="btn btn-bablyGreen btn-lg form-control mt-3">
+        Save
+      </button>
     </form>
   );
 }

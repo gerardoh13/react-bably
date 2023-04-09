@@ -2,16 +2,22 @@
 const { transporter } = require("../services");
 
 class Email {
-  // static transporter = nodemailer.createTransport({
-  //   // host: "smtp.ethereal.email",
-  //   host: "smtp-relay.sendinblue.com",
-  //   port: 587,
-  //   secure: false, // true for 465, false for other ports
-  //   auth: {
-  //     user: "gerardoh13@gmail.com",
-  //     pass: "YK02S157bwAz8Nm6",
-  //   },
-  // });
+  static async sendInvite(email) {
+    let info = await transporter.sendMail({
+      from: '"Bably Team" <donotreply@bably.com>', // sender address
+      to: email, // list of receivers
+      subject: "Get Started With Bably", // Subject line
+      //   text: "Hello from bably team!", // plain text body
+      html: `<div style="text-align: center;">
+      <h2>Forgot your Password? We've got you covered.</h2>
+      <h3>follow the link below to create an account</h3>
+      <p></p>
+      <a href="http://localhost:3000/reset?token=${token}">reset password</a>
+      </div>`, // html body
+    });
+    console.log("Message sent: %s", info.messageId);
+  }
+
   static async sendPwdReset(email, token) {
     let info = await transporter.sendMail({
       from: '"Bably Team" <donotreply@bably.com>', // sender address
@@ -24,7 +30,6 @@ class Email {
       <a href="http://localhost:3000/reset?token=${token}">reset password</a>
       </div>`, // html body
     });
-
     console.log("Message sent: %s", info.messageId);
   }
 }

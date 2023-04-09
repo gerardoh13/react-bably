@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, NavLink } from "react-router-dom";
 import UserContext from "../users/UserContext";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import Nav from "react-bootstrap/Nav";
@@ -11,8 +11,12 @@ function Navigation({ logout }) {
 
   const loggedOut = (
     <>
-      <Nav.Link href="/login">Login</Nav.Link>
-      <Nav.Link href="/signup">Sign up</Nav.Link>
+      <Nav.Link to="/login" eventKey={4} as={NavLink}>
+        Login
+      </Nav.Link>
+      <Nav.Link to="/signup" eventKey={5} as={NavLink}>
+        Sign up
+      </Nav.Link>
     </>
   );
 
@@ -20,12 +24,20 @@ function Navigation({ logout }) {
     <>
       {currChild ? (
         <>
-          <Nav.Link href="/calendar">Calendar</Nav.Link>
-          <Nav.Link href="/settings">Settings</Nav.Link>
-          <Nav.Link href="/profile">{currChild.firstName}</Nav.Link>
+          <Nav.Link to="/calendar" eventKey={1} as={NavLink}>
+            Calendar
+          </Nav.Link>
+          <Nav.Link to="/settings" eventKey={2} as={NavLink}>
+            Settings
+          </Nav.Link>
+          <Nav.Link to="/profile" eventKey={3} as={NavLink}>
+            {currChild.firstName}
+          </Nav.Link>
         </>
       ) : (
-        <Nav.Link href="/register">Register</Nav.Link>
+        <Nav.Link to="/register" eventKey={6} as={NavLink}>
+          Register
+        </Nav.Link>
       )}
 
       {currUser && currUser.infants.length > 1 ? (
@@ -44,7 +56,9 @@ function Navigation({ logout }) {
 
   return (
     <Navbar collapseOnSelect expand="md" variant="dark">
-      <Navbar.Brand href="/">Bably</Navbar.Brand>
+      <Navbar.Brand to="/" as={Link} className="ms-2">
+        Bably
+      </Navbar.Brand>
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="me-auto" activeKey={location.pathname}>
@@ -52,9 +66,15 @@ function Navigation({ logout }) {
         </Nav>
         <Nav>
           {currUser ? (
-            <Link to="/" onClick={logout} className="nav-link me-4">
+            <Nav.Link
+              to="/"
+              onClick={logout}
+              eventKey={6}
+              as={NavLink}
+              className="me-4"
+            >
               Logout
-            </Link>
+            </Nav.Link>
           ) : null}
         </Nav>
       </Navbar.Collapse>

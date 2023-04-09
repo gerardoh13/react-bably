@@ -14,6 +14,7 @@ function ChildSettings({ infants }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMsgs([])
     let details = await BablyApi.addUser(infant.id, {
       email: email.toLowerCase(),
     });
@@ -21,7 +22,7 @@ function ChildSettings({ infants }) {
     if (details.inviteSent) {
       setMsgs([`'${email}' doesn't have an account, we sent them an invite!`]);
     } else {
-      // setMsgs(["firstName now has access to firstName's profile!"]);
+      setMsgs([`${details.recipient} now has access to ${infant.firstName}${infant.firstName.endsWith("s") ? "'" : "'s"} profile!`]);
     }
     setEmail("");
   };

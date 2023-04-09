@@ -21,8 +21,6 @@ function App() {
   useEffect(() => {
     async function getCurrUser() {
       if (token) {
-        console.log("GETTING USER");
-
         try {
           let { email } = decodeToken(token);
           BablyApi.token = token;
@@ -39,12 +37,11 @@ function App() {
     }
     setLoading(true);
     getCurrUser();
-  }, [token, setChildId, childId]);
+  }, [token, childId, setChildId]);
 
   useEffect(() => {
     async function getCurrChild() {
       if (childId) {
-        console.log("GETTING CHILD");
         try {
           let child = await BablyApi.getCurrChild(childId);
           setCurrChild(child);
@@ -103,7 +100,6 @@ function App() {
   };
   return (
     <div className="App">
-      {/* <PushNotifications /> */}
       <BrowserRouter>
         <UserContext.Provider
           value={{
