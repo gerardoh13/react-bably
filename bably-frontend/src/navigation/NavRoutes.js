@@ -18,7 +18,21 @@ function NavRoutes({ login, signup }) {
 
   return (
     <Routes>
-      <Route exact path="/" element={currUser && currChild ? <Home /> : <HomeAnon />} />
+      <Route
+        exact
+        path="/"
+        element={
+          currUser && currChild ? (
+            <Home />
+          ) : currUser && !currChild ? (
+            <div className="col-lg-4 col-md-5 col-sm-6 col-11">
+              <Register />
+            </div>
+          ) : (
+            <HomeAnon />
+          )
+        }
+      />
       <Route element={<PublicRoutes />}>
         <Route exact path="/login" element={<Login login={login} />} />
         <Route exact path="/signup" element={<Signup signup={signup} />} />
@@ -27,8 +41,16 @@ function NavRoutes({ login, signup }) {
       <Route element={<PrivateRoutes />}>
         <Route exact path="/calendar" element={<Calendar />} />
         <Route exact path="/profile" element={<Profile />} />
-        <Route exact path="/register" element={<Register />} />
         <Route exact path="/settings" element={<Settings />} />
+        {/* <Route
+          exact
+          path="/register"
+          element={
+            <div className="col-lg-4 col-md-5 col-sm-6 col-11 my-auto">
+              <Register />
+            </div>
+          }
+        /> */}
       </Route>
     </Routes>
   );

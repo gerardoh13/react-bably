@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ImageUpload from "../common/ImageUpload";
 
-function StepThree({ data, setFormData, changeStep }) {
+function StepThree({ data, setFormData, changeStep, additionalChild, submit }) {
   const [photoUrl, setPhotoUrl] = useState("");
 
   const uploadSuccess = (error, result) => {
@@ -40,9 +40,9 @@ function StepThree({ data, setFormData, changeStep }) {
         </button>
         <button
           className="btn btn-success mt-3 form-control col"
-          onClick={() => changeStep(1)}
+          onClick={() => (additionalChild ? submit() : changeStep(1))}
         >
-          Next
+          {additionalChild ? "Submit" : "Next"}
         </button>
       </div>
     </div>

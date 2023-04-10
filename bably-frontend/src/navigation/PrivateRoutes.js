@@ -6,10 +6,9 @@ function PrivateRoute() {
   const { currUser, currChild } = useContext(UserContext);
 
   if (!currUser) {
-    console.log("NAVIGATE TO LOGIN")
     return <Navigate to="/login" replace />;
   } else if (currUser && !currChild) {
-    return <Navigate to="/register" replace />;
+    return <Navigate to="/" replace />;
   }
   return <Outlet />;
 }

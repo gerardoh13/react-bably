@@ -8,6 +8,7 @@ const Infant = require("../models/infant");
 const User = require("../models/user");
 const Feed = require("../models/feed");
 const Diaper = require("../models/diaper");
+const Email = require("../models/email");
 const express = require("express");
 const infantNewSchema = require("../schemas/infantNew.json");
 const { BadRequestError } = require("../expressError");
@@ -112,15 +113,16 @@ router.post(
   async function (req, res, next) {
     try {
       const { infant_id } = req.params;
-      const { email } = req.body;
+      const { email, sentBy } = req.body;
       if (await Infant.checkAuthorized(res.locals.user.email, infant_id)) {
         const user = await User.checkIfRegistered(email);
         let details = {};
         if (user) {
           details.recipient = user.firstName;
           details.inviteSent = false;
-          // add user to infants_users table
+          // add user to infants_users table, send email
         } else {
+          await Email.sendInvite(email, sentBy);
           details.inviteSent = true;
           // add email to invites table, send email
         }

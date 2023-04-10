@@ -37,6 +37,8 @@ CREATE TABLE users_infants (
     REFERENCES users ON DELETE CASCADE,
   infant_id INTEGER
     REFERENCES infants ON DELETE CASCADE,
+  user_is_admin BOOLEAN NOT NULL,
+  crud BOOLEAN NOT NULL,
   PRIMARY KEY (user_id, infant_id)
 );
 

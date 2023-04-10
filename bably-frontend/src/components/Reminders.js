@@ -37,7 +37,6 @@ function Reminders({ reminders, update }) {
   const validateStartCutoff = () => {
     const sleepTimeEnd = getDate(formData.start);
     const sleepTimeStart = getDate(formData.cutoff);
-    console.log(sleepTimeEnd, sleepTimeStart)
     if (sleepTimeEnd >= sleepTimeStart)
       setErrs((prev) => [...prev, "Reminders start time must be before end time"]);
     return sleepTimeEnd < sleepTimeStart;
@@ -74,13 +73,13 @@ function Reminders({ reminders, update }) {
       {msgs.length ? <Alerts msgs={msgs} type="primary" /> : null}
       {errs.length ? <Alerts msgs={errs} /> : null}
 
-      <div className="row mt-3">
-        <div className="col-6 text-start">
+      <div className="row">
+        <div className="col-6">
           <p>Enabled</p>
         </div>
         <div className="col-6 form-check form-switch">
           <input
-            className="form-check-input lgSwitch "
+            className="form-check-input lgSwitch"
             type="checkbox"
             role="switch"
             name="enabled"
@@ -95,7 +94,7 @@ function Reminders({ reminders, update }) {
         </span>
       </div>
       <div className="row mt-2">
-        <div className="col-6 text-start">
+        <div className="col-6">
           <br />
           <p>Remind After</p>
         </div>
@@ -136,7 +135,7 @@ function Reminders({ reminders, update }) {
         </div>
       </div>
       <div className="row my-3">
-        <div className="col-6 text-start">
+        <div className="col-6">
           <span>Sleep Time</span>
           <br />
         </div>
@@ -158,7 +157,7 @@ function Reminders({ reminders, update }) {
         </span>
       </div>
       <div className="row mt-3">
-        <div className="col text-start">
+        <div className="col">
           <label htmlFor="cutoff">Sleep Start Time</label>
           <p>Reminders stop at:</p>
         </div>
@@ -176,7 +175,7 @@ function Reminders({ reminders, update }) {
       </div>
 
       <div className="row mt-3">
-        <div className="col text-start">
+        <div className="col">
           <label htmlFor="start">Sleep End Time</label>
           <p>Reminders start at:</p>
         </div>

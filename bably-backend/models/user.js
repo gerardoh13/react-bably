@@ -141,11 +141,13 @@ class User {
     if (!user) throw new NotFoundError(`No user: ${email}`);
 
     const infantsRes = await db.query(
-      `SELECT id,
-              first_name AS "firstName"
-           FROM infants
-           WHERE id IN (SELECT infant_id from users_infants
-            WHERE user_id = $1)`,
+      `SELECT i.id,
+              i.first_name AS "firstName",
+              ui.user_is_admin AS "userIsAdmin",
+              ui.crud
+           FROM infants i
+           JOIN users_infants ui ON i.id = ui.infant_id
+           WHERE ui.user_id = $1`,
       [user.id]
     );
 

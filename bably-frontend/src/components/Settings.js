@@ -5,16 +5,20 @@ import BablyApi from "../api";
 import Reminders from "./Reminders";
 import UserContext from "../users/UserContext";
 import ChildSettings from "./ChildSettings";
+import Register from "../users/Register";
 
 function Settings() {
-  const [key, setKey] = useState("infants");
+  const [key, setKey] = useState("reminders");
   const [reminders, setReminders] = useState(null);
   const [infants, setInfants] = useState(null);
+  const [adminAccess, setAdminAccess] = useState(true)
   const { currUser } = useContext(UserContext);
 
   useEffect(() => {
     setReminders(currUser.reminders);
-    setInfants(currUser.infants);
+    let adminAccessInfants = currUser.infants.filter((i) => i.userIsAdmin);
+    setInfants(adminAccessInfants);
+    if (!adminAccessInfants.length) setAdminAccess(false)
   }, [currUser.reminders, currUser.infants]);
 
   const updateReminders = async (data) => {
@@ -30,17 +34,22 @@ function Settings() {
         onSelect={(k) => setKey(k)}
         className="mb-3"
       >
-        <Tab eventKey="infants" title="Infants">
-          <div className="card-body">
-            {reminders ? <ChildSettings infants={infants} /> : null}
-          </div>
-        </Tab>
         <Tab eventKey="reminders" title="Reminders">
           <div className="card-body">
             {reminders ? (
               <Reminders reminders={reminders} update={updateReminders} />
             ) : null}
           </div>
+        </Tab>
+        {adminAccess ? <Tab eventKey="access" title="Access">
+          <div className="card-body">
+            {reminders ? (
+              <ChildSettings infants={infants} user={currUser} />
+            ) : null}
+          </div>
+        </Tab> : null}
+        <Tab eventKey="register" title="Register Child">
+          <Register additionalChild />
         </Tab>
       </Tabs>
     </div>

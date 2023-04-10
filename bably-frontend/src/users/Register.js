@@ -6,7 +6,7 @@ import UserContext from "../users/UserContext";
 import { useNavigate } from "react-router-dom";
 import "./Register.css";
 
-function Register() {
+function Register({ additionalChild }) {
   const INITIAL_STATE = {
     firstName: "",
     gender: "",
@@ -23,6 +23,7 @@ function Register() {
   };
 
   const submit = async () => {
+    console.log(formData);
     await registerInfant(formData);
     navigate("/");
   };
@@ -62,6 +63,8 @@ function Register() {
           data={formData}
           setFormData={setFormData}
           changeStep={changeStep}
+          additionalChild
+          submit={submit}
         />
       );
       break;
@@ -97,7 +100,7 @@ function Register() {
 
   return (
     <>
-      <div className="card col-lg-4 col-md-5 col-sm-6 col-11 my-auto text-center">
+      <div className="card my-auto text-center">
         <div className="card-body">
           {currStep}
           <div className="row">
@@ -113,11 +116,12 @@ function Register() {
                 }`}
               ></span>
               <span
-                className={`step ${formData.dob ? "finish" : ""} ${
-                  step === 2 ? "active" : ""
-                }`}
+                className={`step ${step === 2 ? "active finish" : ""}`}
               ></span>
-              <span className={`step ${step === 3 ? "active" : ""}`}></span>
+
+              {additionalChild ? null : (
+                <span className={`step ${step === 3 ? "active" : ""}`}></span>
+              )}
             </div>
           </div>
         </div>

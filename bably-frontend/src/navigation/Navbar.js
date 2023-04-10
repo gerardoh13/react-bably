@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { useLocation, Link, NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import UserContext from "../users/UserContext";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import Nav from "react-bootstrap/Nav";
@@ -7,7 +7,6 @@ import Navbar from "react-bootstrap/Navbar";
 
 function Navigation({ logout }) {
   let { currUser, setChildId, currChild } = useContext(UserContext);
-  let location = useLocation();
 
   const loggedOut = (
     <>
@@ -34,11 +33,7 @@ function Navigation({ logout }) {
             {currChild.firstName}
           </Nav.Link>
         </>
-      ) : (
-        <Nav.Link to="/register" eventKey={6} as={NavLink}>
-          Register
-        </Nav.Link>
-      )}
+      ) : null}
 
       {currUser && currUser.infants.length > 1 ? (
         <li className="nav-item dropdown">
@@ -56,14 +51,12 @@ function Navigation({ logout }) {
 
   return (
     <Navbar collapseOnSelect expand="md" variant="dark">
-      <Navbar.Brand to="/" as={Link} className="ms-2">
+      <Nav.Link to="/" eventKey={5} as={Link} className="navbar-brand ms-2">
         Bably
-      </Navbar.Brand>
+      </Nav.Link>
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse id="responsive-navbar-nav">
-        <Nav className="me-auto" activeKey={location.pathname}>
-          {currUser ? loggedIn : loggedOut}
-        </Nav>
+        <Nav className="me-auto">{currUser ? loggedIn : loggedOut}</Nav>
         <Nav>
           {currUser ? (
             <Nav.Link

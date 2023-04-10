@@ -86,7 +86,6 @@ function App() {
   const registerInfant = async (data) => {
     try {
       let newChild = await BablyApi.registerInfant(currUser.id, data);
-      console.log(newChild);
       setChildId(newChild.id);
       setLoading(true);
     } catch (e) {

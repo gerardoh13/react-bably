@@ -112,7 +112,7 @@ function Calendar() {
         confirm={confirmDelete}
         cancel={setToDelete}
       />
-      <div className="col-12 col-sm-8 col-xl-6 col-xxl-5 mt-4 mt-sm-5">
+      <div className="col-12 col-sm-8 col-xl-6 col-xxl-5 mt-4 my-sm-auto">
         <FullCalendar
           plugins={[
             dayGridPlugin,
@@ -127,6 +127,7 @@ function Calendar() {
             }
           }}
           eventClick={async function (info) {
+            if (!currChild.crud) return
             const [type, eventId] = info.event._def.publicId.split("-");
             let event;
             if (type === "feed") {

@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import UserContext from "../users/UserContext";
 import BablyApi from "../api";
 import DiaperForm from "../components/DiaperForm";
@@ -239,19 +240,19 @@ function Home() {
         </div>
 
         <div className="card bablyGreen text-light mb-3">
-          <a className="nav-link" href="/settings">
+          <Link className="nav-link" to="/settings">
             <div className="card-body">
               <h5 className="card-title">Settings</h5>
             </div>
-          </a>
+          </Link>
         </div>
 
         <div className="card bablyColor text-light mb-3">
-          <a className="nav-link" href="/calendar">
+          <Link className="nav-link" to="/calendar">
             <div className="card-body">
               <h5 className="card-title">Calendar</h5>
             </div>
-          </a>
+          </Link>
         </div>
       </div>
     </>

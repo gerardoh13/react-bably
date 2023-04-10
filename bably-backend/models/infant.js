@@ -29,21 +29,26 @@ class Infant {
     await db.query(
       `INSERT INTO users_infants 
             (user_id,
-            infant_id)
-            VALUES ($1, $2)`,
-      [userId, infant.id]
+            infant_id,
+            user_is_admin,
+            crud
+            )
+            VALUES ($1, $2, $3, $4)`,
+      [userId, infant.id, true, true]
     );
     return infant;
   }
 
   static async get(infant_id) {
     const infantRes = await db.query(
-      `SELECT id,
-              first_name AS "firstName",
-              dob,
-              gender,
-              public_id AS "publicId"
-           FROM infants
+      `SELECT i.id,
+              i.first_name AS "firstName",
+              i.dob,
+              i.gender,
+              i.public_id AS "publicId",
+              ui.user_is_admin AS "userIsAdmin",
+              ui.crud
+           FROM infants i JOIN users_infants ui ON i.id = ui.infant_id
            WHERE id = $1`,
       [infant_id]
     );

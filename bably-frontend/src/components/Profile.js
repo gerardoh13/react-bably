@@ -50,12 +50,18 @@ function Profile() {
   };
   return (
     <>
-      <EditChildForm show={showForm} setShow={setShowForm} child={currChild} />
-      <div className="col-11 col-lg-6 col-xxl-5 mt-3 card text-center">
+      {currChild.userIsAdmin ? (
+        <EditChildForm
+          show={showForm}
+          setShow={setShowForm}
+          child={currChild}
+        />
+      ) : null}
+      <div className="col-11 col-lg-6 col-xxl-5 card text-center mt-4 my-sm-auto">
         <div className="card-body">
           <div className="row mt-3">
             {currChild.publicId ? (
-              <div className="col">
+              <div className="col-12 col-sm-6">
                 <img
                   className="profileImg rounded"
                   src={`https://res.cloudinary.com/dolnu62zm/image/upload/${currChild.publicId}`}
@@ -63,7 +69,7 @@ function Profile() {
                 />
               </div>
             ) : null}
-            <div className="col">
+            <div className="col-12 col-sm-6 m-auto">
               <h1 className="card-title">{currChild.firstName}</h1>
               <p>
                 Date of Birth: {new Date(currChild.dob).toLocaleDateString()}
@@ -71,12 +77,15 @@ function Profile() {
               <p>
                 {currChild.firstName} is {prettyAge()} old!
               </p>
-              <button
-                className="btn btn-bablyGreen"
-                onClick={() => setShowForm(true)}
-              >
-                Edit Profile
-              </button>
+
+              {currChild.userIsAdmin ? (
+                <button
+                  className="btn btn-bablyGreen"
+                  onClick={() => setShowForm(true)}
+                >
+                  Edit Profile
+                </button>
+              ) : null}
             </div>
           </div>
 
