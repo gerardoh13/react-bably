@@ -27,19 +27,18 @@ class Infant {
     let infant = result.rows[0];
 
     await db.query(
-      `INSERT INTO users_infants 
+      `INSERT INTO users_infants
             (user_id,
             infant_id,
             user_is_admin,
-            crud
-            )
+            crud)
             VALUES ($1, $2, $3, $4)`,
       [userId, infant.id, true, true]
     );
     return infant;
   }
 
-  static async get(infant_id) {
+  static async get(infantId, userId) {
     const infantRes = await db.query(
       `SELECT i.id,
               i.first_name AS "firstName",
@@ -49,11 +48,11 @@ class Infant {
               ui.user_is_admin AS "userIsAdmin",
               ui.crud
            FROM infants i JOIN users_infants ui ON i.id = ui.infant_id
-           WHERE id = $1`,
-      [infant_id]
+           WHERE i.id = $1 AND ui.user_id = $2`,
+      [infantId, userId]
     );
     const infant = infantRes.rows[0];
-    if (!infant) throw new NotFoundError(`No infant: ${infant_id}`);
+    if (!infant) throw new NotFoundError(`No infant: ${infantId}`);
     return infant;
   }
 
@@ -76,17 +75,29 @@ class Infant {
     return infant;
   }
 
-  static async checkAuthorized(email, infant_id) {
+static async getAuthorizedUsers(infantId, adminId) {
+  const usersRes = await db.query(
+    `SELECT u.id AS "userId",
+            u.first_name as "userName",
+            ui.crud
+            FROM users u
+            JOIN users_infants ui on u.id = ui.user_id
+            WHERE ui.infant_id = $1 AND u.id != $2`, [infantId, adminId]
+  )
+  return usersRes.rows
+}
+
+  static async checkAuthorized(email, infantId) {
     const result = await db.query(
       `SELECT ui.infant_id,
               ui.user_id
       FROM users_infants ui
       JOIN users u ON u.id = ui.user_id
       WHERE u.email = $1 AND ui.infant_id = $2`,
-      [email, infant_id]
+      [email, infantId]
     );
-    if (result.rows[0]) return true;
-    else throw new UnauthorizedError();
+    if (!result.rows[0]) throw new UnauthorizedError();
+    else return true;
   }
 }
 

@@ -2,40 +2,56 @@ import React, { useState, useEffect } from "react";
 import Alerts from "../common/Alerts";
 import Dropdown from "react-bootstrap/Dropdown";
 import BablyApi from "../api";
+import Permissions from "./Permissions";
 
-function ChildSettings({ infants, user }) {
+function AccessSettings({ infants, user }) {
   const [msgs, setMsgs] = useState([]);
   const [infant, setInfant] = useState(null);
   const [email, setEmail] = useState("");
   const [crud, setCrud] = useState(false);
 
   useEffect(() => {
-    if (infants[0]) setInfant(infants[0]);
+    if (infants.length) {
+      setInfant(infants[0]);
+    }
   }, [infants]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMsgs([]);
-    let details = await BablyApi.addUser(infant.id, {
-      email: email.toLowerCase(),
-      sentBy: user.firstName,
-    });
-    console.log(details);
-    if (details.inviteSent) {
-      setMsgs([`'${email}' doesn't have an account, we sent them an invite!`]);
-    } else {
-      setMsgs([
-        `${details.recipient} now has access to ${infant.firstName}${
+    try {
+      let details = await BablyApi.addUser(infant.id, {
+        sentTo: email.toLowerCase(),
+        sentByName: user.firstName,
+        sentById: user.id,
+        infantName: `${infant.firstName}${
           infant.firstName.endsWith("s") ? "'" : "'s"
-        } profile!`,
-      ]);
+        }`,
+        crud: crud,
+      });
+      console.log(details);
+      if (details.inviteSent) {
+        setMsgs([
+          `'${email}' doesn't have an account, we sent them an invite!`,
+        ]);
+      } else {
+        setMsgs([
+          `${details.recipient} now has access to ${infant.firstName}${
+            infant.firstName.endsWith("s") ? "'" : "'s"
+          } profile!`,
+        ]);
+      }
+    } catch (e) {
+      console.log(e);
     }
+
     setEmail("");
   };
 
   const changeChild = (id) => {
-    let child = infants.filter((i) => i.id === id);
-    setInfant(child[0]);
+    let child = infants.filter((i) => i.id === id)[0];
+    console.log(child);
+    setInfant(child);
   };
 
   return (
@@ -43,11 +59,11 @@ function ChildSettings({ infants, user }) {
       {infant ? (
         <>
           <div className="btn-group">
-            <h3 className="me-4">Access settings for {infant.firstName}</h3>
+            <h4 className="me-2 mt-1">Access settings for</h4>
             {infants.length > 1 ? (
               <Dropdown>
-                <Dropdown.Toggle variant="bablyBlue" id="dropdown-basic">
-                  Change Child
+                <Dropdown.Toggle variant="bablyBlue" className="fs-5">
+                  Rafael
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                   {infants.map((i) => (
@@ -61,9 +77,8 @@ function ChildSettings({ infants, user }) {
           </div>
           <form onSubmit={handleSubmit} className="text-center">
             <hr />
-            <span className="my-5 ms-1 fw-bold">
-              Grant access to another user
-            </span>
+            {msgs.length ? <Alerts msgs={msgs} type="primary" /> : null}
+            <span className="fw-bold">Grant access to another user</span>
             <br />
             <span>
               Permissions:{" "}
@@ -95,14 +110,10 @@ function ChildSettings({ infants, user }) {
                 onChange={() => setCrud((prev) => !prev)}
               />
               <label className="btn btn-outline-secondary" htmlFor="caregiver">
-                Caregiver
+                Guardian
               </label>
             </div>
-
-            <div className="text-center mt-2">
-              {msgs.length ? <Alerts msgs={msgs} type="primary" /> : null}
-            </div>
-            <div className="input-group input-group-lg mb-3">
+            <div className="input-group mb-3">
               <input
                 className="form-control"
                 type="email"
@@ -115,14 +126,17 @@ function ChildSettings({ infants, user }) {
               <button className="btn btn-bablyGreen">Send</button>
             </div>
           </form>
+          {infant.users.length ? <Permissions infant={infant} /> : null}
         </>
       ) : (
         <>
-          <h3 className="text-center">These settings are restricted to admin users</h3>
+          <h3 className="text-center">
+            These settings are restricted to admin users
+          </h3>
         </>
       )}
     </>
   );
 }
 
-export default ChildSettings;
+export default AccessSettings;

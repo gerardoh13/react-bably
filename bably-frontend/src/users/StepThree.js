@@ -33,13 +33,13 @@ function StepThree({ data, setFormData, changeStep, additionalChild, submit }) {
       ) : null}
       <div className="row">
         <button
-          className="btn btn-success mt-3 me-2 form-control col"
+          className="btn btn-bablyGreen mt-3 me-2 form-control col"
           onClick={() => changeStep(-1)}
         >
           Previous
         </button>
         <button
-          className="btn btn-success mt-3 form-control col"
+          className="btn btn-bablyGreen mt-3 form-control col"
           onClick={() => (additionalChild ? submit() : changeStep(1))}
         >
           {additionalChild ? "Submit" : "Next"}

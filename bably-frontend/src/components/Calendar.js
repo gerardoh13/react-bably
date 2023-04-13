@@ -7,9 +7,9 @@ import interactionPlugin from "@fullcalendar/interaction";
 import listPlugin from "@fullcalendar/list";
 import BablyApi from "../api";
 import UserContext from "../users/UserContext";
-import FeedForm from "./FeedForm";
-import DiaperForm from "./DiaperForm";
-import ConfirmModal from "./ConfirmModal";
+import FeedForm from "../common/FeedForm";
+import DiaperForm from "../common/DiaperForm";
+import ConfirmModal from "../common/ConfirmModal";
 import "./Calendar.css";
 
 function Calendar() {

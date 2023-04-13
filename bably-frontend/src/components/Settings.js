@@ -4,21 +4,33 @@ import Tabs from "react-bootstrap/Tabs";
 import BablyApi from "../api";
 import Reminders from "./Reminders";
 import UserContext from "../users/UserContext";
-import ChildSettings from "./ChildSettings";
+import ChildSettings from "./AccessSettings";
 import Register from "../users/Register";
 
 function Settings() {
   const [key, setKey] = useState("reminders");
   const [reminders, setReminders] = useState(null);
-  const [infants, setInfants] = useState(null);
-  const [adminAccess, setAdminAccess] = useState(true)
+  const [infants, setInfants] = useState([]);
+  const [adminAccess, setAdminAccess] = useState(true);
   const { currUser } = useContext(UserContext);
 
   useEffect(() => {
+    async function getAuthUsers() {
+      let adminAccessInfants = currUser.infants.filter((i) => i.userIsAdmin);
+      if (!adminAccessInfants.length) {
+        setAdminAccess(false);
+        return;
+      }
+      adminAccessInfants = await Promise.all(
+        adminAccessInfants.map(async (i) => {
+          i.users = await BablyApi.getAuthorizedUsers(i.id);
+          return i;
+        })
+      );
+      setInfants(adminAccessInfants);
+    }
     setReminders(currUser.reminders);
-    let adminAccessInfants = currUser.infants.filter((i) => i.userIsAdmin);
-    setInfants(adminAccessInfants);
-    if (!adminAccessInfants.length) setAdminAccess(false)
+    getAuthUsers();
   }, [currUser.reminders, currUser.infants]);
 
   const updateReminders = async (data) => {
@@ -27,7 +39,7 @@ function Settings() {
   };
 
   return (
-    <div className="card col-11 col-lg-6 col-xxl-5 my-auto">
+    <div className="card col-12 col-lg-6 col-xxl-5 my-auto">
       <Tabs
         id="controlled-tab-example"
         activeKey={key}
@@ -41,13 +53,15 @@ function Settings() {
             ) : null}
           </div>
         </Tab>
-        {adminAccess ? <Tab eventKey="access" title="Access">
-          <div className="card-body">
-            {reminders ? (
-              <ChildSettings infants={infants} user={currUser} />
-            ) : null}
-          </div>
-        </Tab> : null}
+        {adminAccess ? (
+          <Tab eventKey="access" title="Access">
+            <div className="card-body">
+              {reminders ? (
+                <ChildSettings infants={infants} user={currUser} />
+              ) : null}
+            </div>
+          </Tab>
+        ) : null}
         <Tab eventKey="register" title="Register Child">
           <Register additionalChild />
         </Tab>

@@ -96,6 +96,10 @@ class BablyApi {
     return res.details;
   }
 
+  static async getAuthorizedUsers(infant_id) {
+    let res = await this.request(`infants/auth-users/${infant_id}`);
+    return res.users;
+  }
   // ------------------FEEDS-----------------------
   static async addFeed(data) {
     let res = await this.request("feeds", data, "post");

@@ -25,7 +25,7 @@ function FeedTable({ feeds, toDateStr }) {
             <th className="wThird" scope="col">oz/Mins</th>
           </tr>
         </thead>
-        <tbody id="table">
+        <tbody>
           {createRows(feeds.slice(0, 3))}
           {feeds.length > 3 ? (
             <>

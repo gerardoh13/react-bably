@@ -36,7 +36,7 @@ function StepOne({ data, handleChange, changeStep }) {
         required
         onChange={handleChange}
       />
-      <label className="btn btn-outline-dark me-2" htmlFor="boy">
+      <label className="btn btn-outline-secondary me-2" htmlFor="boy">
         <i className="bi bi-gender-male"></i> Boy
       </label>
       <input
@@ -49,11 +49,11 @@ function StepOne({ data, handleChange, changeStep }) {
         value="female"
         onChange={handleChange}
       />
-      <label className="btn btn-outline-dark" htmlFor="girl">
+      <label className="btn btn-outline-secondary" htmlFor="girl">
         <i className="bi bi-gender-female"></i> Girl
       </label>
       <div className="invalid-feedback">Please select your child's gender.</div>
-      <button className="btn btn-success mt-3 form-control">Next</button>
+      <button className="btn btn-bablyGreen mt-3 form-control">Next</button>
     </form>
   );
 }

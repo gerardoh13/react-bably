@@ -46,7 +46,7 @@ router.get("/:infant_id", ensureLoggedIn, async function (req, res, next) {
   const { infant_id } = req.params;
   try {
     if (await Infant.checkAuthorized(res.locals.user.email, infant_id)) {
-      const infant = await Infant.get(infant_id);
+      const infant = await Infant.get(infant_id, res.locals.user.id);
       return res.json({ infant });
     }
   } catch (err) {
@@ -103,6 +103,25 @@ router.get(
       }
     } catch (err) {
       return next(err);
+    }98
+  }
+);
+
+router.get(
+  "/auth-users/:infant_id",
+  ensureLoggedIn,
+  async function (req, res, next) {
+    try {
+      const { infant_id } = req.params;
+      if (await Infant.checkAuthorized(res.locals.user.email, infant_id)) {
+        const users = await Infant.getAuthorizedUsers(
+          infant_id,
+          res.locals.user.id
+        );
+        return res.json({ users });
+      }
+    } catch (err) {
+      return next(err);
     }
   }
 );
@@ -113,16 +132,17 @@ router.post(
   async function (req, res, next) {
     try {
       const { infant_id } = req.params;
-      const { email, sentBy } = req.body;
+      const { sentTo, sentByName, sentById, crud, infantName } = req.body;
       if (await Infant.checkAuthorized(res.locals.user.email, infant_id)) {
-        const user = await User.checkIfRegistered(email);
+        const user = await User.checkIfRegistered(sentTo);
         let details = {};
         if (user) {
           details.recipient = user.firstName;
           details.inviteSent = false;
           // add user to infants_users table, send email
         } else {
-          await Email.sendInvite(email, sentBy);
+          await Email.sendInvite(sentTo, sentByName, infantName);
+          await User.addInvitation(sentById, infant_id, crud, sentTo);
           details.inviteSent = true;
           // add email to invites table, send email
         }

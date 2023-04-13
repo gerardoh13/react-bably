@@ -80,6 +80,27 @@ class User {
 
     const user = result.rows[0];
 
+    const invitationCheck = await db.query(
+      `SELECT infant_id,
+              crud
+              FROM invitations
+          WHERE sent_to = $1`,
+      [email]
+    );
+
+    const invitation = invitationCheck.rows[0];
+
+    if (invitation) {
+      await db.query(
+        `INSERT INTO users_infants
+          (user_id,
+          infant_id,
+          user_is_admin,
+          crud)
+          VALUES ($1, $2, $3, $4)`,
+        [user.id, invitation.infant_id, false, invitation.crud]
+      );
+    }
     await db.query(
       `INSERT INTO reminders
               (user_id)
@@ -118,7 +139,20 @@ class User {
 
     return user;
   }
-  /** Given a username, return data about user.
+
+  static async addInvitation(sentBy, infant_id, crud, sentTo) {
+    await db.query(
+      `INSERT INTO invitations
+               (sent_by,
+                infant_id,
+                crud,
+                sent_to)
+                VALUES ($1, $2, $3, $4)`,
+      [sentBy, infant_id, crud, sentTo]
+    );
+  }
+
+  /** Given an email, return data about user.
    *
    * Returns { username, first_name, last_name, is_admin, jobs }
    *   where jobs is { id, title, company_handle, company_name, state }

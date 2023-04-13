@@ -2,7 +2,7 @@
 const { transporter } = require("../services");
 
 class Email {
-  static async sendInvite(email, sentBy) {
+  static async sendInvite(email, sentBy, infantName) {
     let info = await transporter.sendMail({
       from: '"Bably Team" <donotreply@bably.com>', // sender address
       to: email, // list of receivers
@@ -10,8 +10,8 @@ class Email {
       //   text: "Hello from bably team!", // plain text body
       html: `<div style="text-align: center;">
       <h2>${sentBy} has invited you to join Bably</h2>
-      <h3>follow the link below to create an account</h3>
-      <p></p>
+      <p>${sentBy} has shared access to ${infantName} profile</p>
+      <p>follow the link below to create an account</p>
       <a href="http://localhost:3000">create an account</a>
       </div>`, // html body
     });

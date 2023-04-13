@@ -38,7 +38,10 @@ function Reminders({ reminders, update }) {
     const sleepTimeEnd = getDate(formData.start);
     const sleepTimeStart = getDate(formData.cutoff);
     if (sleepTimeEnd >= sleepTimeStart)
-      setErrs((prev) => [...prev, "Reminders start time must be before end time"]);
+      setErrs((prev) => [
+        ...prev,
+        "Sleep start time must be later than end time",
+      ]);
     return sleepTimeEnd < sleepTimeStart;
   };
 
@@ -75,7 +78,7 @@ function Reminders({ reminders, update }) {
 
       <div className="row">
         <div className="col-6">
-          <p>Enabled</p>
+          <p>Reminders</p>
         </div>
         <div className="col-6 form-check form-switch">
           <input
@@ -89,8 +92,8 @@ function Reminders({ reminders, update }) {
         </div>
         <span className="my-1">
           {enabled
-            ? `Disable to stop notifcations after each new feed`
-            : "Enable to receive a reminder each new feed"}
+            ? `Disable to stop reminders after new feeds`
+            : "Enable to receive reminders after new feeds"}
         </span>
       </div>
       <div className="row mt-2">
@@ -152,7 +155,9 @@ function Reminders({ reminders, update }) {
         </div>
         <span className="my-1">
           {cutoffEnabled
-            ? `Reminders muted from ${toLocalTime(formData.cutoff)} to ${toLocalTime(formData.start)}`
+            ? `Reminders muted from ${toLocalTime(
+                formData.cutoff
+              )} to ${toLocalTime(formData.start)}`
             : "Enable to stop reminders during sleep time"}
         </span>
       </div>

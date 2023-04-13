@@ -144,7 +144,7 @@ function ResetPwd() {
           <form onSubmit={handleSubmitRequest}>
             {!msgs.length ? (
               <>
-                <div className="form-floating my-4">
+            <div className="input-group my-4">
                   <input
                     className="form-control"
                     type="email"
@@ -156,9 +156,9 @@ function ResetPwd() {
                     autoComplete="email"
                     onChange={(e) => setEmail(e.target.value)}
                   />
-                  <label htmlFor="email">Email:</label>
+                  <button className="btn btn-primary">Submit</button>
+
                 </div>
-                <button className="btn btn-primary form-control">Submit</button>
               </>
             ) : null}
           </form>

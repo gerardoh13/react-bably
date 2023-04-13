@@ -2,11 +2,11 @@ import React, { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import UserContext from "../users/UserContext";
 import BablyApi from "../api";
-import DiaperForm from "../components/DiaperForm";
-import FeedForm from "../components/FeedForm";
-import FeedTable from "../components/FeedTable";
-import SummaryCards from "../components/SummaryCards";
-import DiaperTable from "../components/DiaperTable";
+import DiaperForm from "../common/DiaperForm";
+import FeedForm from "../common/FeedForm";
+import FeedTable from "./FeedTable";
+import SummaryCards from "./SummaryCards";
+import DiaperTable from "./DiaperTable";
 import { startBeams } from "../common/PushNotifications";
 function Home() {
   const [feeds, setFeeds] = useState([]);

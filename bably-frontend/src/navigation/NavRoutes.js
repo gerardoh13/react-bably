@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { Routes, Route } from "react-router-dom";
 import HomeAnon from "../common/HomeAnon";
-import Home from "../common/Home";
+import Home from "../components/Home";
 import Login from "../users/Login";
 import Signup from "../users/Signup";
 import PrivateRoutes from "./PrivateRoutes";

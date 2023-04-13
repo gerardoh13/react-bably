@@ -42,6 +42,16 @@ CREATE TABLE users_infants (
   PRIMARY KEY (user_id, infant_id)
 );
 
+CREATE TABLE invitations (
+  sent_by INTEGER
+    REFERENCES users ON DELETE CASCADE,
+  infant_id INTEGER
+    REFERENCES infants ON DELETE CASCADE,
+  crud BOOLEAN NOT NULL,
+  sent_to TEXT NOT NULL CHECK (position('@' IN sent_to) > 1),
+  PRIMARY KEY (sent_by, sent_to)
+);
+
 CREATE TABLE reminders (
   id SERIAL PRIMARY KEY,
   enabled BOOLEAN NOT NULL DEFAULT FALSE,
