@@ -1,5 +1,6 @@
 "use strict";
 const { transporter } = require("../services");
+const { REACT_APP_HOST } = require("../config");
 
 class Email {
   static async sendInvite(email, sentBy, infantName) {
@@ -12,7 +13,7 @@ class Email {
       <h2>${sentBy} has invited you to join Bably</h2>
       <p>${sentBy} has shared access to ${infantName} profile</p>
       <p>follow the link below to create an account</p>
-      <a href="http://localhost:3000">create an account</a>
+      <a href=${REACT_APP_HOST}>create an account</a>
       </div>`, // html body
     });
     console.log("Message sent: %s", info.messageId);
@@ -26,7 +27,7 @@ class Email {
       html: `<div style="text-align: center;">
       <h1>Forgot your Password? We've got you covered.</h1>
       <h3>follow the link below to reset your password</h3>
-      <a href="http://localhost:3000/reset?token=${token}">reset password</a>
+      <a href="${REACT_APP_HOST}/reset?token=${token}">reset password</a>
       </div>`, // html body
     });
     console.log("Message sent: %s", info.messageId);
