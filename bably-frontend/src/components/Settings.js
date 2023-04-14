@@ -39,7 +39,7 @@ function Settings() {
   };
 
   return (
-    <div className="card col-12 col-lg-6 col-xxl-5 my-auto">
+    <div className="card col-12 col-md-6 col-xxl-5 my-auto">
       <Tabs
         id="controlled-tab-example"
         activeKey={key}

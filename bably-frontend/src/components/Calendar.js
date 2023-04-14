@@ -156,7 +156,7 @@ function Calendar() {
               allDaySlot: false,
             },
           }}
-          dayMaxEvents={2}
+          // dayMaxEvents={3}
           slotEventOverlap={false}
           events={{
             events: function (info) {

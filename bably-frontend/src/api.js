@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:3001";
+const BASE_URL = process.env.REACT_APP_BASE_URL || "http://" + window.location.hostname + ":3001";
 
 /** API Class.
  *
@@ -90,7 +90,7 @@ class BablyApi {
     let res = await this.request(`infants/${infant_id}`, data, "patch");
     return res.infant;
   }
-  
+
   static async addUser(infant_id, data) {
     let res = await this.request(`infants/add-user/${infant_id}`, data, "post");
     return res.details;

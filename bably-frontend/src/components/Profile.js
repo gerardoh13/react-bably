@@ -57,7 +57,7 @@ function Profile() {
           child={currChild}
         />
       ) : null}
-      <div className="col-11 col-lg-6 col-xxl-5 card text-center mt-4 my-sm-auto">
+      <div className="col-11 col-md-6 col-xxl-5 card text-center mt-4 my-sm-auto">
         <div className="card-body">
           <div className="row mt-3">
             {currChild.publicId ? (

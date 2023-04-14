@@ -58,12 +58,12 @@ function AccessSettings({ infants, user }) {
     <>
       {infant ? (
         <>
-          <div className="btn-group">
-            <h4 className="me-2 mt-1">Access settings for</h4>
+          <div className="d-flex justify-content-center">
+            <h4 className="me-2 mt-1 text-center">Access settings for</h4>
             {infants.length > 1 ? (
               <Dropdown>
                 <Dropdown.Toggle variant="bablyBlue" className="fs-5">
-                  Rafael
+                  {infant.firstName}
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                   {infants.map((i) => (

@@ -38,8 +38,8 @@ function Navigation({ logout }) {
       {currUser && currUser.infants.length > 1 ? (
         <li className="nav-item dropdown">
           <NavDropdown id="nav-dropdown-dark-example" title="Change Profile">
-            {currUser.infants.map((c) => (
-              <NavDropdown.Item key={c.id} onClick={() => setChildId(c.id)}>
+            {currUser.infants.map((c, i) => (
+              <NavDropdown.Item key={c.id} eventKey={i * 6} onClick={() => setChildId(c.id)}>
                 {c.firstName}
               </NavDropdown.Item>
             ))}
@@ -51,12 +51,14 @@ function Navigation({ logout }) {
 
   return (
     <Navbar collapseOnSelect expand="md" variant="dark">
-      <Nav.Link to="/" eventKey={5} as={Link} className="navbar-brand ms-2">
+      <Nav.Link to="/" eventKey={6} as={Link} className="navbar-brand ms-2">
         Bably
       </Nav.Link>
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse id="responsive-navbar-nav">
-        <Nav className="me-auto">{currUser ? loggedIn : loggedOut}</Nav>
+        <Nav className="me-auto"
+              activeKey="/"
+        >{currUser ? loggedIn : loggedOut}</Nav>
         <Nav>
           {currUser ? (
             <Nav.Link

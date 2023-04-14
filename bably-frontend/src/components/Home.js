@@ -178,8 +178,8 @@ function Home() {
         setShow={setShowFeedForm}
         submit={addFeed}
       />
-      <div className="my-auto col-11 col-lg-6 col-xxl-5 text-center text-light">
-        <h1 className="mb-4">
+      <div className="my-auto col-11 col-md-6 col-xxl-5 text-center text-light">
+        <h1 className="my-4">
           {currChild.firstName}
           {currChild.firstName.endsWith("s") ? "'" : "'s"} Daily Activity
         </h1>
