@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
 import Alerts from "../common/Alerts";
 
-function Signup({ signup }) {
+function Signup({ signup, setCurrPage }) {
   const INITIAL_STATE = {
     firstName: "",
     email: "",
@@ -12,7 +11,6 @@ function Signup({ signup }) {
 
   const [formData, setFormData] = useState(INITIAL_STATE);
   const [errors, setErrors] = useState([]);
-  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,7 +19,6 @@ function Signup({ signup }) {
     let response = await signup(formattedData);
     if (response.success) {
       setFormData(INITIAL_STATE);
-      navigate("/");
     } else {
       setErrors(response.errors);
     }
@@ -55,9 +52,9 @@ function Signup({ signup }) {
   };
 
   return (
-    <div className="card col-lg-4 col-md-5 col-sm-6 col-11 my-auto">
+    <div className="card col-lg-4 col-md-5 col-sm-6 col-11">
       <div className="card-body">
-        <h5 className="card-title">Sign up</h5>
+        <h5 className="card-title">Get started with Bably today!</h5>
         {errors.length ? <Alerts msgs={errors} /> : null}
         <form onSubmit={handleSubmit}>
           <div className="form-floating my-3">
@@ -121,8 +118,13 @@ function Signup({ signup }) {
         </form>
         <p className="text-center mt-2">
           Have an account?
-          <span className="ms-1">
-            <Link to="/login">Login</Link>
+          <span>
+            <button
+              className="btn btn-link"
+              onClick={() => setCurrPage("login")}
+            >
+              Login
+            </button>
           </span>
         </p>
       </div>

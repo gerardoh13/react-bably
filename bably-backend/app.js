@@ -10,7 +10,6 @@ const usersRoutes = require("./routes/users");
 const infantRoutes = require("./routes/infants");
 const feedRoutes = require("./routes/feeds");
 const diaperRoutes = require("./routes/diapers");
-const { pushNotifications } = require("./services");
 
 const app = express();
 

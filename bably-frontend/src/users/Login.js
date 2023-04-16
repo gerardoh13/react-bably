@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Alerts from "../common/Alerts";
 
-function Login({ login }) {
+function Login({ login, setCurrPage }) {
   const INITIAL_STATE = {
     email: "",
     password: "",
@@ -10,15 +10,13 @@ function Login({ login }) {
 
   const [formData, setFormData] = useState(INITIAL_STATE);
   const [errors, setErrors] = useState([]);
-  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors([]);
     let response = await login(formData);
-    setFormData(INITIAL_STATE);
     if (response.valid) {
-      navigate("/");
+      setFormData(INITIAL_STATE);
     } else setErrors(response.errors);
   };
 
@@ -31,9 +29,9 @@ function Login({ login }) {
   };
 
   return (
-    <div className="card col-lg-4 col-md-5 col-sm-6 col-11 my-auto">
+    <div className="card col-lg-4 col-md-5 col-sm-6 col-11">
       <div className="card-body">
-        <h5 className="card-title">Login</h5>
+        <h5 className="card-title">Welcome Back!</h5>
         {errors.length ? <Alerts msgs={errors} /> : null}
         <form onSubmit={handleSubmit}>
           <div className="form-floating my-4">
@@ -68,8 +66,13 @@ function Login({ login }) {
         </form>
         <p className="text-center mt-2">
           New to Bably?
-          <span className="ms-1">
-            <Link to="/signup">Sign up</Link>
+          <span>
+            <button
+              className="btn btn-link"
+              onClick={() => setCurrPage("signup")}
+            >
+              Sign up
+            </button>
           </span>
         </p>
         <p className="text-center mt-2">

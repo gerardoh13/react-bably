@@ -65,9 +65,9 @@ function Home() {
     let newFeed = await BablyApi.addFeed(feed);
     const { lastMidnight, nextMidnight } = getMidnights();
     let newFeedTime = parseInt(newFeed.fed_at);
+    let latestFeedTime = feeds.length ? feeds[0].fed_at : 0;
+    handleNotifications(newFeedTime, latestFeedTime);
     if (newFeedTime > lastMidnight && newFeedTime < nextMidnight) {
-      let latestFeedTime = feeds.length ? feeds[0].fed_at : 0;
-      handleNotifications(newFeedTime, latestFeedTime);
       pushAndSortFeeds(newFeed);
     }
   };

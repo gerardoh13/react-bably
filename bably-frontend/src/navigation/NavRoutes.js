@@ -1,9 +1,7 @@
 import React, { useContext } from "react";
 import { Routes, Route } from "react-router-dom";
-import HomeAnon from "../common/HomeAnon";
+import HomeAnon from "../components/HomeAnon";
 import Home from "../components/Home";
-import Login from "../users/Login";
-import Signup from "../users/Signup";
 import PrivateRoutes from "./PrivateRoutes";
 import PublicRoutes from "./PublicRoutes";
 import Register from "../users/Register";
@@ -25,32 +23,37 @@ function NavRoutes({ login, signup }) {
           currUser && currChild ? (
             <Home />
           ) : currUser && !currChild ? (
-            <div className="col-lg-4 col-md-5 col-sm-6 col-11">
+            <div className="col-11 col-sm-8 col-md-6 col-lg-5 col-xl-4 my-auto">
+              <h2 className="text-center text-light">
+                Welcome {currUser.firstName}!
+              </h2>
+              <p className="text-center text-light">
+                <span>
+                  if you're using Bably with an existing child account
+                </span>
+                <br />
+                <span>
+                  contact the primary user and request access.
+                </span>
+                <br />
+                <span>
+                  Otherwise, please fill out the form below.
+                </span>
+              </p>
               <Register />
             </div>
           ) : (
-            <HomeAnon />
+            <HomeAnon login={login} signup={signup} />
           )
         }
       />
       <Route element={<PublicRoutes />}>
-        <Route exact path="/login" element={<Login login={login} />} />
-        <Route exact path="/signup" element={<Signup signup={signup} />} />
         <Route exact path="/reset" element={<ResetPwd />} />
       </Route>
       <Route element={<PrivateRoutes />}>
         <Route exact path="/calendar" element={<Calendar />} />
         <Route exact path="/profile" element={<Profile />} />
         <Route exact path="/settings" element={<Settings />} />
-        {/* <Route
-          exact
-          path="/register"
-          element={
-            <div className="col-lg-4 col-md-5 col-sm-6 col-11 my-auto">
-              <Register />
-            </div>
-          }
-        /> */}
       </Route>
     </Routes>
   );

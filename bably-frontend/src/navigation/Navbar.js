@@ -8,17 +8,6 @@ import Navbar from "react-bootstrap/Navbar";
 function Navigation({ logout }) {
   let { currUser, setChildId, currChild } = useContext(UserContext);
 
-  const loggedOut = (
-    <>
-      <Nav.Link to="/login" eventKey={4} as={NavLink}>
-        Login
-      </Nav.Link>
-      <Nav.Link to="/signup" eventKey={5} as={NavLink}>
-        Sign up
-      </Nav.Link>
-    </>
-  );
-
   const loggedIn = (
     <>
       {currChild ? (
@@ -39,7 +28,11 @@ function Navigation({ logout }) {
         <li className="nav-item dropdown">
           <NavDropdown id="nav-dropdown-dark-example" title="Change Profile">
             {currUser.infants.map((c, i) => (
-              <NavDropdown.Item key={c.id} eventKey={i * 6} onClick={() => setChildId(c.id)}>
+              <NavDropdown.Item
+                key={c.id}
+                eventKey={i * 6}
+                onClick={() => setChildId(c.id)}
+              >
                 {c.firstName}
               </NavDropdown.Item>
             ))}
@@ -56,9 +49,9 @@ function Navigation({ logout }) {
       </Nav.Link>
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse id="responsive-navbar-nav">
-        <Nav className="me-auto"
-              activeKey="/"
-        >{currUser ? loggedIn : loggedOut}</Nav>
+        <Nav className="me-auto" activeKey="/">
+          {currUser ? loggedIn : null}
+        </Nav>
         <Nav>
           {currUser ? (
             <Nav.Link

@@ -1,16 +1,35 @@
-// const PushNotifications = require("@pusher/push-notifications-server");
 const schedule = require("node-schedule");
 const { pushNotifications } = require("../services");
+const db = require("../db");
 
 class Notification {
-
-  static send() {
+  static async sendNotification(userId, infantId, type) {
+    const adminAndChild = await db.query(
+      `
+      SELECT u.email,
+             i.first_name AS "childName"
+      FROM users u JOIN users_infants ui ON u.id = ui.user_id
+      JOIN infants i ON i.id = ui.infant_id
+      WHERE ui.infant_id = $1 AND ui.user_is_admin = true`,
+      [infantId]
+    );
+    const nonAdminUser = await db.query(
+      `
+      SELECT u.first_name AS "name"
+      FROM users u JOIN users_infants ui ON u.id = ui.user_id
+      WHERE ui.infant_id = $1 AND ui.user_id = $2`,
+      [infantId, userId]
+    );
+    const msg =
+      type === "feed"
+        ? `${nonAdminUser.rows[0].name} logged a new feed for ${adminAndChild.rows[0].childName}`
+        : `${nonAdminUser.rows[0].name} logged a new diaper change for ${adminAndChild.rows[0].childName}`;
     pushNotifications
-      .publishToInterests(["hello"], {
+      .publishToUsers([adminAndChild.rows[0].email], {
         web: {
           notification: {
-            title: "Hello",
-            body: "Hello, world!",
+            title: `New ${type} logged.`,
+            body: msg,
           },
         },
       })

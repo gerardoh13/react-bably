@@ -42,11 +42,15 @@ router.post(
   }
 );
 
-router.get("/:infant_id", ensureLoggedIn, async function (req, res, next) {
-  const { infant_id } = req.params;
+router.get("/:infantId", ensureLoggedIn, async function (req, res, next) {
+  const { infantId } = req.params;
   try {
-    if (await Infant.checkAuthorized(res.locals.user.email, infant_id)) {
-      const infant = await Infant.get(infant_id, res.locals.user.id);
+    const userAccess = await Infant.checkAuthorized(
+      res.locals.user.email,
+      infantId
+    );
+    if (userAccess) {
+      const infant = await Infant.get(infantId, res.locals.user.id);
       return res.json({ infant });
     }
   } catch (err) {
@@ -54,16 +58,24 @@ router.get("/:infant_id", ensureLoggedIn, async function (req, res, next) {
   }
 });
 
-router.patch("/:infant_id/", ensureLoggedIn, async function (req, res, next) {
-  const { infant_id } = req.params;
+router.patch("/:infantId/", ensureLoggedIn, async function (req, res, next) {
+  const { infantId } = req.params;
   try {
     const validator = jsonschema.validate(req.body, infantNewSchema);
     if (!validator.valid) {
       const errs = validator.errors.map((e) => e.stack);
       throw new BadRequestError(errs);
     }
-    if (await Infant.checkAuthorized(res.locals.user.email, infant_id)) {
-      const infant = await Infant.update(infant_id, req.body);
+    const userAccess = await Infant.checkAuthorized(
+      res.locals.user.email,
+      infantId
+    );
+    if (userAccess.userIsAdmin) {
+      const infant = await Infant.update(
+        infantId,
+        req.body,
+        res.locals.user.id
+      );
       return res.json({ infant });
     }
   } catch (err) {
@@ -72,15 +84,19 @@ router.patch("/:infant_id/", ensureLoggedIn, async function (req, res, next) {
 });
 
 router.get(
-  "/events/:infant_id/:start/:end",
+  "/events/:infantId/:start/:end",
   ensureLoggedIn,
   async function (req, res, next) {
-    const { infant_id, start, end } = req.params;
+    const { infantId, start, end } = req.params;
     try {
-      if (await Infant.checkAuthorized(res.locals.user.email, infant_id)) {
+      const userAccess = await Infant.checkAuthorized(
+        res.locals.user.email,
+        infantId
+      );
+      if (userAccess) {
         let events = {};
-        events.feeds = await Feed.getEvents(infant_id, start, end);
-        events.diapers = await Diaper.getEvents(infant_id, start, end);
+        events.feeds = await Feed.getEvents(infantId, start, end);
+        events.diapers = await Diaper.getEvents(infantId, start, end);
         return res.json({ events });
       }
     } catch (err) {
@@ -90,32 +106,41 @@ router.get(
 );
 
 router.get(
-  "/today/:infant_id/:start/:end",
+  "/today/:infantId/:start/:end",
   ensureLoggedIn,
   async function (req, res, next) {
-    const { infant_id, start, end } = req.params;
+    const { infantId, start, end } = req.params;
     try {
-      if (await Infant.checkAuthorized(res.locals.user.email, infant_id)) {
+      const userAccess = await Infant.checkAuthorized(
+        res.locals.user.email,
+        infantId
+      );
+      if (userAccess) {
         let today = {};
-        today.feeds = await Feed.getTodays(infant_id, start, end);
-        today.diapers = await Diaper.getTodays(infant_id, start, end);
+        today.feeds = await Feed.getTodays(infantId, start, end);
+        today.diapers = await Diaper.getTodays(infantId, start, end);
         return res.json({ today });
       }
     } catch (err) {
       return next(err);
-    }98
+    }
+    98;
   }
 );
 
 router.get(
-  "/auth-users/:infant_id",
+  "/auth-users/:infantId",
   ensureLoggedIn,
   async function (req, res, next) {
+    const { infantId } = req.params;
     try {
-      const { infant_id } = req.params;
-      if (await Infant.checkAuthorized(res.locals.user.email, infant_id)) {
+      const userAccess = await Infant.checkAuthorized(
+        res.locals.user.email,
+        infantId
+      );
+      if (userAccess) {
         const users = await Infant.getAuthorizedUsers(
-          infant_id,
+          infantId,
           res.locals.user.id
         );
         return res.json({ users });
@@ -127,24 +152,36 @@ router.get(
 );
 
 router.post(
-  "/add-user/:infant_id",
+  "/add-user/:infantId",
   ensureLoggedIn,
   async function (req, res, next) {
     try {
-      const { infant_id } = req.params;
-      const { sentTo, sentByName, sentById, crud, infantName } = req.body;
-      if (await Infant.checkAuthorized(res.locals.user.email, infant_id)) {
+      const { infantId } = req.params;
+      const { sentTo, sentByName, sentById, crud, infantName } =
+        req.body;
+      const userAccess = await Infant.checkAuthorized(
+        res.locals.user.email,
+        infantId
+      );
+      if (userAccess.userIsAdmin) {
         const user = await User.checkIfRegistered(sentTo);
         let details = {};
         if (user) {
           details.recipient = user.firstName;
           details.inviteSent = false;
-          // add user to infants_users table, send email
+          // send email
+          const addedtoTable = await Infant.addAuthorizedUser(
+            user.id,
+            infantId,
+            crud
+          );
+          if (!addedtoTable) {
+            details.previouslyAdded = true;
+          }
         } else {
+          await User.addInvitation(sentById, infantId, crud, sentTo);
           await Email.sendInvite(sentTo, sentByName, infantName);
-          await User.addInvitation(sentById, infant_id, crud, sentTo);
           details.inviteSent = true;
-          // add email to invites table, send email
         }
         return res.json({ details });
       }

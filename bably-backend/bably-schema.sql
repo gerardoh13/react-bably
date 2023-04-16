@@ -2,7 +2,8 @@ CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   email TEXT NOT NULL CHECK (position('@' IN email) > 1),
   first_name VARCHAR(15) NOT NULL,
-  password TEXT NOT NULL
+  password TEXT NOT NULL,
+  active BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE infants (
@@ -10,7 +11,8 @@ CREATE TABLE infants (
   first_name VARCHAR(15) NOT NULL,
   dob DATE NOT NULL,
   gender VARCHAR(6) NOT NULL,
-  public_id TEXT
+  public_id TEXT,
+  active BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE feeds (
@@ -39,6 +41,7 @@ CREATE TABLE users_infants (
     REFERENCES infants ON DELETE CASCADE,
   user_is_admin BOOLEAN NOT NULL,
   crud BOOLEAN NOT NULL,
+  notify_admin BOOLEAN NOT NULL DEFAULT FALSE,
   PRIMARY KEY (user_id, infant_id)
 );
 
@@ -49,13 +52,13 @@ CREATE TABLE invitations (
     REFERENCES infants ON DELETE CASCADE,
   crud BOOLEAN NOT NULL,
   sent_to TEXT NOT NULL CHECK (position('@' IN sent_to) > 1),
-  PRIMARY KEY (sent_by, sent_to)
+  PRIMARY KEY (sent_by, infant_id, sent_to)
 );
 
 CREATE TABLE reminders (
   id SERIAL PRIMARY KEY,
   enabled BOOLEAN NOT NULL DEFAULT FALSE,
-  hours INTEGER DEFAULT 0,
+  hours INTEGER DEFAULT 3,
   minutes INTEGER DEFAULT 0,
   cutoff_enabled BOOLEAN NOT NULL DEFAULT FALSE,
   cutoff TEXT DEFAULT '20:00:00',

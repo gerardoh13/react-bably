@@ -28,6 +28,8 @@ function App() {
           setCurrUser(user);
           if (user.infants.length && !childId) {
             setChildId(user.infants[0].id);
+          } else if (!user.infants.length) {
+            setLoading(false);
           }
         } catch (err) {
           console.log(err);

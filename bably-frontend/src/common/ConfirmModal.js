@@ -1,7 +1,13 @@
 import React from "react";
 import Modal from "react-bootstrap/Modal";
 
-function ConfirmModal({ show, setShow, confirm, cancel }) {
+function ConfirmModal({
+  show,
+  setShow,
+  confirm,
+  cancel,
+  msg = "This action cannot be undone.",
+}) {
   const handleClose = () => {
     setShow(false);
     cancel(null);
@@ -17,7 +23,7 @@ function ConfirmModal({ show, setShow, confirm, cancel }) {
         ></button>
       </Modal.Header>
       <Modal.Body>
-        <p>This action cannot be undone.</p>
+        <p>{msg}</p>
         <div className="float-end">
           <button
             type="button"

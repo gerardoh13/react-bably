@@ -10,7 +10,7 @@ const beamsClient = new PusherPushNotifications.Client({
 });
 
 function startBeams(email) {
-  if (!email) {
+  if (!email || sessionStorage.getItem("beamsUser") === "denied") {
     return;
   }
   if (sessionStorage.getItem("beamsUser") !== email) {
@@ -27,7 +27,13 @@ function startBeams(email) {
         console.log("Beams client started");
         sessionStorage.setItem("beamsUser", email);
       })
-      .catch(console.error);
+      .catch((e) => {
+        if (
+          e.toString() === "AbortError: Registration failed - permission denied"
+        ) {
+          sessionStorage.setItem("beamsUser", "denied");
+        } else console.error(e);
+      });
   }
 }
 

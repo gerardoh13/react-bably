@@ -6,6 +6,7 @@ const jsonschema = require("jsonschema");
 
 const Diaper = require("../models/diaper");
 const Infant = require("../models/infant");
+const Notification = require("../models/notification");
 const express = require("express");
 const { ensureLoggedIn } = require("../middleware/auth");
 const diaperNewSchema = require("../schemas/diaperNew.json");
@@ -30,10 +31,15 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
       const errs = validator.errors.map((e) => e.stack);
       throw new BadRequestError(errs);
     }
-    if (
-      await Infant.checkAuthorized(res.locals.user.email, req.body.infant_id)
-    ) {
+    const userAccess = await Infant.checkAuthorized(
+      res.locals.user.email,
+      req.body.infant_id
+    );
+    if (userAccess) {
       const diaper = await Diaper.add(req.body);
+      if (!userAccess.userIsAdmin && userAccess.notifyAdmin){
+        await Notification.sendNotification(res.locals.user.id, req.body.infant_id, "diaper")
+      }
       return res.status(201).json({ diaper });
     }
   } catch (err) {
@@ -44,7 +50,11 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
 router.get("/:infant_id/:id", ensureLoggedIn, async function (req, res, next) {
   const { infant_id, id } = req.params;
   try {
-    if (await Infant.checkAuthorized(res.locals.user.email, infant_id)) {
+    const userAccess = await Infant.checkAuthorized(
+      res.locals.user.email,
+      infant_id
+    );
+    if (userAccess.crud) {
       const diaper = await Diaper.get(id);
       return res.json({ diaper });
     }
@@ -64,7 +74,11 @@ router.patch(
         const errs = validator.errors.map((e) => e.stack);
         throw new BadRequestError(errs);
       }
-      if (await Infant.checkAuthorized(res.locals.user.email, infant_id)) {
+      const userAccess = await Infant.checkAuthorized(
+        res.locals.user.email,
+        infant_id
+      );
+      if (userAccess.crud) {
         const diaper = await Diaper.update(diaper_id, req.body);
         return res.json({ diaper });
       }
@@ -79,9 +93,12 @@ router.delete(
   ensureLoggedIn,
   async function (req, res, next) {
     const { infant_id, diaper_id } = req.params;
-
     try {
-      if (await Infant.checkAuthorized(res.locals.user.email, infant_id)) {
+      const userAccess = await Infant.checkAuthorized(
+        res.locals.user.email,
+        infant_id
+      );
+      if (userAccess.crud) {
         await Diaper.delete(diaper_id);
         return res.json({ deleted: diaper_id });
       }

@@ -4,7 +4,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import BablyApi from "../api";
 import Permissions from "./Permissions";
 
-function AccessSettings({ infants, user }) {
+function AccessSettings({ infants, user, setInfants, setChangeCount }) {
   const [msgs, setMsgs] = useState([]);
   const [infant, setInfant] = useState(null);
   const [email, setEmail] = useState("");
@@ -35,11 +35,20 @@ function AccessSettings({ infants, user }) {
           `'${email}' doesn't have an account, we sent them an invite!`,
         ]);
       } else {
-        setMsgs([
-          `${details.recipient} now has access to ${infant.firstName}${
-            infant.firstName.endsWith("s") ? "'" : "'s"
-          } profile!`,
-        ]);
+        if (details.previouslyAdded)
+          setMsgs([
+            `${details.recipient} already has access to ${infant.firstName}${
+              infant.firstName.endsWith("s") ? "'" : "'s"
+            } profile.`,
+          ]);
+        else {
+          setMsgs([
+            `${details.recipient} now has access to ${infant.firstName}${
+              infant.firstName.endsWith("s") ? "'" : "'s"
+            } profile!`,
+          ]);
+          setChangeCount((prev) => prev + 1);
+        }
       }
     } catch (e) {
       console.log(e);
@@ -49,9 +58,62 @@ function AccessSettings({ infants, user }) {
   };
 
   const changeChild = (id) => {
-    let child = infants.filter((i) => i.id === id)[0];
-    console.log(child);
+    let child = infants.find((i) => i.id === id);
     setInfant(child);
+  };
+
+  const updateNotifications = async (userId, infantId, checked) => {
+    const notify = await BablyApi.updateNotifications(userId, infantId, {
+      notifyAdmin: !checked,
+    });
+    let child = infants.find((i) => i.id === notify.infantId);
+    let childIndex = infants.findIndex((i) => i.id === notify.infantId);
+    let user = child.users.find((u) => u.userId === notify.userId);
+    user.notifyAdmin = notify.notifyAdmin;
+    const updatedChildList = infants.map((c, i) => {
+      if (i === childIndex) {
+        return child;
+      } else {
+        return c;
+      }
+    });
+    setInfants(updatedChildList);
+  };
+
+  const updateAccess = async (userId, infantId, crud) => {
+    const access = await BablyApi.updateAcess(userId, infantId, {
+      crud: crud,
+    });
+    let child = infants.find((i) => i.id === access.infantId);
+    let childIndex = infants.findIndex((i) => i.id === access.infantId);
+    let user = child.users.find((u) => u.userId === access.userId);
+    user.crud = access.crud;
+    const updatedChildList = infants.map((c, i) => {
+      if (i === childIndex) {
+        return child;
+      } else {
+        return c;
+      }
+    });
+    setInfants(updatedChildList);
+  };
+
+  const removeAccess = async (userId, infantId) => {
+    const removed = await BablyApi.removeAcess(userId, infantId);
+    if (removed === userId) {
+      let child = infants.find((i) => i.id === infantId);
+      let childIndex = infants.findIndex((i) => i.id === infantId);
+      let users = child.users.filter((u) => u.userId !== userId);
+      child.users = users;
+      const updatedChildList = infants.map((c, i) => {
+        if (i === childIndex) {
+          return child;
+        } else {
+          return c;
+        }
+      });
+      setInfants(updatedChildList);
+    }
   };
 
   return (
@@ -73,7 +135,9 @@ function AccessSettings({ infants, user }) {
                   ))}
                 </Dropdown.Menu>
               </Dropdown>
-            ) : null}
+            ) : (
+              <h4 className="mt-1">{infant.firstName}</h4>
+            )}
           </div>
           <form onSubmit={handleSubmit} className="text-center">
             <hr />
@@ -126,7 +190,14 @@ function AccessSettings({ infants, user }) {
               <button className="btn btn-bablyGreen">Send</button>
             </div>
           </form>
-          {infant.users.length ? <Permissions infant={infant} /> : null}
+          {infant.users.length ? (
+            <Permissions
+              infant={infant}
+              updateNotifications={updateNotifications}
+              updateAccess={updateAccess}
+              removeAccess={removeAccess}
+            />
+          ) : null}
         </>
       ) : (
         <>

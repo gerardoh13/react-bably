@@ -4,7 +4,7 @@ import Tabs from "react-bootstrap/Tabs";
 import BablyApi from "../api";
 import Reminders from "./Reminders";
 import UserContext from "../users/UserContext";
-import ChildSettings from "./AccessSettings";
+import AccessSettings from "./AccessSettings";
 import Register from "../users/Register";
 
 function Settings() {
@@ -13,6 +13,7 @@ function Settings() {
   const [infants, setInfants] = useState([]);
   const [adminAccess, setAdminAccess] = useState(true);
   const { currUser } = useContext(UserContext);
+  const [changeCount, setChangeCount] = useState(0);
 
   useEffect(() => {
     async function getAuthUsers() {
@@ -31,7 +32,7 @@ function Settings() {
     }
     setReminders(currUser.reminders);
     getAuthUsers();
-  }, [currUser.reminders, currUser.infants]);
+  }, [currUser.reminders, currUser.infants, changeCount]);
 
   const updateReminders = async (data) => {
     let res = await BablyApi.updateReminders(currUser.email, data);
@@ -39,12 +40,13 @@ function Settings() {
   };
 
   return (
-    <div className="card col-12 col-md-6 col-xxl-5 my-auto">
+    <div className="card col-12 col-md-6 col-xxl-5 my-auto small text-dark">
       <Tabs
         id="controlled-tab-example"
         activeKey={key}
         onSelect={(k) => setKey(k)}
         className="mb-3"
+        fill
       >
         <Tab eventKey="reminders" title="Reminders">
           <div className="card-body">
@@ -57,14 +59,22 @@ function Settings() {
           <Tab eventKey="access" title="Access">
             <div className="card-body">
               {reminders ? (
-                <ChildSettings infants={infants} user={currUser} />
+                <AccessSettings
+                  infants={infants}
+                  user={currUser}
+                  setInfants={setInfants}
+                  setChangeCount={setChangeCount}
+                />
               ) : null}
             </div>
           </Tab>
         ) : null}
-        <Tab eventKey="register" title="Register Child">
+        <Tab eventKey="register" title="Register">
           <Register additionalChild />
         </Tab>
+        {/* <Tab eventKey="profile" title="My Profile">
+          <h1>My Profile</h1>
+        </Tab> */}
       </Tabs>
     </div>
   );

@@ -56,7 +56,7 @@ class Infant {
     return infant;
   }
 
-  static async update(id, data) {
+  static async update(id, data, userId) {
     const { setCols, values } = sqlForPartialUpdate(data, {
       firstName: "first_name",
       publicId: "public_id",
@@ -72,32 +72,71 @@ class Infant {
 
     if (!infant) throw new NotFoundError(`No infant: ${id}`);
 
+    const accessRes = await db.query(
+      `SELECT user_is_admin AS "userIsAdmin",
+              crud
+      FROM users_infants
+      WHERE infant_id = $1 AND user_id = $2`,
+      [id, userId]
+    );
+    const access = accessRes.rows[0];
+    infant.userIsAdmin = access.userIsAdmin;
+    infant.crud = access.crud;
     return infant;
   }
 
-static async getAuthorizedUsers(infantId, adminId) {
-  const usersRes = await db.query(
-    `SELECT u.id AS "userId",
+  static async addAuthorizedUser(userId, infantId, crud) {
+    const duplicateCheck = await db.query(
+      `SELECT user_id,
+              infant_id
+      FROM users_infants
+      WHERE user_id = $1 AND infant_id = $2`,
+      [userId, infantId]
+    );
+    if (duplicateCheck.rows[0]) {
+      return false;
+    }
+    const response = await db.query(
+      `INSERT INTO users_infants
+                  (user_id,
+                  infant_id,
+                  user_is_admin,
+                  crud,
+                  notify_admin)
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING user_id, infant_id`,
+      [userId, infantId, false, crud, false]
+    );
+    if (response.rows[0]) return true;
+  }
+
+  static async getAuthorizedUsers(infantId, adminId) {
+    const usersRes = await db.query(
+      `SELECT u.id AS "userId",
             u.first_name as "userName",
-            ui.crud
+            ui.crud,
+            ui.notify_admin as "notifyAdmin"
             FROM users u
             JOIN users_infants ui on u.id = ui.user_id
-            WHERE ui.infant_id = $1 AND u.id != $2`, [infantId, adminId]
-  )
-  return usersRes.rows
-}
+            WHERE ui.infant_id = $1 AND u.id != $2`,
+      [infantId, adminId]
+    );
+    return usersRes.rows;
+  }
 
   static async checkAuthorized(email, infantId) {
     const result = await db.query(
-      `SELECT ui.infant_id,
-              ui.user_id
+      `SELECT ui.user_is_admin AS "userIsAdmin",
+              ui.crud,
+              ui.notify_admin AS "notifyAdmin"
       FROM users_infants ui
       JOIN users u ON u.id = ui.user_id
       WHERE u.email = $1 AND ui.infant_id = $2`,
       [email, infantId]
     );
-    if (!result.rows[0]) throw new UnauthorizedError();
-    else return true;
+    const userAccess = result.rows[0];
+    if (!userAccess) throw new UnauthorizedError();
+    else return userAccess;
   }
 }
 

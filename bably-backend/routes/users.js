@@ -140,4 +140,43 @@ router.get("/pusher/beams-auth", function (req, res, next) {
   }
 });
 
+router.patch(
+  "/notify-admin/:userId/:infantId",
+  async function (req, res, next) {
+    const { userId, infantId } = req.params;
+    const { notifyAdmin } = req.body;
+    try {
+      const notify = await User.updateNotifications(
+        notifyAdmin,
+        userId,
+        infantId
+      );
+      return res.json({ notify });
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
+
+router.patch("/access/:userId/:infantId", async function (req, res, next) {
+  const { userId, infantId } = req.params;
+  const { crud } = req.body;
+  try {
+    const access = await User.updateAcess(crud, userId, infantId);
+    return res.json({ access });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+router.delete("/access/:userId/:infantId", async function (req, res, next) {
+  const { userId, infantId } = req.params;
+  try {
+    await User.removeAccess(userId, infantId);
+    return res.json({ removedAccess: +userId });
+  } catch (err) {
+    return next(err);
+  }
+});
+
 module.exports = router;

@@ -141,6 +141,18 @@ class User {
   }
 
   static async addInvitation(sentBy, infant_id, crud, sentTo) {
+    const invitationCheck = await db.query(
+      `SELECT infant_id,
+              crud
+              FROM invitations
+          WHERE sent_by = $1 AND sent_to = $2 AND infant_id = $3`,
+      [sentBy, sentTo, infant_id]
+    );
+
+    const invitation = invitationCheck.rows[0];
+
+    if (invitation) return;
+
     await db.query(
       `INSERT INTO invitations
                (sent_by,
@@ -229,6 +241,46 @@ class User {
     const reminders = result.rows[0];
 
     return reminders;
+  }
+
+  static async updateNotifications(notifyAdmin, userId, infantId) {
+    const notifyRes = await db.query(
+      `UPDATE users_infants
+      SET notify_admin = $1
+      WHERE user_id = $2 AND infant_id = $3
+      RETURNING user_id AS "userId", infant_id AS "infantId", notify_admin AS "notifyAdmin"`,
+      [notifyAdmin, userId, infantId]
+    );
+    const notify = notifyRes.rows[0];
+
+    return notify;
+  }
+
+  static async updateAcess(crud, userId, infantId) {
+    const accessRes = await db.query(
+      `UPDATE users_infants
+      SET crud = $1
+      WHERE user_id = $2 AND infant_id = $3
+      RETURNING user_id AS "userId", infant_id AS "infantId", crud`,
+      [crud, userId, infantId]
+    );
+    const access = accessRes.rows[0];
+
+    return access;
+  }
+
+  static async removeAccess(userId, infantId) {
+    const result = await db.query(
+      `DELETE
+       FROM users_infants
+       WHERE user_id = $1 AND infant_id = $2
+       RETURNING user_id`,
+      [userId, infantId]
+    );
+    const relation = result.rows[0];
+
+    if (!relation)
+      throw new NotFoundError(`No user/infant relation: ${userId}/${infantId}`);
   }
   /** Update user data with `data`.
    *

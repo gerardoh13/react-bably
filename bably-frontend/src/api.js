@@ -2,14 +2,9 @@ import axios from "axios";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL || "http://" + window.location.hostname + ":3001";
 
-/** API Class.
- *
- * Static class tying together methods used to get/send to to the API.
- *
- */
 
 class BablyApi {
-  // the token for interactive with the API will be stored here.
+
   static token;
 
   static async request(endpoint, data = {}, method = "get") {
@@ -65,6 +60,20 @@ class BablyApi {
     return res;
   }
 
+  static async updateNotifications(userId, infantId, data) {
+    let res = await this.request(`users/notify-admin/${userId}/${infantId}`, data, "patch");
+    return res.notify;
+  }
+
+  static async updateAcess(userId, infantId, data) {
+    let res = await this.request(`users/access/${userId}/${infantId}`, data, "patch");
+    return res.access;
+  }
+
+  static async removeAcess(userId, infantId) {
+    let res = await this.request(`users/access/${userId}/${infantId}`, {}, "delete");
+    return res.removedAccess;
+  }
   // static async updateUser(email, data) {
   //   let res = await this.request(`users/${email}`, data, "patch");
   //   return res.user;

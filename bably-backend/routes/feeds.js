@@ -31,10 +31,15 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
       const errs = validator.errors.map((e) => e.stack);
       throw new BadRequestError(errs);
     }
-    if (
-      await Infant.checkAuthorized(res.locals.user.email, req.body.infant_id)
-    ) {
+    const userAccess = await Infant.checkAuthorized(
+      res.locals.user.email,
+      req.body.infant_id
+    );
+    if (userAccess) {
       const feed = await Feed.add(req.body);
+      if (!userAccess.userIsAdmin && userAccess.notifyAdmin){
+        await Notification.sendNotification(res.locals.user.id, req.body.infant_id, "feed")
+      }
       return res.status(201).json({ feed });
     }
   } catch (err) {
@@ -45,7 +50,11 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
 router.get("/:infant_id/:id", ensureLoggedIn, async function (req, res, next) {
   const { infant_id, id } = req.params;
   try {
-    if (await Infant.checkAuthorized(res.locals.user.email, infant_id)) {
+    const userAccess = await Infant.checkAuthorized(
+      res.locals.user.email,
+      infant_id
+    );
+    if (userAccess.crud) {
       const feed = await Feed.get(id);
       return res.json({ feed });
     }
@@ -65,7 +74,11 @@ router.patch(
         const errs = validator.errors.map((e) => e.stack);
         throw new BadRequestError(errs);
       }
-      if (await Infant.checkAuthorized(res.locals.user.email, infant_id)) {
+      const userAccess = await Infant.checkAuthorized(
+        res.locals.user.email,
+        infant_id
+      );
+      if (userAccess.crud) {
         const diaper = await Feed.update(feed_id, req.body);
         return res.json({ diaper });
       }
@@ -82,7 +95,11 @@ router.delete(
     const { infant_id, feed_id } = req.params;
 
     try {
-      if (await Infant.checkAuthorized(res.locals.user.email, infant_id)) {
+      const userAccess = await Infant.checkAuthorized(
+        res.locals.user.email,
+        infant_id
+      );
+      if (userAccess.crud) {
         await Feed.delete(feed_id);
         return res.json({ deleted: feed_id });
       }
