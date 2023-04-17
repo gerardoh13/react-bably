@@ -3,3 +3,7 @@ bably-backend/node_modules
 bably-backend/.env
 bably-frontend/.env
 bably-frontend/build
+
+git remote add origin https://github.com/gerardoh13/react-bably.git
+git branch -M main
+git push -u origin main
