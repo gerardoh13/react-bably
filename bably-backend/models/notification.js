@@ -30,6 +30,7 @@ class Notification {
           notification: {
             title: `New ${type} logged.`,
             body: msg,
+            icon: "https://res.cloudinary.com/dolnu62zm/image/upload/v1681800494/logo192_fkicpf.png"
           },
         },
       })
@@ -50,6 +51,7 @@ class Notification {
             notification: {
               title: "Heads up!",
               body: `Time to feed ${infant}`,
+              icon: "https://res.cloudinary.com/dolnu62zm/image/upload/v1681800494/logo192_fkicpf.png"
             },
           },
         })
