@@ -1,6 +1,6 @@
 import React from "react";
 
-function StepTwo({ data, handleChange, changeStep }) {
+function StepTwo({ data, handleChange, changeStep, max, min }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (data.dob) changeStep(1);
@@ -14,6 +14,8 @@ function StepTwo({ data, handleChange, changeStep }) {
         type="date"
         name="dob"
         id="dob"
+        max={max}
+        min={min}
         value={data.dob}
         onChange={handleChange}
         required
@@ -28,7 +30,9 @@ function StepTwo({ data, handleChange, changeStep }) {
         >
           Previous
         </button>
-        <button className="btn btn-bablyGreen mt-3 form-control col">Next</button>
+        <button className="btn btn-bablyGreen mt-3 form-control col">
+          Next
+        </button>
       </div>
     </form>
   );

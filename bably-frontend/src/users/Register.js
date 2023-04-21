@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import StepOne from "./StepOne";
 import StepTwo from "./StepTwo";
 import StepThree from "./StepThree";
@@ -13,18 +13,35 @@ function Register({ additionalChild }) {
     dob: "",
     publicId: "",
   };
+
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState(INITIAL_STATE);
   const { registerInfant } = useContext(UserContext);
+  const [maxDate, setMaxDate] = useState("");
+  const [minDate, setMinDate] = useState("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    let max = new Date().toISOString().slice(0, 14);
+    let event = new Date();
+    let twoYearsAgo = parseInt(event.getFullYear()) - 2;
+    event.setFullYear(twoYearsAgo);
+    let min = event.toISOString().slice(0, -14);
+    setMaxDate(max);
+    setMinDate(min);
+  }, [setMaxDate, setMinDate]);
 
   const changeStep = (n) => {
     setStep((prev) => prev + n);
   };
 
   const submit = async () => {
-    console.log(formData);
-    await registerInfant(formData);
+    await registerInfant({
+      firstName: formData.firstName,
+      gender: formData.firstName,
+      dob: formData.dob,
+      publicId: formData.publicId,
+    });
     navigate("/");
   };
 
@@ -54,6 +71,8 @@ function Register({ additionalChild }) {
           data={formData}
           handleChange={handleChange}
           changeStep={changeStep}
+          maxDate={maxDate}
+          minDate={minDate}
         />
       );
       break;
