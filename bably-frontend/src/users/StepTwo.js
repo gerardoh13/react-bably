@@ -1,6 +1,6 @@
 import React from "react";
 
-function StepTwo({ data, handleChange, changeStep, max, min }) {
+function StepTwo({ data, handleChange, changeStep, maxDate, minDate }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (data.dob) changeStep(1);
@@ -14,8 +14,8 @@ function StepTwo({ data, handleChange, changeStep, max, min }) {
         type="date"
         name="dob"
         id="dob"
-        max={max}
-        min={min}
+        max={maxDate}
+        min={minDate}
         value={data.dob}
         onChange={handleChange}
         required

@@ -22,7 +22,7 @@ function Register({ additionalChild }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    let max = new Date().toISOString().slice(0, 14);
+    let max = new Date().toISOString().slice(0, -14);
     let event = new Date();
     let twoYearsAgo = parseInt(event.getFullYear()) - 2;
     event.setFullYear(twoYearsAgo);

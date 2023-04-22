@@ -16,8 +16,17 @@ function EditChildForm({ show, setShow, child }) {
     ? `https://res.cloudinary.com/dolnu62zm/image/upload/${child.publicId}`
     : "";
   const [photoUrl, setPhotoUrl] = useState(defaultURL);
+  const [maxDate, setMaxDate] = useState("");
+  const [minDate, setMinDate] = useState("");
 
   useEffect(() => {
+    let max = new Date().toISOString().slice(0, -14);
+    let event = new Date();
+    let twoYearsAgo = parseInt(event.getFullYear()) - 2;
+    event.setFullYear(twoYearsAgo);
+    let min = event.toISOString().slice(0, -14);
+    setMaxDate(max);
+    setMinDate(min);
     setFormData({
       firstName: child.firstName,
       dob: child.dob.slice(0, 10),
@@ -130,6 +139,8 @@ function EditChildForm({ show, setShow, child }) {
             type="date"
             name="dob"
             id="dob"
+            max={maxDate}
+            min={minDate}
             value={formData.dob}
             onChange={handleChange}
             required
