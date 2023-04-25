@@ -11,7 +11,7 @@ const express = require("express");
 const { ensureLoggedIn, ensureCorrectUser } = require("../middleware/auth");
 const feedNewSchema = require("../schemas/feedNew.json");
 const feedUpdateSchema = require("../schemas/feedUpdate.json");
-const { BadRequestError } = require("../expressError");
+const { BadRequestError, UnauthorizedError } = require("../expressError");
 
 const router = new express.Router();
 
@@ -35,10 +35,15 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
       res.locals.user.email,
       req.body.infant_id
     );
+    if (!userAccess) throw new UnauthorizedError();
     if (userAccess) {
       const feed = await Feed.add(req.body);
-      if (!userAccess.userIsAdmin && userAccess.notifyAdmin){
-        await Notification.sendNotification(res.locals.user.id, req.body.infant_id, "feed")
+      if (!userAccess.userIsAdmin && userAccess.notifyAdmin) {
+        await Notification.sendNotification(
+          res.locals.user.id,
+          req.body.infant_id,
+          "feed"
+        );
       }
       return res.status(201).json({ feed });
     }
@@ -54,6 +59,7 @@ router.get("/:infant_id/:id", ensureLoggedIn, async function (req, res, next) {
       res.locals.user.email,
       infant_id
     );
+    if (!userAccess) throw new UnauthorizedError();
     if (userAccess.crud) {
       const feed = await Feed.get(id);
       return res.json({ feed });
@@ -78,10 +84,11 @@ router.patch(
         res.locals.user.email,
         infant_id
       );
+      if (!userAccess) throw new UnauthorizedError();
       if (userAccess.crud) {
         const diaper = await Feed.update(feed_id, req.body);
         return res.json({ diaper });
-      }
+      } else throw new UnauthorizedError();
     } catch (err) {
       return next(err);
     }
@@ -99,6 +106,7 @@ router.delete(
         res.locals.user.email,
         infant_id
       );
+      if (!userAccess) throw new UnauthorizedError();
       if (userAccess.crud) {
         await Feed.delete(feed_id);
         return res.json({ deleted: feed_id });

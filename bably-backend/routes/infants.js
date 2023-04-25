@@ -11,7 +11,7 @@ const Diaper = require("../models/diaper");
 const Email = require("../models/email");
 const express = require("express");
 const infantNewSchema = require("../schemas/infantNew.json");
-const { BadRequestError } = require("../expressError");
+const { BadRequestError, UnauthorizedError } = require("../expressError");
 const { ensureLoggedIn } = require("../middleware/auth");
 const router = new express.Router();
 
@@ -52,7 +52,7 @@ router.get("/:infantId", ensureLoggedIn, async function (req, res, next) {
     if (userAccess) {
       const infant = await Infant.get(infantId, res.locals.user.id);
       return res.json({ infant });
-    }
+    } else throw new UnauthorizedError();
   } catch (err) {
     return next(err);
   }
@@ -77,7 +77,7 @@ router.patch("/:infantId/", ensureLoggedIn, async function (req, res, next) {
         res.locals.user.id
       );
       return res.json({ infant });
-    }
+    } else throw new UnauthorizedError();
   } catch (err) {
     return next(err);
   }
@@ -98,7 +98,7 @@ router.get(
         events.feeds = await Feed.getEvents(infantId, start, end);
         events.diapers = await Diaper.getEvents(infantId, start, end);
         return res.json({ events });
-      }
+      } else throw new UnauthorizedError();
     } catch (err) {
       return next(err);
     }
@@ -120,7 +120,7 @@ router.get(
         today.feeds = await Feed.getTodays(infantId, start, end);
         today.diapers = await Diaper.getTodays(infantId, start, end);
         return res.json({ today });
-      }
+      } else throw new UnauthorizedError();
     } catch (err) {
       return next(err);
     }
@@ -144,7 +144,7 @@ router.get(
           res.locals.user.id
         );
         return res.json({ users });
-      }
+      } else throw new UnauthorizedError();
     } catch (err) {
       return next(err);
     }
@@ -157,8 +157,7 @@ router.post(
   async function (req, res, next) {
     try {
       const { infantId } = req.params;
-      const { sentTo, sentByName, sentById, crud, infantName } =
-        req.body;
+      const { sentTo, sentByName, sentById, crud, infantName } = req.body;
       const userAccess = await Infant.checkAuthorized(
         res.locals.user.email,
         infantId
@@ -184,7 +183,7 @@ router.post(
           details.inviteSent = true;
         }
         return res.json({ details });
-      }
+      } else throw new UnauthorizedError();
     } catch (err) {
       return next(err);
     }

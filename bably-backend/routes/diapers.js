@@ -11,7 +11,7 @@ const express = require("express");
 const { ensureLoggedIn } = require("../middleware/auth");
 const diaperNewSchema = require("../schemas/diaperNew.json");
 const diaperUpdateSchema = require("../schemas/diaperUpdate.json");
-const { BadRequestError } = require("../expressError");
+const { BadRequestError, UnauthorizedError } = require("../expressError");
 
 const router = new express.Router();
 
@@ -37,11 +37,15 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
     );
     if (userAccess) {
       const diaper = await Diaper.add(req.body);
-      if (!userAccess.userIsAdmin && userAccess.notifyAdmin){
-        await Notification.sendNotification(res.locals.user.id, req.body.infant_id, "diaper")
+      if (!userAccess.userIsAdmin && userAccess.notifyAdmin) {
+        await Notification.sendNotification(
+          res.locals.user.id,
+          req.body.infant_id,
+          "diaper"
+        );
       }
       return res.status(201).json({ diaper });
-    }
+    } else throw new UnauthorizedError();
   } catch (err) {
     return next(err);
   }
@@ -54,6 +58,7 @@ router.get("/:infant_id/:id", ensureLoggedIn, async function (req, res, next) {
       res.locals.user.email,
       infant_id
     );
+    if (!userAccess) throw new UnauthorizedError();
     if (userAccess.crud) {
       const diaper = await Diaper.get(id);
       return res.json({ diaper });
@@ -78,6 +83,7 @@ router.patch(
         res.locals.user.email,
         infant_id
       );
+      if (!userAccess) throw new UnauthorizedError();
       if (userAccess.crud) {
         const diaper = await Diaper.update(diaper_id, req.body);
         return res.json({ diaper });
@@ -98,6 +104,7 @@ router.delete(
         res.locals.user.email,
         infant_id
       );
+      if (!userAccess) throw new UnauthorizedError();
       if (userAccess.crud) {
         await Diaper.delete(diaper_id);
         return res.json({ deleted: diaper_id });
