@@ -83,9 +83,9 @@ function Milestones({ gender, months }) {
           <h4>Cognitive Milestones</h4>
           <ul>
             <li>
-              If hungry, opens mouth when ${subject} sees breast or bottle
+              If hungry, opens mouth when {subject} sees breast or bottle
             </li>
-            <li>Looks at ${possPronoun} hands with interest</li>
+            <li>Looks at {possPronoun} hands with interest</li>
           </ul>
           <h4>Movement/Physical</h4>
           <ul>
@@ -188,7 +188,7 @@ function Milestones({ gender, months }) {
           <ul>
             <li>Puts something in a container, like a block in a cup</li>
             <li>
-              Looks for things ${subject} sees you hide, like a toy under a
+              Looks for things {subject} sees you hide, like a toy under a
               blanket
             </li>
           </ul>

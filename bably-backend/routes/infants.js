@@ -124,7 +124,6 @@ router.get(
     } catch (err) {
       return next(err);
     }
-    98;
   }
 );
 
