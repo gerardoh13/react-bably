@@ -35,7 +35,7 @@ function Home() {
       updateFeedCard(todaysData.feeds);
       updateDiaperCard(todaysData.diapers);
     };
-     getActivity();
+    getActivity();
   }, [currChild.id]);
 
   useEffect(() => {
@@ -44,7 +44,13 @@ function Home() {
   }, [feeds, diapers]);
 
   useEffect(() => {
-    startBeams(currUser.email)
+    if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+      console.log("This is an iOS device.");
+      return;
+    } else {
+      // startBeams(currUser.email);
+      console.log("start beams")
+    }
   }, [currUser.email]);
 
   const getMidnights = () => {
