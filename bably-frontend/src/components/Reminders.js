@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Alerts from "../common/Alerts";
 
 function Reminders({ reminders, update }) {
@@ -12,6 +12,17 @@ function Reminders({ reminders, update }) {
   const [cutoffEnabled, setCutoffEnabled] = useState(reminders.cutoffEnabled);
   const [msgs, setMsgs] = useState([]);
   const [errs, setErrs] = useState([]);
+  const [iOS, setiOS] = useState(false);
+
+  useEffect(() => {
+    if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+      setErrs(["Coming soon!", "Reminders not currently available on iOS"]);
+      setiOS(true);
+      return;
+    } else {
+      return;
+    }
+  }, [iOS]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -86,7 +97,8 @@ function Reminders({ reminders, update }) {
             type="checkbox"
             role="switch"
             name="enabled"
-            checked={enabled}
+            checked={enabled && !iOS}
+            disabled={iOS}
             onChange={handleSwitch}
           />
         </div>
@@ -110,7 +122,7 @@ function Reminders({ reminders, update }) {
                 className="form-select"
                 value={formData.hours}
                 onChange={handleChange}
-                disabled={!enabled}
+                disabled={!enabled || iOS}
               >
                 <option value="0">0</option>
                 <option value="1">1</option>
@@ -126,7 +138,7 @@ function Reminders({ reminders, update }) {
                 className="form-select"
                 value={formData.minutes}
                 onChange={handleChange}
-                disabled={!enabled}
+                disabled={!enabled || iOS}
               >
                 <option value="0">0</option>
                 <option value="15">15</option>
@@ -148,9 +160,9 @@ function Reminders({ reminders, update }) {
             type="checkbox"
             role="switch"
             name="cutoffEnabled"
-            checked={cutoffEnabled}
+            checked={cutoffEnabled && !iOS}
             onChange={handleSwitch}
-            disabled={!enabled}
+            disabled={!enabled || iOS}
           />
         </div>
         <span className="my-1">
@@ -174,7 +186,7 @@ function Reminders({ reminders, update }) {
             id="cutoff"
             value={formData.cutoff}
             onChange={handleChange}
-            disabled={!cutoffEnabled || !enabled}
+            disabled={!cutoffEnabled || !enabled || iOS}
           />
         </div>
       </div>
@@ -192,7 +204,7 @@ function Reminders({ reminders, update }) {
             id="start"
             value={formData.start}
             onChange={handleChange}
-            disabled={!cutoffEnabled || !enabled}
+            disabled={!cutoffEnabled || !enabled || iOS}
           />
         </div>
       </div>

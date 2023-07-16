@@ -48,8 +48,7 @@ function Home() {
       console.log("This is an iOS device.");
       return;
     } else {
-      // startBeams(currUser.email);
-      console.log("start beams")
+      startBeams(currUser.email);
     }
   }, [currUser.email]);
 
