@@ -14,7 +14,9 @@ function Login({ login, setCurrPage }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors([]);
-    let response = await login(formData);
+    let copy = {...formData}
+    formData.email = formData.email.toLowerCase()
+    let response = await login(copy);
     if (response.valid) {
       setFormData(INITIAL_STATE);
     } else setErrors(response.errors);

@@ -4,7 +4,7 @@ const db = require("../db");
 const { NotFoundError } = require("../expressError");
 const { sqlForPartialUpdate } = require("../helpers/sql");
 
-/** Related functions for feeds. */
+/** Related functions for diapers. */
 
 class Diaper {
   /** Register an infant (from data), update db, return new infant data.

@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import UserContext from "../users/UserContext";
 import { Outlet, Navigate } from "react-router-dom";
 
-function PrivateRoute() {
+function PrivateRoutes() {
   const { currUser, currChild } = useContext(UserContext);
 
   if (!currUser || !currChild) {
@@ -10,4 +10,4 @@ function PrivateRoute() {
   } else return <Outlet />;
 }
 
-export default PrivateRoute;
+export default PrivateRoutes;

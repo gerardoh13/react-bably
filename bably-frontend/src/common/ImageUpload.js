@@ -1,41 +1,46 @@
-import React from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 function ImageUpload({ uploadSuccess }) {
   //   https://cloudinary.com/documentation/upload_widget_reference
+  const [cloudinaryWidget, setCloudinaryWidget] = useState(null);
+  const widgetRef = useRef();
 
-    const cloudName = "dolnu62zm";
-    const uploadPreset = "yssxueby";
+  const cloudName = "dolnu62zm";
+  const uploadPreset = "yssxueby";
 
-    var myWidget = window.cloudinary.createUploadWidget(
-      {
-        cloudName: cloudName, 
-        uploadPreset: uploadPreset,
-        cropping: true,
-        sources: ["local", "facebook", "instagram", "camera"],
-        multiple: false,
-        context: { alt: "user_uploaded" },
-        clientAllowedFormats: ["jpg"],
-        maxImageFileSize: 4000000,
-      },
-      (error, result) => {
-        if (!error && result && result.event === "success") {
-          uploadSuccess(error, result);
-          myWidget.close();
+  useEffect(() => {
+    if (!cloudinaryWidget) {
+      const myWidget = window.cloudinary.createUploadWidget(
+        {
+          cloudName: cloudName,
+          uploadPreset: uploadPreset,
+          cropping: true,
+          sources: ["local", "facebook", "instagram", "camera"],
+          multiple: false,
+          context: { alt: "user_uploaded" },
+          clientAllowedFormats: ["jpg", "HEIF"],
+          maxImageFileSize: 5000000,
+        },
+        (error, result) => {
+          if (!error && result && result.event === "success") {
+            uploadSuccess(error, result);
+            myWidget.close();
+          }
         }
-      }
-    );
+      );
+      setCloudinaryWidget(myWidget);
+      widgetRef.current = myWidget;
+    }
+  }, [cloudinaryWidget, formKey, setUrl, uploadSuccess]);
 
-    // document.getElementById("upload_widget").addEventListener(
-    //   "click",
-    //   function () {
-    //     myWidget.open();
-    //   },
-    //   false
-    // );
+  const openWidget = () => {
+    // Access the widget instance from the ref and open it
+    widgetRef.current.open();
+  };
 
   return (
     <>
-      <button id="upload_widget" className="btn btn-bablyBlue" type="button" onClick={() => myWidget.open()}>
+      <button className="btn btn-bablyBlue" type="button" onClick={openWidget}>
         Upload
       </button>
     </>
