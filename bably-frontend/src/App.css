@@ -19,6 +19,7 @@ nav {
 
 .profileImg {
   max-height: 250px;
+  max-width: 100%;
   padding: 0.25rem;
   border: 1px solid var(--bs-border-color);
   background-color: #fff;
