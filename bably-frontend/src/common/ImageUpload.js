@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 
-function ImageUpload({ uploadSuccess }) {
+function ImageUpload({ uploadSuccess, setUrl, formKey }) {
   //   https://cloudinary.com/documentation/upload_widget_reference
   const [cloudinaryWidget, setCloudinaryWidget] = useState(null);
   const widgetRef = useRef();
