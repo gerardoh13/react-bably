@@ -20,9 +20,15 @@ function FeedTable({ feeds, toDateStr }) {
       <table className="table table-striped bg-light">
         <thead>
           <tr>
-            <th className="wThird" scope="col">Time</th>
-            <th className="wThird" scope="col">Method</th>
-            <th className="wThird" scope="col">oz/Mins</th>
+            <th className="wThird" scope="col">
+              Time
+            </th>
+            <th className="wThird" scope="col">
+              Method
+            </th>
+            <th className="wThird" scope="col">
+              oz/Mins
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -33,15 +39,16 @@ function FeedTable({ feeds, toDateStr }) {
                 className={showMore === "" ? "d-none" : ""}
                 onClick={() => setShowMore("")}
               >
+                <td />
                 <th scope="row">+ {feeds.slice(3).length} More</th>
-                <td></td>
-                <td></td>
+                <td />
               </tr>
+              <tr className="d-none" />
               {createRows(feeds.slice(3), true)}
               <tr className={showMore} onClick={() => setShowMore("d-none")}>
+                <td />
                 <th scope="row">Hide</th>
-                <td></td>
-                <td></td>
+                <td />
               </tr>
             </>
           ) : null}

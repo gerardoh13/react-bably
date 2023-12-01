@@ -12,13 +12,13 @@ function Navigation({ logout }) {
     <>
       {currChild ? (
         <>
-          <Nav.Link to="/calendar" eventKey={1} as={NavLink}>
+          <Nav.Link to="/calendar" eventKey={1} as={NavLink} className="ms-2 ms-md-0">
             Calendar
           </Nav.Link>
-          <Nav.Link to="/settings" eventKey={2} as={NavLink}>
+          <Nav.Link to="/settings" eventKey={2} as={NavLink} className="ms-2 ms-md-0">
             Settings
           </Nav.Link>
-          <Nav.Link to="/profile" eventKey={3} as={NavLink}>
+          <Nav.Link to="/profile" eventKey={3} as={NavLink} className="ms-2 ms-md-0">
             {currChild.firstName}
           </Nav.Link>
         </>
@@ -26,7 +26,7 @@ function Navigation({ logout }) {
 
       {currUser && currUser.infants.length > 1 ? (
         <li className="nav-item dropdown">
-          <NavDropdown id="nav-dropdown-dark-example" title="Change Profile">
+          <NavDropdown id="nav-dropdown-dark-example" title="Change Profile" className="ms-2 ms-md-0">
             {currUser.infants.map((c, i) => (
               <NavDropdown.Item
                 key={c.id}
@@ -59,7 +59,7 @@ function Navigation({ logout }) {
               onClick={logout}
               eventKey={6}
               as={NavLink}
-              className="me-4"
+              className="me-4 ms-2 ms-md-0"
             >
               Logout
             </Nav.Link>

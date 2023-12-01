@@ -101,21 +101,25 @@ function App() {
   };
   return (
     <div className="App">
-      <BrowserRouter>
-        <UserContext.Provider
-          value={{
-            currUser,
-            currChild,
-            registerInfant,
-            updateInfant,
-            setChildId,
-          }}
-        >
-          <Navbar logout={logout} />
-          {loading ? <Spinner /> : <NavRoutes login={login} signup={signup} />}
-        </UserContext.Provider>
-      </BrowserRouter>
-    </div>
+        <BrowserRouter>
+          <UserContext.Provider
+            value={{
+              currUser,
+              currChild,
+              registerInfant,
+              updateInfant,
+              setChildId,
+            }}
+          >
+            <Navbar logout={logout} />
+            {loading ? (
+              <Spinner />
+            ) : (
+              <NavRoutes login={login} signup={signup} />
+            )}
+          </UserContext.Provider>
+        </BrowserRouter>
+      </div>
   );
 }
 

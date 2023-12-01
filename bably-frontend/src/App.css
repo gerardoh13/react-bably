@@ -1,8 +1,14 @@
+
 .App {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow: hidden;
+}
+
+::-webkit-scrollbar {
+  display: none;
 }
 
 nav {
@@ -87,4 +93,3 @@ nav {
   z-index: -1;
   position: absolute;
 }
-

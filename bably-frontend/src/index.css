@@ -5,11 +5,6 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* background-color: #282c34;
-  background: url(https://img.freepik.com/free-vector/gradient-blue-color-background-modern-minimalist-design-abstract_343694-2124.jpg?w=1380&t=st=1679118144~exp=1679118744~hmac=401f6b7cc53aea65eaff6fabd002ecfcd02f920e73d12f36d72ce5b895f99645);
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-  background-size: cover; */
   background: rgb(54, 73, 88);
   background: linear-gradient(
     0deg,
@@ -19,7 +14,7 @@ body {
     rgba(135, 187, 162, 1) 78%,
     rgba(201, 228, 202, 1) 100%
   );
-  overflow-y: overlay;
+  /* overflow-y: hidden; */
 }
 
 code {

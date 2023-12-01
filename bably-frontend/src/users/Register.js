@@ -38,7 +38,7 @@ function Register({ additionalChild }) {
   const submit = async () => {
     await registerInfant({
       firstName: formData.firstName,
-      gender: formData.firstName,
+      gender: formData.gender,
       dob: formData.dob,
       publicId: formData.publicId,
     });

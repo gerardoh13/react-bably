@@ -183,49 +183,37 @@ function Home() {
         setShow={setShowFeedForm}
         submit={addFeed}
       />
-      <div className="my-auto col-11 col-md-6 col-xxl-5 text-center text-light">
+      <div className="col-11 col-md-6 col-xxl-5 text-center text-light">
         <h1 className="my-4">
           {currChild.firstName}
           {currChild.firstName.endsWith("s") ? "'" : "'s"} Daily Activity
         </h1>
-        {!feeds.length && !diapers.length ? (
-          <div>
-            <hr />
-            <h4 className="my-3 text-light">
-              Log {currChild.firstName}
-              {currChild.firstName.endsWith("s") ? "'" : "'s"} feeds and diapers
-              to see {currChild.gender === "male" ? "his" : "her"} latest
-              activity here!
-            </h4>
-            <hr />
-          </div>
-        ) : (
-          <>
-            <SummaryCards
-              feeds={feeds}
-              totals={totals}
+        <>
+          <SummaryCards
+            feeds={feeds}
+            totals={totals}
+            diapers={diapers}
+            changeTable={changeTable}
+          />
+          {currTable === "feeds" && feeds.length ? (
+            <FeedTable feeds={feeds} totals={totals} toDateStr={toDateStr} />
+          ) : currTable === "diapers" && diapers.length ? (
+            <DiaperTable
               diapers={diapers}
-              changeTable={changeTable}
+              totals={totals}
+              toDateStr={toDateStr}
             />
-            {currTable === "feeds" && feeds.length ? (
-              <FeedTable feeds={feeds} totals={totals} toDateStr={toDateStr} />
-            ) : currTable === "diapers" && diapers.length ? (
-              <DiaperTable
-                diapers={diapers}
-                totals={totals}
-                toDateStr={toDateStr}
-              />
-            ) : (
-              <h4 className="my-3 text-light">
+          ) : (
+            <p className="my-3 text-light">
+              <b>
                 Log {currChild.firstName}
                 {currChild.firstName.endsWith("s") ? "'" : "'s"} {currTable} to
                 see {currChild.gender === "male" ? "his" : "her"} latest
                 activity here!
-              </h4>
-            )}
-          </>
-        )}
-
+              </b>
+            </p>
+          )}
+        </>
         <div
           className="card bablyGrey text-light mb-3 pointer"
           onClick={() => setShowFeedForm(true)}

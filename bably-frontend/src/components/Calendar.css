@@ -22,6 +22,10 @@
     pointer-events: none;
 }
 
+.fc-event-title-container {
+font-size: x-small;
+font-weight: bold;
+}
 .fc-daygrid-event-harness {
     margin-top: 0px !important;
 }

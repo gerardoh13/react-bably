@@ -13,7 +13,7 @@ function ConfirmModal({
     cancel(null);
   };
   return (
-    <Modal show={show}>
+    <Modal show={show} centered>
       <Modal.Header>
         <Modal.Title>Are you Sure?</Modal.Title>
         <button

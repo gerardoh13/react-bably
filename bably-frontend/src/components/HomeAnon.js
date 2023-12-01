@@ -12,7 +12,7 @@ function HomeAnon({ login, signup }) {
         alt="bably bg"
         className="bablyBg d-none d-md-block"
       />
-      <div className="text-light text-center my-5">
+      <div className="text-light text-center my-4">
         <h1>Bably</h1>
         <h2>Parenting simplified</h2>
       </div>
